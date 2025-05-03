@@ -1,5 +1,3 @@
-xsoar_outputs/
-lambda_playbooks/
 cache/
 conversion.log
 __pycache__/
