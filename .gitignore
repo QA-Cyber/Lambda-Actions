@@ -1,0 +1,9 @@
+xsoar_outputs/
+lambda_playbooks/
+cache/
+conversion.log
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env/
+.env

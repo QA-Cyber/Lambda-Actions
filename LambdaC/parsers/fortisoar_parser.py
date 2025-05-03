@@ -1,0 +1,86 @@
+# fortisoar_parser.py
+import json
+from internal_model import LambdaPlaybook, Step, ConditionBranch
+
+
+def identify_step_type(step_data: dict, incoming_routes: set) -> str:
+    args = step_data.get("arguments", {})
+    name = (step_data.get("name") or "").strip().lower()
+
+    # 1. Manual Task if user input required
+    if "response_mapping" in args:
+        return "Manual Task"
+
+    # 2. Condition if multiple branches or explicit conditions
+    if args.get("conditions") or args.get("response_mapping", {}).get("options"):
+        return "Condition"
+
+    # 3. Start: name contains “start” OR no one ever routes *to* this step
+    uid = step_data.get("uuid")
+    if "start" in name or uid not in incoming_routes:
+        return "Start"
+
+    # 4. Title if step is purely UI (no script/op and no next steps)
+    if not args.get("operation") and not args.get("scriptName") and not args.get("response_mapping"):
+        return "Title"
+
+    # 5. Fallback
+    return "WorkflowStep"
+
+
+def parse_fortisoar(filepath: str) -> LambdaPlaybook:
+
+    with open(filepath) as f:
+        data = json.load(f)
+
+    incoming = {r.get("targetStep", "").split("/")[-1] for r in data.get("routes", [])}
+
+    steps = []
+    for idx, s in enumerate(data.get('steps', [])):
+        step_id = s.get("uuid", f"step-{idx}")
+
+        conditions = None
+        args = s.get("arguments", {})
+        if "response_mapping" in args:
+            options = args["response_mapping"].get("options", [])
+            conditions = [
+                ConditionBranch(
+                    option=o.get("option", "#default#"),
+                    next_step=o.get("step_iri", "").split("/")[-1],
+                    condition=o.get("condition")
+                ) for o in options
+            ]
+
+        step = Step(
+            id=step_id,
+            name=s.get("name", f"Unnamed Step"),
+            type=identify_step_type(s, incoming),
+            description=s.get("description"),
+            action=args.get("operation") or None,
+            inputs=args,
+            outputs=None,
+            conditions=conditions,
+            metadata={
+                "raw_arguments": args,
+                "stepType": s.get("stepType")
+            }
+        )
+        steps.append(step)
+
+    # Routes handling
+    uuid_to_nextsteps = {}
+    for r in data.get("routes", []):
+        source = r.get("sourceStep", "").split("/")[-1]
+        target = r.get("targetStep", "").split("/")[-1]
+        uuid_to_nextsteps.setdefault(source, []).append(target)
+
+    for step in steps:
+        if step.id in uuid_to_nextsteps:
+            step.next_steps = uuid_to_nextsteps[step.id]
+
+    return LambdaPlaybook(
+        id=data.get("uuid", "unknown-playbook"),
+        name=data.get("name", "Unnamed Playbook"),
+        description=data.get("description"),
+        steps=steps
+    )

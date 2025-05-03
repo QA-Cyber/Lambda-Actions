@@ -1,0 +1,76 @@
+### Lambda-Actions YAML Schema (v1.2)
+
+# Top-level metadata for Lambda-Action playbook identification and management
+id: STRING                        
+name: STRING                      
+description: STRING
+
+# Trigger definition
+trigger:
+  type: ENUM(manual | scheduled | event)
+  schedule: STRING                 # Cron expression (if type = scheduled)
+  event:
+    source: STRING                 # Generic event source identifier
+    on: ENUM(create | update)      # Indicates when the trigger fires
+    fields: [STRING]               # Optional list of fields (used if on: update)
+    filters: MAP                   # Key-value filters for triggering logic
+
+# Steps definition
+steps:
+  - id: STRING                      # Unique step identifier
+    type: ENUM(action | condition | subplaybook | manual | script | task)
+    description: STRING             # Optional detailed description
+
+    # ACTION step: executes an abstract action
+    action: STRING                  # Action/command identifier
+    connector: STRING (optional)    # Connector/integration name
+    inputs: MAP                     # Input parameters for the action
+    outputs: MAP                    # Output variables to store results
+
+    # CONDITION step: branching logic
+    conditions:
+      - if: STRING                  # Expression to evaluate
+        then: STRING                # Step ID to continue if true
+        else: STRING                # Step ID if false
+
+    # SUBPLAYBOOK step: reusable nested logic
+    subplaybooks: [STRING]          # List of subplaybook identifiers
+    parallel: BOOLEAN               # Whether to run subplaybooks in parallel
+    inputs: MAP                     # Inputs passed to subplaybooks
+    outputs: MAP                    # Outputs returned from subplaybooks
+
+    # MANUAL step: human input or approval
+    instructions: STRING            # Analyst instructions
+    timeout: INTEGER                # Timeout in minutes
+    escalation:
+      notify: [STRING]              # Who to notify
+      escalate_after: INTEGER       # When to escalate (in minutes)
+
+    # SCRIPT step: custom logic block
+    runtime: ENUM(python | javascript | lua)
+    script_content: STRING          # The actual script code
+    inputs: MAP                     # Script input parameters
+    outputs: MAP                    # Script output variables
+
+    # TASK step: arbitrary logic block
+    task_definition:
+      type: STRING                  # Task type
+      parameters: MAP               # Task parameters
+      description: STRING           # Description of task purpose
+      outputs: MAP                  # Resulting output variables
+
+# Inputs to the playbook
+inputs:
+  - name: STRING
+    description: STRING
+    default: ANY
+
+# Outputs from the playbook
+outputs:
+  - name: STRING
+    description: STRING
+    value: ANY
+
+# Metadata for conversion purposes
+metadata:
+  vendor_mappings: MAP

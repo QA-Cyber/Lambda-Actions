@@ -1,0 +1,1061 @@
+id: 02000b45-97fc-47f2-a8a7-5b03d2625898
+name: Enrich Indicators (Type All)
+description: Get indicator reputation from all available pluggable enrichment playbooks
+steps:
+- id: 07b26b32-f4a6-4296-98f7-146507b9e35a
+  name: Set Exit Response
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  inputs:
+    reputation: "{{vars.steps.No_Integration_Available.reputation.itemValue or 'No
+      Reputation Available'}}"
+    reputation_iri: "{{vars.steps.No_Integration_Available.reputation['@id'] or ((\"\
+      IndicatorReputation\" | picklist(\"No Reputation Available\"))[\"@id\"]) }}"
+    enrichment_summaries: '{{vars.steps.No_Integration_Available.description}}'
+  outputs:
+  metadata:
+    raw_arguments:
+      reputation: "{{vars.steps.No_Integration_Available.reputation.itemValue or 'No
+        Reputation Available'}}"
+      reputation_iri: "{{vars.steps.No_Integration_Available.reputation['@id'] or
+        ((\"IndicatorReputation\" | picklist(\"No Reputation Available\"))[\"@id\"\
+        ]) }}"
+      enrichment_summaries: '{{vars.steps.No_Integration_Available.description}}'
+    stepType: /api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f
+- id: 2e62a551-037c-4a68-ade3-a6cf4186a487
+  name: Initialize Enrichment Playbooks List
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  - ba6f3981-1789-4635-8784-02b7ad23f655
+  inputs:
+    when: "{{vars.steps.Get_Enrichment_Playbooks_List.data['hydra:member'] | length
+      == 0}}"
+    arguments:
+      enrichmentTag: '{{vars.enrichmentTag}}'
+      enrichmentGlobalVar: '{{vars.enrichmentGlobalVarForType}}'
+    apply_async: false
+    step_variables:
+      enrichmentPlaybooksList: '{{vars.result.data.value}}'
+    pass_input_record: false
+    workflowReference: /api/3/workflows/e1fbff9b-8397-4b2e-afd7-676251acf064
+  outputs:
+  metadata:
+    raw_arguments:
+      when: "{{vars.steps.Get_Enrichment_Playbooks_List.data['hydra:member'] | length
+        == 0}}"
+      arguments:
+        enrichmentTag: '{{vars.enrichmentTag}}'
+        enrichmentGlobalVar: '{{vars.enrichmentGlobalVarForType}}'
+      apply_async: false
+      step_variables:
+        enrichmentPlaybooksList: '{{vars.result.data.value}}'
+      pass_input_record: false
+      workflowReference: /api/3/workflows/e1fbff9b-8397-4b2e-afd7-676251acf064
+    stepType: /api/3/workflow_step_types/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3
+- id: 3019b0d0-df56-4738-b599-8752a82af23e
+  name: Set Suspicious
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  - dd6f68af-fb89-41c3-9d36-036299d96c6d
+  inputs:
+    Reputation_Type_IRI: '{{("IndicatorReputation" | picklist("Suspicious"))["@id"]}}'
+    Reputation_Type_Text: Suspicious
+  outputs:
+  metadata:
+    raw_arguments:
+      Reputation_Type_IRI: '{{("IndicatorReputation" | picklist("Suspicious"))["@id"]}}'
+      Reputation_Type_Text: Suspicious
+    stepType: /api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f
+- id: 38b44efe-c444-42c9-b0d9-a8efbfe3a0c6
+  name: Get Enrichment Playbooks List
+  type: WorkflowStep
+  description:
+  action: make_cyops_request
+  conditions:
+  next_steps:
+  - 2e62a551-037c-4a68-ade3-a6cf4186a487
+  inputs:
+    params:
+      iri: /api/wf/api/dynamic-variable/?limit=40&name={{vars.enrichmentGlobalVarForType}}
+      body: ''
+      method: GET
+    version: 3.2.1
+    connector: cyops_utilities
+    operation: make_cyops_request
+    operationTitle: 'FSR: Make FortiSOAR API Call'
+    step_variables:
+      enrichmentPlaybooksList: "{% if vars.result.data['hydra:member'] | length >
+        0 %}{{vars.result.data['hydra:member'][0].value}}{% endif %}"
+  outputs:
+  metadata:
+    raw_arguments:
+      params:
+        iri: /api/wf/api/dynamic-variable/?limit=40&name={{vars.enrichmentGlobalVarForType}}
+        body: ''
+        method: GET
+      version: 3.2.1
+      connector: cyops_utilities
+      operation: make_cyops_request
+      operationTitle: 'FSR: Make FortiSOAR API Call'
+      step_variables:
+        enrichmentPlaybooksList: "{% if vars.result.data['hydra:member'] | length
+          > 0 %}{{vars.result.data['hydra:member'][0].value}}{% endif %}"
+    stepType: /api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562
+- id: 3a4098d5-3ec4-42bc-94e2-8f63bfed103f
+  name: Start
+  type: Start
+  description: Indicator reputation is set as 'TBD' by 'Create and Link Indicator'
+    utility playbook. We can ignore those indicators when triggering this PB
+  action:
+  conditions:
+  next_steps:
+  - 50a9c51c-6dbb-412c-83b3-fad2d88a9392
+  inputs:
+    resource: indicators
+    resources:
+    - indicators
+    step_variables:
+      input:
+        params: []
+        records:
+        - '{{vars.input.records[0]}}'
+      indicator_type: "{{vars.input.params['indicator_type'] | ternary(vars.input.params['indicator_type'],vars.input.records[0].typeofindicator.itemValue)
+        }}"
+      indicator_value: "{% if vars.input.records[0].typeofindicator.itemValue == \"\
+        File\" %}{\"indicator_file_IRI\": \"{{vars.input.params['indicator_file_IRI']
+        | ternary(vars.input.params['indicator_file_IRI'],vars.input.records[0].file['@id'])
+        }}\", \"indicator_file_name\": \"{{vars.input.params['indicator_file_name']
+        | ternary(vars.input.params['indicator_file_name'],vars.input.records[0].file.filename)
+        }}\" }{% else %}{{vars.input.params['indicator_value'] | ternary(vars.input.params['indicator_value'],vars.input.records[0].value)
+        }}{% endif %}"
+      enrichment_playbooks_global_vars_map: "{\n\"Domain\":\"{{globalVars.Domain_Enrichment_Playbooks_IRIs}}\"\
+        ,\n\"Email Address\":\"{{globalVars.Email_Enrichment_Playbooks_IRIs}}\",\n\
+        \"Host\":\"{{globalVars.Host_Enrichment_Playbooks_IRIs}}\",\n\"File\":\"{{globalVars.File_Enrichment_Playbooks_IRIs}}\"\
+        ,\n\"FileHash-MD5\":\"{{globalVars.FileHash_Enrichment_Playbooks_IRIs}}\"\
+        ,\n\"FileHash-SHA1\":\"{{globalVars.FileHash_Enrichment_Playbooks_IRIs}}\"\
+        ,\n\"FileHash-SHA256\":\"{{globalVars.FileHash_Enrichment_Playbooks_IRIs}}\"\
+        ,\n\"IP Address\":\"{{globalVars.IP_Enrichment_Playbooks_IRIs}}\",\n\"Port\"\
+        :\"{{globalVars.Port_Enrichment_Playbooks_IRIs}}\",\n\"Registry\":\"{{globalVars.Registry_Enrichment_Playbooks_IRIs}}\"\
+        ,\n\"Process\":\"{{globalVars.Process_Enrichment_Playbooks_IRIs}}\",\n\"URL\"\
+        :\"{{globalVars.URL_Enrichment_Playbooks_IRIs}}\",\n\"User\":\"{{globalVars.User_Enrichment_Playbooks_IRIs}}\"\
+        \n}"
+    fieldbasedtrigger:
+      sort: []
+      limit: 30
+      logic: AND
+      filters:
+      - logic: OR
+        filters:
+        - type: object
+          field: typeofindicator
+          value: /api/3/picklists/5a5a7d42-be27-4903-858a-19909ebfa1eb
+          _value:
+            '@id': /api/3/picklists/5a5a7d42-be27-4903-858a-19909ebfa1eb
+            itemValue: Domain
+          operator: eq
+        - type: object
+          field: typeofindicator
+          value: /api/3/picklists/0ca054f2-d923-4992-a4a7-c516e6df281e
+          _value:
+            '@id': /api/3/picklists/0ca054f2-d923-4992-a4a7-c516e6df281e
+            itemValue: FileHash-MD5
+          operator: eq
+        - type: object
+          field: typeofindicator
+          value: /api/3/picklists/143e40b0-e643-468d-b968-a542fc85f08d
+          _value:
+            '@id': /api/3/picklists/143e40b0-e643-468d-b968-a542fc85f08d
+            itemValue: FileHash-SHA1
+          operator: eq
+        - type: object
+          field: typeofindicator
+          value: /api/3/picklists/4ea7b083-a0af-41ea-8d7c-7ace16021722
+          _value:
+            '@id': /api/3/picklists/4ea7b083-a0af-41ea-8d7c-7ace16021722
+            itemValue: FileHash-SHA256
+          operator: eq
+        - type: object
+          field: typeofindicator
+          value: /api/3/picklists/c0beeda4-2c7a-4214-b7e5-53ba1649539c
+          _value:
+            '@id': /api/3/picklists/c0beeda4-2c7a-4214-b7e5-53ba1649539c
+            itemValue: IP Address
+          operator: eq
+        - type: object
+          field: typeofindicator
+          value: /api/3/picklists/353a37b4-3eeb-43ee-aac6-64806422cfec
+          _value:
+            '@id': /api/3/picklists/353a37b4-3eeb-43ee-aac6-64806422cfec
+            itemValue: URL
+          operator: eq
+        - type: object
+          field: typeofindicator
+          value: /api/3/picklists/80bd55b0-6d88-4beb-bec3-97954f261c4d
+          _value:
+            '@id': /api/3/picklists/80bd55b0-6d88-4beb-bec3-97954f261c4d
+            itemValue: Email Address
+          operator: eq
+        - type: object
+          field: typeofindicator
+          value: /api/3/picklists/0162241b-f5bf-4917-a150-00e920be47bd
+          _value:
+            '@id': /api/3/picklists/0162241b-f5bf-4917-a150-00e920be47bd
+            itemValue: File
+          operator: eq
+        - type: object
+          field: typeofindicator
+          value: /api/3/picklists/e72907c5-2088-4e85-99d0-6c7970a5470e
+          _value:
+            '@id': /api/3/picklists/e72907c5-2088-4e85-99d0-6c7970a5470e
+            display: User
+            itemValue: User
+          operator: eq
+      - logic: AND
+        filters:
+        - type: object
+          field: indicatorStatus
+          value: /api/3/picklists/4218cb58-4de5-4eff-ad08-185d36ef9bab
+          _value:
+            '@id': /api/3/picklists/4218cb58-4de5-4eff-ad08-185d36ef9bab
+            itemValue: Excluded
+          operator: neq
+      - logic: OR
+        filters:
+        - type: object
+          field: reputation
+          value: 'true'
+          _value:
+            '@id': 'true'
+            display: ''
+            itemValue: ''
+          operator: isnull
+        - type: object
+          field: reputation
+          value: /api/3/picklists/ae98ebc6-beef-4882-9980-1d88fc6d87cd
+          _value:
+            '@id': /api/3/picklists/ae98ebc6-beef-4882-9980-1d88fc6d87cd
+            itemValue: TBD
+          operator: eq
+  outputs:
+  metadata:
+    raw_arguments:
+      resource: indicators
+      resources:
+      - indicators
+      step_variables:
+        input:
+          params: []
+          records:
+          - '{{vars.input.records[0]}}'
+        indicator_type: "{{vars.input.params['indicator_type'] | ternary(vars.input.params['indicator_type'],vars.input.records[0].typeofindicator.itemValue)
+          }}"
+        indicator_value: "{% if vars.input.records[0].typeofindicator.itemValue ==
+          \"File\" %}{\"indicator_file_IRI\": \"{{vars.input.params['indicator_file_IRI']
+          | ternary(vars.input.params['indicator_file_IRI'],vars.input.records[0].file['@id'])
+          }}\", \"indicator_file_name\": \"{{vars.input.params['indicator_file_name']
+          | ternary(vars.input.params['indicator_file_name'],vars.input.records[0].file.filename)
+          }}\" }{% else %}{{vars.input.params['indicator_value'] | ternary(vars.input.params['indicator_value'],vars.input.records[0].value)
+          }}{% endif %}"
+        enrichment_playbooks_global_vars_map: "{\n\"Domain\":\"{{globalVars.Domain_Enrichment_Playbooks_IRIs}}\"\
+          ,\n\"Email Address\":\"{{globalVars.Email_Enrichment_Playbooks_IRIs}}\"\
+          ,\n\"Host\":\"{{globalVars.Host_Enrichment_Playbooks_IRIs}}\",\n\"File\"\
+          :\"{{globalVars.File_Enrichment_Playbooks_IRIs}}\",\n\"FileHash-MD5\":\"\
+          {{globalVars.FileHash_Enrichment_Playbooks_IRIs}}\",\n\"FileHash-SHA1\"\
+          :\"{{globalVars.FileHash_Enrichment_Playbooks_IRIs}}\",\n\"FileHash-SHA256\"\
+          :\"{{globalVars.FileHash_Enrichment_Playbooks_IRIs}}\",\n\"IP Address\"\
+          :\"{{globalVars.IP_Enrichment_Playbooks_IRIs}}\",\n\"Port\":\"{{globalVars.Port_Enrichment_Playbooks_IRIs}}\"\
+          ,\n\"Registry\":\"{{globalVars.Registry_Enrichment_Playbooks_IRIs}}\",\n\
+          \"Process\":\"{{globalVars.Process_Enrichment_Playbooks_IRIs}}\",\n\"URL\"\
+          :\"{{globalVars.URL_Enrichment_Playbooks_IRIs}}\",\n\"User\":\"{{globalVars.User_Enrichment_Playbooks_IRIs}}\"\
+          \n}"
+      fieldbasedtrigger:
+        sort: []
+        limit: 30
+        logic: AND
+        filters:
+        - logic: OR
+          filters:
+          - type: object
+            field: typeofindicator
+            value: /api/3/picklists/5a5a7d42-be27-4903-858a-19909ebfa1eb
+            _value:
+              '@id': /api/3/picklists/5a5a7d42-be27-4903-858a-19909ebfa1eb
+              itemValue: Domain
+            operator: eq
+          - type: object
+            field: typeofindicator
+            value: /api/3/picklists/0ca054f2-d923-4992-a4a7-c516e6df281e
+            _value:
+              '@id': /api/3/picklists/0ca054f2-d923-4992-a4a7-c516e6df281e
+              itemValue: FileHash-MD5
+            operator: eq
+          - type: object
+            field: typeofindicator
+            value: /api/3/picklists/143e40b0-e643-468d-b968-a542fc85f08d
+            _value:
+              '@id': /api/3/picklists/143e40b0-e643-468d-b968-a542fc85f08d
+              itemValue: FileHash-SHA1
+            operator: eq
+          - type: object
+            field: typeofindicator
+            value: /api/3/picklists/4ea7b083-a0af-41ea-8d7c-7ace16021722
+            _value:
+              '@id': /api/3/picklists/4ea7b083-a0af-41ea-8d7c-7ace16021722
+              itemValue: FileHash-SHA256
+            operator: eq
+          - type: object
+            field: typeofindicator
+            value: /api/3/picklists/c0beeda4-2c7a-4214-b7e5-53ba1649539c
+            _value:
+              '@id': /api/3/picklists/c0beeda4-2c7a-4214-b7e5-53ba1649539c
+              itemValue: IP Address
+            operator: eq
+          - type: object
+            field: typeofindicator
+            value: /api/3/picklists/353a37b4-3eeb-43ee-aac6-64806422cfec
+            _value:
+              '@id': /api/3/picklists/353a37b4-3eeb-43ee-aac6-64806422cfec
+              itemValue: URL
+            operator: eq
+          - type: object
+            field: typeofindicator
+            value: /api/3/picklists/80bd55b0-6d88-4beb-bec3-97954f261c4d
+            _value:
+              '@id': /api/3/picklists/80bd55b0-6d88-4beb-bec3-97954f261c4d
+              itemValue: Email Address
+            operator: eq
+          - type: object
+            field: typeofindicator
+            value: /api/3/picklists/0162241b-f5bf-4917-a150-00e920be47bd
+            _value:
+              '@id': /api/3/picklists/0162241b-f5bf-4917-a150-00e920be47bd
+              itemValue: File
+            operator: eq
+          - type: object
+            field: typeofindicator
+            value: /api/3/picklists/e72907c5-2088-4e85-99d0-6c7970a5470e
+            _value:
+              '@id': /api/3/picklists/e72907c5-2088-4e85-99d0-6c7970a5470e
+              display: User
+              itemValue: User
+            operator: eq
+        - logic: AND
+          filters:
+          - type: object
+            field: indicatorStatus
+            value: /api/3/picklists/4218cb58-4de5-4eff-ad08-185d36ef9bab
+            _value:
+              '@id': /api/3/picklists/4218cb58-4de5-4eff-ad08-185d36ef9bab
+              itemValue: Excluded
+            operator: neq
+        - logic: OR
+          filters:
+          - type: object
+            field: reputation
+            value: 'true'
+            _value:
+              '@id': 'true'
+              display: ''
+              itemValue: ''
+            operator: isnull
+          - type: object
+            field: reputation
+            value: /api/3/picklists/ae98ebc6-beef-4882-9980-1d88fc6d87cd
+            _value:
+              '@id': /api/3/picklists/ae98ebc6-beef-4882-9980-1d88fc6d87cd
+              itemValue: TBD
+            operator: eq
+    stepType: /api/3/workflow_step_types/ea155646-3821-4542-9702-b246da430a8d
+- id: 3d7cb74b-d060-4933-9ebe-67579f88452b
+  name: Set No Reputation
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  - dd6f68af-fb89-41c3-9d36-036299d96c6d
+  inputs:
+    Reputation_Type_IRI: '{{("IndicatorReputation" | picklist("No Reputation Available"))["@id"]}}'
+    Reputation_Type_Text: No Reputation Available
+  outputs:
+  metadata:
+    raw_arguments:
+      Reputation_Type_IRI: '{{("IndicatorReputation" | picklist("No Reputation Available"))["@id"]}}'
+      Reputation_Type_Text: No Reputation Available
+    stepType: /api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f
+- id: 4d9603ae-2f1c-48ed-a61a-60704a608db8
+  name: No Integration Available
+  type: WorkflowStep
+  description:
+  action: Append
+  conditions:
+  next_steps:
+  - 07b26b32-f4a6-4296-98f7-146507b9e35a
+  inputs:
+    when: "{{not vars.input.params['indicator_IRI'] == None}}"
+    message:
+      tags: []
+      type: /api/3/picklists/ff599189-3eeb-4c86-acb0-a7915e85ac3b
+      tenant: ''
+      content: <p>No integration available for enrichment</p>
+      records: '{{vars.indicator_iri}}'
+    resource:
+      reputation: /api/3/picklists/9a611980-1b5e-4ae9-8062-eb2c0c433cff
+      enrichmentStatus: /api/3/picklists/c6e46fde-97a2-48cc-8019-938c9c5aebd0
+    operation: Append
+    collection: '{{vars.indicator_iri}}'
+    __recommend: []
+    collectionType: /api/3/indicators
+    fieldOperation:
+      recordTags: Append
+    step_variables: []
+  outputs:
+  metadata:
+    raw_arguments:
+      when: "{{not vars.input.params['indicator_IRI'] == None}}"
+      message:
+        tags: []
+        type: /api/3/picklists/ff599189-3eeb-4c86-acb0-a7915e85ac3b
+        tenant: ''
+        content: <p>No integration available for enrichment</p>
+        records: '{{vars.indicator_iri}}'
+      resource:
+        reputation: /api/3/picklists/9a611980-1b5e-4ae9-8062-eb2c0c433cff
+        enrichmentStatus: /api/3/picklists/c6e46fde-97a2-48cc-8019-938c9c5aebd0
+      operation: Append
+      collection: '{{vars.indicator_iri}}'
+      __recommend: []
+      collectionType: /api/3/indicators
+      fieldOperation:
+        recordTags: Append
+      step_variables: []
+    stepType: /api/3/workflow_step_types/b593663d-7d13-40ce-a3a3-96dece928722
+- id: 50a9c51c-6dbb-412c-83b3-fad2d88a9392
+  name: Is Dedicated Tenant Record
+  type: Condition
+  description:
+  action:
+  conditions:
+  next_steps:
+  - 678a25cd-14af-49c7-9ea8-c3452585b910
+  - fbe06a74-ed1b-4e6c-9ab6-98350daed35f
+  inputs:
+    conditions:
+    - option: Yes, Enrich at Tenant Node
+      step_iri: /api/3/workflow_steps/678a25cd-14af-49c7-9ea8-c3452585b910
+      condition: "{{ 'tenant' in vars.input.records[0] and vars.input.records[0].tenant.isDedicated
+        == true and vars.input.records[0].tenant.role != 'self' }}"
+      step_name: Enrichment on Tenant
+    - option: No, Enrich here
+      default: true
+      step_iri: /api/3/workflow_steps/fbe06a74-ed1b-4e6c-9ab6-98350daed35f
+      step_name: Configuration
+  outputs:
+  metadata:
+    raw_arguments:
+      conditions:
+      - option: Yes, Enrich at Tenant Node
+        step_iri: /api/3/workflow_steps/678a25cd-14af-49c7-9ea8-c3452585b910
+        condition: "{{ 'tenant' in vars.input.records[0] and vars.input.records[0].tenant.isDedicated
+          == true and vars.input.records[0].tenant.role != 'self' }}"
+        step_name: Enrichment on Tenant
+      - option: No, Enrich here
+        default: true
+        step_iri: /api/3/workflow_steps/fbe06a74-ed1b-4e6c-9ab6-98350daed35f
+        step_name: Configuration
+    stepType: /api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28
+- id: 50ce2052-a344-4374-9b94-e528860c111f
+  name: Is Supported Indicator Type
+  type: Condition
+  description:
+  action:
+  conditions:
+  next_steps:
+  - 38b44efe-c444-42c9-b0d9-a8efbfe3a0c6
+  - a61c987a-3864-49a0-b0b9-8802e00805d2
+  inputs:
+    conditions:
+    - option: No
+      step_iri: /api/3/workflow_steps/a61c987a-3864-49a0-b0b9-8802e00805d2
+      condition: '{{ vars.enrichmentGlobalVarForType == "NotSupported_Playbooks_IRIs"
+        }}'
+      step_name: Exit
+    - option: Yes
+      default: true
+      step_iri: /api/3/workflow_steps/38b44efe-c444-42c9-b0d9-a8efbfe3a0c6
+      step_name: Get Enrichment Playbooks List
+  outputs:
+  metadata:
+    raw_arguments:
+      conditions:
+      - option: No
+        step_iri: /api/3/workflow_steps/a61c987a-3864-49a0-b0b9-8802e00805d2
+        condition: '{{ vars.enrichmentGlobalVarForType == "NotSupported_Playbooks_IRIs"
+          }}'
+        step_name: Exit
+      - option: Yes
+        default: true
+        step_iri: /api/3/workflow_steps/38b44efe-c444-42c9-b0d9-a8efbfe3a0c6
+        step_name: Get Enrichment Playbooks List
+    stepType: /api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28
+- id: 5e280ff6-13e6-49eb-878a-217923163080
+  name: Additional Checks for IP
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  - 8c18e496-91ba-4f0c-8301-917829cc2060
+  inputs:
+    arguments:
+      style_colors: '{{vars.style_colors}}'
+      indicator_value: '{{vars.indicator_value}}'
+      enrichmentPlaybooksList: '{{vars.enrichmentPlaybooksList.split(",")}}'
+    apply_async: false
+    ignore_errors: false
+    step_variables: []
+    pass_input_record: false
+    workflowReference: /api/3/workflows/846a0e87-c5e9-4181-a9ab-f3b3f1e521cb
+  outputs:
+  metadata:
+    raw_arguments:
+      arguments:
+        style_colors: '{{vars.style_colors}}'
+        indicator_value: '{{vars.indicator_value}}'
+        enrichmentPlaybooksList: '{{vars.enrichmentPlaybooksList.split(",")}}'
+      apply_async: false
+      ignore_errors: false
+      step_variables: []
+      pass_input_record: false
+      workflowReference: /api/3/workflows/846a0e87-c5e9-4181-a9ab-f3b3f1e521cb
+    stepType: /api/3/workflow_step_types/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3
+- id: 678a25cd-14af-49c7-9ea8-c3452585b910
+  name: Enrichment on Tenant
+  type: WorkflowStep
+  description:
+  action: no_op
+  conditions:
+  next_steps:
+  inputs:
+    params: []
+    version: 3.2.1
+    connector: cyops_utilities
+    operation: no_op
+    operationTitle: 'Utils: No Operation'
+    step_variables: []
+  outputs:
+  metadata:
+    raw_arguments:
+      params: []
+      version: 3.2.1
+      connector: cyops_utilities
+      operation: no_op
+      operationTitle: 'Utils: No Operation'
+      step_variables: []
+    stepType: /api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562
+- id: 8c18e496-91ba-4f0c-8301-917829cc2060
+  name: Compute Reputation Data
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  - ddc214f4-d9c0-4600-b2e9-af0df3bc0377
+  inputs:
+    verdicts: "{{(vars.steps.Get_Indicator_Reputation| json_query('[].verdict')) or
+      (vars.steps.Additional_Checks_for_IP | json_query('[].verdict')) or (vars.steps.Additional_Checks_for_IP.verdict)}}"
+    cti_names: "{{(vars.steps.Get_Indicator_Reputation|json_query('[].cti_name'))
+      or (vars.steps.Additional_Checks_for_IP | json_query('[].cti_name'))}}"
+    cti_scores: "{{(vars.steps.Get_Indicator_Reputation|json_query('[].cti_score'))
+      or (vars.steps.Additional_Checks_for_IP | json_query('[].cti_score'))}}"
+    source_data: "{% set sd = {} %}{% if vars.indicator_type == 'IP Address' %}{%
+      for item in vars.steps.Additional_Checks_for_IP %}{% if item.source_data | type_debug
+      == 'dict' %}{% set _ = sd.update(item.source_data) %}{% endif %}{% endfor %}{%
+      else %}{% for item in vars.steps.Get_Indicator_Reputation %}{% if item.source_data
+      | type_debug == 'dict' %}{% set _ = sd.update(item.source_data) %}{% endif %}{%
+      endfor %}{% endif %}{{sd}}"
+    field_mapping: "{% set fm = {} %}{% if vars.indicator_type == 'IP Address' %}{%
+      for item in vars.steps.Additional_Checks_for_IP %}{% if item.field_mapping |
+      type_debug == 'dict' %}{% set _ = fm.update(item.field_mapping) %}{% endif %}{%
+      endfor %}{% else %}{% for item in vars.steps.Get_Indicator_Reputation %}{% if
+      item.field_mapping | type_debug == 'dict' %}{% set _ = fm.update(item.field_mapping)
+      %}{% endif %}{% endfor %}{% endif %}{% set nfm = {} %}{% for k,v in fm.items()
+      %}{% if not v == None %}{% set _ = nfm.update({k: v})  %}{% endif %}{% endfor
+      %}{% if nfm.lastSeen | type_debug == 'dict' %}{% set ls = nfm.get('lastSeen')
+      %}{% if not ls is integer %}{% set _ = nfm.update({'lastSeen': (arrow.get(ls).int_timestamp)})
+      %}{%endif%}{% endif %}{% if nfm.firstSeen | type_debug == 'dict' %}{% set fs
+      = nfm.get('firstSeen') %}{% if not fs is integer %}{% set _ = nfm.update({'firstSeen':
+      (arrow.get(fs).int_timestamp)}) %}{% endif %}{% endif %}{% if nfm.tlp | type_debug
+      == 'dict' %}{% set tlp = (nfm.get('tlp') | capitalize) %}{% if tlp %}{% set
+      iri = (\"TrafficLightProtocol\" | picklist(tlp, \"@id\")) %}{% set _ = nfm.update({'tlp':
+      iri}) %}{% endif %}{% endif %}{{nfm}}"
+    is_private_ip: '{{vars.steps.Additional_Checks_for_IP.is_private_ip or vars.is_private_ip}}'
+    enrichment_summaries: "{{vars.steps.Get_Indicator_Reputation|json_query('[].enrichment_summary')
+      or (vars.steps.Additional_Checks_for_IP | json_query('[].enrichment_summary'))
+      or (vars.steps.Additional_Checks_for_IP.enrichment_summary)}}"
+  outputs:
+  metadata:
+    raw_arguments:
+      verdicts: "{{(vars.steps.Get_Indicator_Reputation| json_query('[].verdict'))
+        or (vars.steps.Additional_Checks_for_IP | json_query('[].verdict')) or (vars.steps.Additional_Checks_for_IP.verdict)}}"
+      cti_names: "{{(vars.steps.Get_Indicator_Reputation|json_query('[].cti_name'))
+        or (vars.steps.Additional_Checks_for_IP | json_query('[].cti_name'))}}"
+      cti_scores: "{{(vars.steps.Get_Indicator_Reputation|json_query('[].cti_score'))
+        or (vars.steps.Additional_Checks_for_IP | json_query('[].cti_score'))}}"
+      source_data: "{% set sd = {} %}{% if vars.indicator_type == 'IP Address' %}{%
+        for item in vars.steps.Additional_Checks_for_IP %}{% if item.source_data |
+        type_debug == 'dict' %}{% set _ = sd.update(item.source_data) %}{% endif %}{%
+        endfor %}{% else %}{% for item in vars.steps.Get_Indicator_Reputation %}{%
+        if item.source_data | type_debug == 'dict' %}{% set _ = sd.update(item.source_data)
+        %}{% endif %}{% endfor %}{% endif %}{{sd}}"
+      field_mapping: "{% set fm = {} %}{% if vars.indicator_type == 'IP Address' %}{%
+        for item in vars.steps.Additional_Checks_for_IP %}{% if item.field_mapping
+        | type_debug == 'dict' %}{% set _ = fm.update(item.field_mapping) %}{% endif
+        %}{% endfor %}{% else %}{% for item in vars.steps.Get_Indicator_Reputation
+        %}{% if item.field_mapping | type_debug == 'dict' %}{% set _ = fm.update(item.field_mapping)
+        %}{% endif %}{% endfor %}{% endif %}{% set nfm = {} %}{% for k,v in fm.items()
+        %}{% if not v == None %}{% set _ = nfm.update({k: v})  %}{% endif %}{% endfor
+        %}{% if nfm.lastSeen | type_debug == 'dict' %}{% set ls = nfm.get('lastSeen')
+        %}{% if not ls is integer %}{% set _ = nfm.update({'lastSeen': (arrow.get(ls).int_timestamp)})
+        %}{%endif%}{% endif %}{% if nfm.firstSeen | type_debug == 'dict' %}{% set
+        fs = nfm.get('firstSeen') %}{% if not fs is integer %}{% set _ = nfm.update({'firstSeen':
+        (arrow.get(fs).int_timestamp)}) %}{% endif %}{% endif %}{% if nfm.tlp | type_debug
+        == 'dict' %}{% set tlp = (nfm.get('tlp') | capitalize) %}{% if tlp %}{% set
+        iri = (\"TrafficLightProtocol\" | picklist(tlp, \"@id\")) %}{% set _ = nfm.update({'tlp':
+        iri}) %}{% endif %}{% endif %}{{nfm}}"
+      is_private_ip: '{{vars.steps.Additional_Checks_for_IP.is_private_ip or vars.is_private_ip}}'
+      enrichment_summaries: "{{vars.steps.Get_Indicator_Reputation|json_query('[].enrichment_summary')
+        or (vars.steps.Additional_Checks_for_IP | json_query('[].enrichment_summary'))
+        or (vars.steps.Additional_Checks_for_IP.enrichment_summary)}}"
+    stepType: /api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f
+- id: 90602b79-d420-44dd-95ad-c06e6c107585
+  name: Set Good
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  - dd6f68af-fb89-41c3-9d36-036299d96c6d
+  inputs:
+    Reputation_Type_IRI: '{{("IndicatorReputation" | picklist("Good"))["@id"]}}'
+    Reputation_Type_Text: Good
+  outputs:
+  metadata:
+    raw_arguments:
+      Reputation_Type_IRI: '{{("IndicatorReputation" | picklist("Good"))["@id"]}}'
+      Reputation_Type_Text: Good
+    stepType: /api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f
+- id: 95b508b7-10bc-4794-abd4-d75663111f73
+  name: Identify Enrichment Playbooks List
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  - 50ce2052-a344-4374-9b94-e528860c111f
+  inputs:
+    enrichmentTag: /api/3/tags/{{vars.enrichmentTags.get(vars.indicator_type, "NotSupported")}}
+    enrichmentGlobalVarForType: '{{vars.enrichmentTags.get(vars.indicator_type, "NotSupported")}}_Playbooks_IRIs'
+  outputs:
+  metadata:
+    raw_arguments:
+      enrichmentTag: /api/3/tags/{{vars.enrichmentTags.get(vars.indicator_type, "NotSupported")}}
+      enrichmentGlobalVarForType: '{{vars.enrichmentTags.get(vars.indicator_type,
+        "NotSupported")}}_Playbooks_IRIs'
+    stepType: /api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f
+- id: 9b6a0035-6c1a-4cd5-8638-1ea33b94ab6b
+  name: Get Indicator Reputation
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  - 8c18e496-91ba-4f0c-8301-917829cc2060
+  inputs:
+    for_each:
+      item: '{{vars.enrichmentPlaybooksList.split(",")}}'
+      __bulk: false
+      parallel: true
+      condition: ''
+    arguments:
+      style_colors: '{{vars.style_colors}}'
+      indicator_value: '{{vars.indicator_value}}'
+    apply_async: false
+    ignore_errors: true
+    step_variables: []
+    pass_input_record: true
+    workflowReference: '{{vars.item}}'
+  outputs:
+  metadata:
+    raw_arguments:
+      for_each:
+        item: '{{vars.enrichmentPlaybooksList.split(",")}}'
+        __bulk: false
+        parallel: true
+        condition: ''
+      arguments:
+        style_colors: '{{vars.style_colors}}'
+        indicator_value: '{{vars.indicator_value}}'
+      apply_async: false
+      ignore_errors: true
+      step_variables: []
+      pass_input_record: true
+      workflowReference: '{{vars.item}}'
+    stepType: /api/3/workflow_step_types/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3
+- id: a61c987a-3864-49a0-b0b9-8802e00805d2
+  name: Exit
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  inputs:
+    reputation: No Reputation Available
+    reputation_iri: '{{"IndicatorReputation" | picklist("No Reputation Available",
+      "@id")}}'
+    enrichment_summaries: ''
+  outputs:
+  metadata:
+    raw_arguments:
+      reputation: No Reputation Available
+      reputation_iri: '{{"IndicatorReputation" | picklist("No Reputation Available",
+        "@id")}}'
+      enrichment_summaries: ''
+    stepType: /api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f
+- id: acc4c661-464c-4c5d-b58d-b0e7a88008ee
+  name: Update Field Mapping
+  type: WorkflowStep
+  description:
+  action: update_cyops_resource
+  conditions:
+  next_steps:
+  inputs:
+    when: '{{vars.field_mapping | length > 0}}'
+    params:
+      iri: '{{vars.indicator_iri}}'
+      body: '{{vars.field_mapping}}'
+    version: 3.2.1
+    connector: cyops_utilities
+    operation: update_cyops_resource
+    operationTitle: 'FSR: Update Record'
+    step_variables: []
+  outputs:
+  metadata:
+    raw_arguments:
+      when: '{{vars.field_mapping | length > 0}}'
+      params:
+        iri: '{{vars.indicator_iri}}'
+        body: '{{vars.field_mapping}}'
+      version: 3.2.1
+      connector: cyops_utilities
+      operation: update_cyops_resource
+      operationTitle: 'FSR: Update Record'
+      step_variables: []
+    stepType: /api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562
+- id: ba6f3981-1789-4635-8784-02b7ad23f655
+  name: Is Type IP
+  type: Condition
+  description:
+  action:
+  conditions:
+  next_steps:
+  - 5e280ff6-13e6-49eb-878a-217923163080
+  - ea51391e-d9b2-4af6-ac63-497e61419238
+  inputs:
+    conditions:
+    - option: Yes
+      step_iri: /api/3/workflow_steps/5e280ff6-13e6-49eb-878a-217923163080
+      condition: "{{ vars.indicator_type == 'IP Address' }}"
+      step_name: Additional Checks for IP
+    - option: No
+      default: true
+      step_iri: /api/3/workflow_steps/ea51391e-d9b2-4af6-ac63-497e61419238
+      step_name: Integrations Available for Enrichment
+  outputs:
+  metadata:
+    raw_arguments:
+      conditions:
+      - option: Yes
+        step_iri: /api/3/workflow_steps/5e280ff6-13e6-49eb-878a-217923163080
+        condition: "{{ vars.indicator_type == 'IP Address' }}"
+        step_name: Additional Checks for IP
+      - option: No
+        default: true
+        step_iri: /api/3/workflow_steps/ea51391e-d9b2-4af6-ac63-497e61419238
+        step_name: Integrations Available for Enrichment
+    stepType: /api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28
+- id: dd6f68af-fb89-41c3-9d36-036299d96c6d
+  name: Is Referenced
+  type: Condition
+  description:
+  action:
+  conditions:
+  next_steps:
+  - ff1cda79-4318-46df-afd2-febe2d72c076
+  - f250ed61-15a3-458b-9436-7480c809f3ef
+  inputs:
+    conditions:
+    - option: Referenced
+      step_iri: /api/3/workflow_steps/ff1cda79-4318-46df-afd2-febe2d72c076
+      condition: '{{ vars.is_referenced }}'
+      step_name: Summary
+    - option: Upon Create
+      default: true
+      step_iri: /api/3/workflow_steps/f250ed61-15a3-458b-9436-7480c809f3ef
+      step_name: Update Record
+  outputs:
+  metadata:
+    raw_arguments:
+      conditions:
+      - option: Referenced
+        step_iri: /api/3/workflow_steps/ff1cda79-4318-46df-afd2-febe2d72c076
+        condition: '{{ vars.is_referenced }}'
+        step_name: Summary
+      - option: Upon Create
+        default: true
+        step_iri: /api/3/workflow_steps/f250ed61-15a3-458b-9436-7480c809f3ef
+        step_name: Update Record
+    stepType: /api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28
+- id: ddc214f4-d9c0-4600-b2e9-af0df3bc0377
+  name: Is Malicious
+  type: Condition
+  description:
+  action:
+  conditions:
+  next_steps:
+  - 3019b0d0-df56-4738-b599-8752a82af23e
+  - 3d7cb74b-d060-4933-9ebe-67579f88452b
+  - f9efb396-4f6d-496e-95b7-8132b4357f86
+  - 90602b79-d420-44dd-95ad-c06e6c107585
+  inputs:
+    conditions:
+    - option: Malicious
+      step_iri: /api/3/workflow_steps/f9efb396-4f6d-496e-95b7-8132b4357f86
+      condition: '{{ "Malicious" in vars.verdicts }}'
+      step_name: Set Malicious
+    - option: No Reputation
+      default: true
+      step_iri: /api/3/workflow_steps/3d7cb74b-d060-4933-9ebe-67579f88452b
+      step_name: Set No Reputation
+    - option: Suspicious
+      step_iri: /api/3/workflow_steps/3019b0d0-df56-4738-b599-8752a82af23e
+      condition: '{{ "Suspicious" in vars.verdicts }}'
+      step_name: Set Suspicious
+    - option: Good
+      step_iri: /api/3/workflow_steps/90602b79-d420-44dd-95ad-c06e6c107585
+      condition: '{{ "Good" in vars.verdicts }}'
+      step_name: Set Good
+  outputs:
+  metadata:
+    raw_arguments:
+      conditions:
+      - option: Malicious
+        step_iri: /api/3/workflow_steps/f9efb396-4f6d-496e-95b7-8132b4357f86
+        condition: '{{ "Malicious" in vars.verdicts }}'
+        step_name: Set Malicious
+      - option: No Reputation
+        default: true
+        step_iri: /api/3/workflow_steps/3d7cb74b-d060-4933-9ebe-67579f88452b
+        step_name: Set No Reputation
+      - option: Suspicious
+        step_iri: /api/3/workflow_steps/3019b0d0-df56-4738-b599-8752a82af23e
+        condition: '{{ "Suspicious" in vars.verdicts }}'
+        step_name: Set Suspicious
+      - option: Good
+        step_iri: /api/3/workflow_steps/90602b79-d420-44dd-95ad-c06e6c107585
+        condition: '{{ "Good" in vars.verdicts }}'
+        step_name: Set Good
+    stepType: /api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28
+- id: e7e931fb-79a9-422a-beb2-bfcee6012817
+  name: Update Enrichment Status to In Progress
+  type: WorkflowStep
+  description:
+  action: Append
+  conditions:
+  next_steps:
+  - 95b508b7-10bc-4794-abd4-d75663111f73
+  inputs:
+    when: "{{not vars.input.params['indicator_IRI'] == None}}"
+    resource:
+      enrichmentStatus: /api/3/picklists/8a4609d2-8a3d-4bda-9888-5f00bfea43cb
+    _showJson: false
+    operation: Append
+    collection: '{{vars.indicator_iri}}'
+    __recommend: []
+    collectionType: /api/3/indicators
+    fieldOperation:
+      recordTags: Append
+    step_variables: []
+  outputs:
+  metadata:
+    raw_arguments:
+      when: "{{not vars.input.params['indicator_IRI'] == None}}"
+      resource:
+        enrichmentStatus: /api/3/picklists/8a4609d2-8a3d-4bda-9888-5f00bfea43cb
+      _showJson: false
+      operation: Append
+      collection: '{{vars.indicator_iri}}'
+      __recommend: []
+      collectionType: /api/3/indicators
+      fieldOperation:
+        recordTags: Append
+      step_variables: []
+    stepType: /api/3/workflow_step_types/b593663d-7d13-40ce-a3a3-96dece928722
+- id: ea51391e-d9b2-4af6-ac63-497e61419238
+  name: Has Integrations Available for Enrichment
+  type: Condition
+  description:
+  action:
+  conditions:
+  next_steps:
+  - 9b6a0035-6c1a-4cd5-8638-1ea33b94ab6b
+  - 4d9603ae-2f1c-48ed-a61a-60704a608db8
+  inputs:
+    conditions:
+    - option: Yes
+      step_iri: /api/3/workflow_steps/9b6a0035-6c1a-4cd5-8638-1ea33b94ab6b
+      condition: '{{ "/api/3/workflows" in vars.enrichmentPlaybooksList }}'
+      step_name: Get Indicator Reputation
+    - option: No
+      default: true
+      step_iri: /api/3/workflow_steps/4d9603ae-2f1c-48ed-a61a-60704a608db8
+      step_name: No Integration Available
+  outputs:
+  metadata:
+    raw_arguments:
+      conditions:
+      - option: Yes
+        step_iri: /api/3/workflow_steps/9b6a0035-6c1a-4cd5-8638-1ea33b94ab6b
+        condition: '{{ "/api/3/workflows" in vars.enrichmentPlaybooksList }}'
+        step_name: Get Indicator Reputation
+      - option: No
+        default: true
+        step_iri: /api/3/workflow_steps/4d9603ae-2f1c-48ed-a61a-60704a608db8
+        step_name: No Integration Available
+    stepType: /api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28
+- id: f250ed61-15a3-458b-9436-7480c809f3ef
+  name: Update Record
+  type: WorkflowStep
+  description:
+  action: Overwrite
+  conditions:
+  next_steps:
+  - acc4c661-464c-4c5d-b58d-b0e7a88008ee
+  inputs:
+    resource:
+      reputation: '{{vars.Reputation_Type_IRI}}'
+      sourceData: '{{vars.source_data | toJSON}}'
+      description: '{% if vars.is_private_ip %}{{vars.enrichment_summaries}}{% else
+        %}{% for item in vars.steps.Additional_Checks_for_IP %}{{item.enrichment_summary}}{%
+        endfor %}{% for item in vars.steps.Get_Indicator_Reputation %}{{item.enrichment_summary}}{%
+        endfor %}{% endif %}'
+      enrichmentStatus: /api/3/picklists/c6e46fde-97a2-48cc-8019-938c9c5aebd0
+    _showJson: false
+    operation: Overwrite
+    collection: '{{vars.indicator_iri}}'
+    __recommend: []
+    collectionType: /api/3/indicators
+    fieldOperation:
+      recordTags: Append
+    step_variables: []
+  outputs:
+  metadata:
+    raw_arguments:
+      resource:
+        reputation: '{{vars.Reputation_Type_IRI}}'
+        sourceData: '{{vars.source_data | toJSON}}'
+        description: '{% if vars.is_private_ip %}{{vars.enrichment_summaries}}{% else
+          %}{% for item in vars.steps.Additional_Checks_for_IP %}{{item.enrichment_summary}}{%
+          endfor %}{% for item in vars.steps.Get_Indicator_Reputation %}{{item.enrichment_summary}}{%
+          endfor %}{% endif %}'
+        enrichmentStatus: /api/3/picklists/c6e46fde-97a2-48cc-8019-938c9c5aebd0
+      _showJson: false
+      operation: Overwrite
+      collection: '{{vars.indicator_iri}}'
+      __recommend: []
+      collectionType: /api/3/indicators
+      fieldOperation:
+        recordTags: Append
+      step_variables: []
+    stepType: /api/3/workflow_step_types/b593663d-7d13-40ce-a3a3-96dece928722
+- id: f9efb396-4f6d-496e-95b7-8132b4357f86
+  name: Set Malicious
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  - dd6f68af-fb89-41c3-9d36-036299d96c6d
+  inputs:
+    Reputation_Type_IRI: '{{("IndicatorReputation" | picklist("Malicious"))["@id"]}}'
+    Reputation_Type_Text: Malicious
+  outputs:
+  metadata:
+    raw_arguments:
+      Reputation_Type_IRI: '{{("IndicatorReputation" | picklist("Malicious"))["@id"]}}'
+      Reputation_Type_Text: Malicious
+    stepType: /api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f
+- id: fbe06a74-ed1b-4e6c-9ab6-98350daed35f
+  name: Configuration
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  - e7e931fb-79a9-422a-beb2-bfcee6012817
+  inputs:
+    style_colors: "{\n\"Good\": \"#52c91a\",\n\"Malicious\": \"#c42323\",\n\"Suspicious\"\
+      : \"#dbc030\",\n\"TBD\": \"#696969\",\n\"No Reputation Available\": \"#6a9169\"\
+      \n}"
+    indicator_iri: "{{vars.input.records[0]['@id'] or vars.input.params['indicator_IRI']}}"
+    is_private_ip: 'false'
+    is_referenced: "{% if vars.input.params['indicator_type'] == \"File\" and vars.input.params['indicator_file_IRI']
+      | length > 0 %}{{true}}{% elif vars.input.params['indicator_value'] | string
+      | length > 0 %}{{true}}{% else %}{{false}}{% endif %}"
+    enrichmentTags: '{"File": "File_Enrichment","IP Address": "IP_Enrichment","URL":
+      "URL_Enrichment","Domain": "Domain_Enrichment","Email Address": "Email_Enrichment","FileHash-MD5":
+      "FileHash_Enrichment","FileHash-SHA1": "FileHash_Enrichment","FileHash-SHA256":
+      "FileHash_Enrichment", "User": "User_Enrichment"}'
+  outputs:
+  metadata:
+    raw_arguments:
+      style_colors: "{\n\"Good\": \"#52c91a\",\n\"Malicious\": \"#c42323\",\n\"Suspicious\"\
+        : \"#dbc030\",\n\"TBD\": \"#696969\",\n\"No Reputation Available\": \"#6a9169\"\
+        \n}"
+      indicator_iri: "{{vars.input.records[0]['@id'] or vars.input.params['indicator_IRI']}}"
+      is_private_ip: 'false'
+      is_referenced: "{% if vars.input.params['indicator_type'] == \"File\" and vars.input.params['indicator_file_IRI']
+        | length > 0 %}{{true}}{% elif vars.input.params['indicator_value'] | string
+        | length > 0 %}{{true}}{% else %}{{false}}{% endif %}"
+      enrichmentTags: '{"File": "File_Enrichment","IP Address": "IP_Enrichment","URL":
+        "URL_Enrichment","Domain": "Domain_Enrichment","Email Address": "Email_Enrichment","FileHash-MD5":
+        "FileHash_Enrichment","FileHash-SHA1": "FileHash_Enrichment","FileHash-SHA256":
+        "FileHash_Enrichment", "User": "User_Enrichment"}'
+    stepType: /api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f
+- id: ff1cda79-4318-46df-afd2-febe2d72c076
+  name: Summary
+  type: Title
+  description:
+  action:
+  conditions:
+  next_steps:
+  inputs:
+    reputation: '{{vars.Reputation_Type_Text}}'
+    reputation_iri: '{{vars.Reputation_Type_IRI}}'
+    enrichment_summaries: '{{vars.enrichment_summaries}}'
+  outputs:
+  metadata:
+    raw_arguments:
+      reputation: '{{vars.Reputation_Type_Text}}'
+      reputation_iri: '{{vars.Reputation_Type_IRI}}'
+      enrichment_summaries: '{{vars.enrichment_summaries}}'
+    stepType: /api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f
