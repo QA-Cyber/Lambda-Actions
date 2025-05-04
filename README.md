@@ -6,7 +6,7 @@
   </a>
 </p>
 
-Lambda-Actions is an open standard to define **portable, platform agnostic security playbooks** — Lambda-Actions is to Security Actions, like what [Sigma](https://github.com/SigmaHQ/sigma) is to Detections.
+Lambda-Actions is an open standard to define **portable, platform agnostic, unified security playbooks** — Lambda-Actions is to Security Actions, like what [Sigma](https://github.com/SigmaHQ/sigma) is to Detections.
 
 ## Why Lambda-Actions Exists
 Lambda-Actions aims to eliminate vendor lock-in and fragmentation across automation platforms like:
@@ -20,8 +20,6 @@ The following diagram shows how Lambda-Actions standardizes playbooks and enable
   <img width="800" src="./documentations/images/Lambda-Flow.png" alt="Lambda Flow">
 </p>
 
-
----
 
 ## Main Features
 
@@ -47,8 +45,6 @@ These playbooks are ready-to-import into supported tools — enabling fast reuse
 ## Contribute to Lambda-Actions
 
 - 🛠️ Improve the spec, the LambdaC converter, or propose features via [Issues](https://github.com/QA-Cyber/Lambda-Actions/issues/new/choose)
-
----
 
 ## Owner
 

@@ -11,7 +11,7 @@ LambdaC is a CLI tool that converts SOAR playbooks **to/from the Lambda-Actions 
 ## 🚀 Usage
 
 ```bash
-python cli.py convert <input_file> --vendor <vendor> [--ai-fallback] [--sdk-validate]
+python lambdaC.py convert <input_file> --vendor <vendor> [--ai-fallback] [--sdk-validate]
 ````
 
 ### Parameters:
@@ -30,25 +30,25 @@ python cli.py convert <input_file> --vendor <vendor> [--ai-fallback] [--sdk-vali
 ### Convert SOAR PB to Lambda (e.g XSOAR)
 
 ```bash
-python cli.py convert samples/xsoar-alert.yml --vendor xsoar
+python lambdaC.py convert samples/xsoar-alert.yml --vendor xsoar
 ```
 
 ### Convert FortiSOAR to Lambda
 
 ```bash
-python cli.py convert samples/fortisoar-alert.json --vendor fortisoar
+python lambdaC.py convert samples/fortisoar-alert.json --vendor fortisoar
 ```
 
 ### Use AI fallback for unknown vendor format
 
 ```bash
-python cli.py convert samples/unknown-playbook.json --vendor sentinel --ai-fallback
+python lambdaC.py convert samples/unknown-playbook.json --vendor sentinel --ai-fallback
 ```
 
 ### Convert XSOAR with SDK validation
 
 ```bash
-python cli.py convert samples/xsoar-block-ip.yml --vendor xsoar --sdk-validate
+python lambdaC.py convert samples/xsoar-block-ip.yml --vendor xsoar --sdk-validate
 ```
 
 ---
