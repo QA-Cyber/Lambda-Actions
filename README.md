@@ -1,62 +1,53 @@
-# Lambda-Actions - Generic Standard & Convertor for Security Playbooks
-
-<p align="center">
-    <a href="https://github.com/QA-Cyber/Lambda-Actions"></a>
-  <img width="600" src="./documentations/images/Lambda-Logo-White.png" alt="Lambda Logo">
-</p>
-
-Lambda-Actions is an open standard to define **portable, platform-agnostic SOAR playbooks** — Lambda-Actions is for Security Actions, much like how [Sigma](https://github.com/SigmaHQ/sigma) is for Detections.
-
-
-## 🚨 Why Lambda-Actions Exists
-
-Lambda-Actions aims to eliminate vendor lock-in and fragmentation across automation platforms like:
-- SOAR Platforms (ex: XSOAR, FortiSOAR, Phantom, Resilient)
-- Automation Platforms (ex: Logic Apps, Zapier)
-- Custom-built orchestrators
-
-The following diagram shows how Lambda-Actions standardizes Playbooks and enables cross-platform SOAR integration:
+# Lambda-Actions – Generic Standard & Converter for Security Playbooks
 
 <p align="center">
   <a href="https://github.com/QA-Cyber/Lambda-Actions">
-    <img width="800" alt="Lambda-Actions Logo" src="./documentations/images/Lambda-Flow.png">
+    <img width="600" src="./documentations/images/Lambda-Logo-White.png" alt="Lambda Logo">
   </a>
 </p>
 
----
+Lambda-Actions is an open standard to define **portable, platform-agnostic SOAR playbooks** — Lambda-Actions is to Security Actions what [Sigma](https://github.com/SigmaHQ/sigma) is to Detections.
 
-## ✨ Main Features
-All playbooks in this repository are structured for **direct import into your SOAR platform**, removing the friction from tool migration or cross-vendor automation.
+## Why Lambda-Actions Exists
+Lambda-Actions aims to eliminate vendor lock-in and fragmentation across automation platforms like:
+- SOAR Platforms (e.g. XSOAR, FortiSOAR, Phantom, Resilient)
+- Automation Platforms (e.g. Logic Apps, Zapier)
+- Custom-built orchestrators
 
-- 💡 **Lambda-Actions Format** – A YAML-based generic schema for modeling playbooks that is easy to read, write, and share.
-- 📁 **Playbooks_Repo/** – Due to convertor, this repo would host large number of standarized security playbooks, allowing users to browse and reuse existing playbooks for different platforms: All ready to import directly into their respective SOAR platforms.
-- 🔄 **LambdaC Tool** – Convertor between popular SOAR platforms and also Lambda.
-  - 🧠 **Intelligent Conversions** – Currently supports vice versa betwnee XSOAR, FortiSOAR & Lambda. For unsupported SOAR formats it uses intelligent transformation logic to convert to Lambda.
+The following diagram shows how Lambda-Actions standardizes playbooks and enables cross-platform SOAR integration:
 
 <p align="center">
-  <img width="800" src="./documentations/images/Lambda-Flow.png" alt="Lambda Flow Diagram">
+  <img width="800" src="./documentations/images/Lambda-Flow.png" alt="Lambda Flow">
 </p>
 
----
-
-## [`Lambda Schema & Documentation`](./documentations)
-### Schema references, authoring guides, and best practices
-
----
-## 🌀[`LambdaC`](./LambdaC/README.md)
-### CLI tool to convert SOAR playbooks to/from Lambda-Actions
 
 ---
 
-## 📚[`Playbooks_Repo`](./Playbooks_Repo)
-### Central folder with converted playbooks per vendor & Lambda
+## Main Features
+
+### 📖 [`Lambda Schema & Documentation`](./documentations)
+- A simple, YAML-based schema that is easy to read, write, and extend. Includes schema references, authoring guides, and best practices.
+
+---
+
+### 🌀 [`LambdaC`](./LambdaC/README.md)
+- A powerful convertor tool that converts playbooks to/from different platforms. (Currently Supporting to/from XSOAR, FortiSOAR, Lambda) 
+
+- Utilizes intelligent & validation techniques to convert production-grade playbooks.
+
+---
+
+### 📚 [`Playbooks_Repo`](./Playbooks_Repo)
+- A structured repository of converted playbooks, organized by platform:
+These playbooks are ready-to-import into supported tools — enabling fast reuse, analysis, or migration.
 
 ---
 
 ## Contribute to Lambda-Actions
 
-- 🛠️ Improve the spec, the LambdaC converter, or propose features via [Issues](https://github.com/QA-Cyber/Lambda-Actions/issues/new/choose) tab.
+- 🛠️ Improve the spec, the LambdaC converter, or propose features via [Issues](https://github.com/QA-Cyber/Lambda-Actions/issues/new/choose)
 
+---
 
 ## Owner
 
