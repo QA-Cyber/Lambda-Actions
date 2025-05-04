@@ -6,7 +6,7 @@
   </a>
 </p>
 
-Lambda-Actions is an open standard to define **portable, platform-agnostic SOAR playbooks** — Lambda-Actions is to Security Actions what [Sigma](https://github.com/SigmaHQ/sigma) is to Detections.
+Lambda-Actions is an open standard to define **portable, platform agnostic security playbooks** — Lambda-Actions is to Security Actions, like what [Sigma](https://github.com/SigmaHQ/sigma) is to Detections.
 
 ## Why Lambda-Actions Exists
 Lambda-Actions aims to eliminate vendor lock-in and fragmentation across automation platforms like:
@@ -33,7 +33,8 @@ The following diagram shows how Lambda-Actions standardizes playbooks and enable
 ### 🌀 [`LambdaC`](./LambdaC/README.md)
 - A powerful convertor tool that converts playbooks to/from different platforms. (Currently Supporting to/from XSOAR, FortiSOAR, Lambda) 
 
-- Utilizes intelligent & validation techniques to convert production-grade playbooks.
+- Platform specific parsers + Intelligent transformation techniques with AI + Validation
+- = Generates production-grade playbooks.
 
 ---
 
