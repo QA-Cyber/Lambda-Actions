@@ -25,7 +25,7 @@ The following diagram shows how Lambda-Actions standardizes playbooks and enable
 
 ## Main Features
 
-### 📖 [`Lambda Schema & Documentation`](./documentations)
+### [`Lambda Schema & Documentation`](./documentations)
 - A simple, YAML-based schema that is easy to read, write, and extend. Includes schema references, authoring guides, and best practices.
 
 ---
@@ -38,7 +38,7 @@ The following diagram shows how Lambda-Actions standardizes playbooks and enable
 
 ---
 
-### 📚 [`Playbooks_Repo`](./Playbooks_Repo)
+### [`Playbooks_Repo`](./Playbooks_Repo)
 - A structured repository of converted playbooks, organized by platform:
 These playbooks are ready-to-import into supported tools — enabling fast reuse, analysis, or migration.
 

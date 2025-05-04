@@ -25,9 +25,9 @@ python cli.py convert <input_file> --vendor <vendor> [--ai-fallback] [--sdk-vali
 
 ---
 
-## 📦 Example Commands
+## 📦 Commands
 
-### Convert XSOAR to Lambda (default behavior)
+### Convert SOAR PB to Lambda (e.g XSOAR)
 
 ```bash
 python cli.py convert samples/xsoar-alert.yml --vendor xsoar
@@ -66,7 +66,7 @@ When you convert a playbook, LambdaC will:
 * Maintain **cached AI transformations** in:
   `LambdaC/cache/<vendor>/`
 
-### Example Folder Output:
+### Where Output is Stored:
 
 ```
 Playbooks_Repo/
@@ -86,9 +86,9 @@ LambdaC/
 
 ## 🔁 How It Works
 
-1. **Parses input** using a native parser or AI (if `--ai-fallback` is set)
+1. **Parses input** using intelligent & advanced techniques with a mix of custom parsers & the power of AI.
 2. Converts to **Lambda-Actions schema**
-3. Optionally exports to native vendor format (if applicable)
+3. Exports to native vendor format (where supported)
 4. Writes to the proper folders for:
 
    * Vendor format
