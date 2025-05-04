@@ -1,79 +1,62 @@
-# Lambda-Actions - Generic Standard for SOAR Playbooks
+# Lambda-Actions - Generic Standard & Convertor for Security Playbooks
 
 <p align="center">
-  <a href="https://github.com/Troybado/Lambda-Actions">
-    <img width="600" alt="Lambda-Actions Logo" src="./images/Lambda-Logo-White.png">
-  </a>
+    <a href="https://github.com/QA-Cyber/Lambda-Actions"></a>
+  <img width="600" src="./documentations/images/Lambda-Logo-White.png" alt="Lambda Logo">
 </p>
 
-  
+Lambda-Actions is an open standard to define **portable, platform-agnostic SOAR playbooks** — Lambda-Actions is for Security Actions, much like how [Sigma](https://github.com/SigmaHQ/sigma) is for Detections.
 
-Lambda-Actions is an open standard that helps security teams write and share SOAR Playbooks using a simple, portable format that is designed to fit all SOAR Platforms like Cortex XSOAR, FortiSOAR, Microsoft Sentinel (Logic Apps), etc..
-
-Lambda-Actions is for SOAR Playbooks, like what Sigma is for detections, & what Snort is for network traffic...
-
-Lambda currently offer three types of Playbooks:
-* [Generic Actions](./playbooks/generic-actions) – Are generic Playbooks (e.g: IP Enrichment)
-* [Response Actions](./playbooks/incident-response-actions) – Are specific response Playbooks to mitigate incidents (e.g: IOC blocking)
-* [Use Cases](./playbooks/use-cases) – comprehensive Playbooks to address a Security Use Case (e.g: Password Spray Detected)
 
 ## 🚨 Why Lambda-Actions Exists
 
-Security teams struggle with Playbook **portability**, **interoperability**, and **standardization** across SOAR platforms.
-
-Today:
-- Each SOAR platform (FortiSOAR, Sentinel (Logic Apps), XSOAR, etc.) uses its own **proprietary format**.
-- Sharing or reusing automation Playbooks across tools is **manual and time-consuming**.
-- Switching tools or collaborating across teams = **rewriting automation playbooks from scratch**.
-
-#### This Creates
-- ❌ **Vendor lock-in** — migrating to another tool is costly due to incompatible Playbooks  
-- ❌ **Tooling silos** — hard to collaborate across different SOARs  
-- ❌ **Duplicated effort** — same logic rebuilt for each platform
-
-#### Lambda-Actions solves these problems by aiming to:
-
-- ✅ **Use easy, readable Playbook standard** — skip the GUIs and custom formats
-- ✅ **Develop fast** — reuse community Playbooks or create your own
-- ✅ **Share and collaborate** — frictionless Playbook portability
-- ✅ **Write once, convert anywhere** — supports XSOAR, Sentinel (Logic Apps), FortiSOAR.
+Lambda-Actions aims to eliminate vendor lock-in and fragmentation across automation platforms like:
+- SOAR Platforms (ex: XSOAR, FortiSOAR, Phantom, Resilient)
+- Automation Platforms (ex: Logic Apps, Zapier)
+- Custom-built orchestrators
 
 The following diagram shows how Lambda-Actions standardizes Playbooks and enables cross-platform SOAR integration:
 
 <p align="center">
-  <a href="https://github.com/Troybado/Lambda-Actions">
-    <img width="800" alt="Lambda-Actions Logo" src="./images/Lambda-Flow.png">
+  <a href="https://github.com/QA-Cyber/Lambda-Actions">
+    <img width="800" alt="Lambda-Actions Logo" src="./documentations/images/Lambda-Flow.png">
   </a>
 </p>
 
 ---
 
-## 📚 Getting Started & Documentation
+## ✨ Main Features
+All playbooks in this repository are structured for **direct import into your SOAR platform**, removing the friction from tool migration or cross-vendor automation.
 
-- **[Lambda-Actions Playbooks](./playbooks/)** – Browse ready-to-use Playbooks  
-- **[How to Create Lambda Action Playbooks](./docs/playbook-Creation-Guide.md)** – Step-by-step authoring guide  
+- 💡 **Lambda-Actions Format** – A YAML-based generic schema for modeling playbooks that is easy to read, write, and share.
+- 📁 **Playbooks_Repo/** – Due to convertor, this repo would host large number of standarized security playbooks, allowing users to browse and reuse existing playbooks for different platforms: All ready to import directly into their respective SOAR platforms.
+- 🔄 **LambdaC Tool** – Convertor between popular SOAR platforms and also Lambda.
+  - 🧠 **Intelligent Conversions** – Currently supports vice versa betwnee XSOAR, FortiSOAR & Lambda. For unsupported SOAR formats it uses intelligent transformation logic to convert to Lambda.
 
-## 🔨 LambdaC: The Playbook Converter (Coming Soon)
+<p align="center">
+  <img width="800" src="./documentations/images/Lambda-Flow.png" alt="Lambda Flow Diagram">
+</p>
 
-Use the CLI tool **LambdaC** to convert Lambda Playbooks to:
+---
 
-- Cortex XSOAR  
-- FortiSOAR  
-- Sentinel (Logic Apps)
+## [`Lambda Schema & Documentation`](./documentations)
+### Schema references, authoring guides, and best practices
 
-and vice versa..
+---
+## 🌀[`LambdaC`](./LambdaC/README.md)
+### CLI tool to convert SOAR playbooks to/from Lambda-Actions
 
-📖 [LambdaC Tool Documentation](./tools/lambdac/README.md)
+---
 
-## 🤝 Contribute to Lambda-Actions
+## 📚[`Playbooks_Repo`](./Playbooks_Repo)
+### Central folder with converted playbooks per vendor & Lambda
 
-We welcome contributions from engineers, analysts, and automation pros!
+---
 
-- 📥 Submit Playbooks
-- 🛠️ Improve the spec or tooling
-- 💬 Propose new features
+## Contribute to Lambda-Actions
 
-📖 [Open an Issue](https://github.com/Troybado/Lambda-Actions/issues/new/choose)
+- 🛠️ Improve the spec, the LambdaC converter, or propose features via [Issues](https://github.com/QA-Cyber/Lambda-Actions/issues/new/choose) tab.
+
 
 ## Owner
 
