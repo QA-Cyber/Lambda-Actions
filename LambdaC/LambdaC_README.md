@@ -1,108 +1,144 @@
-# LambdaC – SOAR Playbook Converter CLI
+# LambdaC – SOAR Playbook Converter
 
-LambdaC is a CLI tool that converts SOAR playbooks **to/from the Lambda-Actions standard**, enabling:
+**LambdaC** is a vendor-agnostic CLI tool for converting SOAR playbooks between different platforms using the [Lambda-Actions](https://github.com/YOUR_ORG/Lambda-Actions) intermediate schema.
 
-- Seamless platform migration
-- Schema unification
-- Reusability across XSOAR, FortiSOAR, and more
+It supports:
 
----
-
-## 🚀 Usage
-
-```bash
-python lambdaC.py convert <input_file> --vendor <vendor> [--ai-fallback] [--sdk-validate]
-````
-
-### Parameters:
-
-| Argument         | Description                                                             |
-| ---------------- | ----------------------------------------------------------------------- |
-| `input_file`     | Path to your input file (YAML or JSON)                                  |
-| `--vendor`       | Required source format: `xsoar`, `fortisoar`, or any custom name        |
-| `--ai-fallback`  | If specified, uses AI to assist in parsing/exporting when unsupported   |
-| `--sdk-validate` | If specified, runs `demisto-sdk validate` after generating XSOAR output |
+* 🔁 Conversion from XSOAR, FortiSOAR, and AI-parsed formats to Lambda-Actions
+* 🔄 Export back into XSOAR and FortiSOAR formats
+* 🧠 AI fallback support for unknown vendor formats
+* 🧪 Optional `demisto-sdk` validation for XSOAR exports
 
 ---
 
-## 📦 Commands
+## ⚙️ Prerequisites
 
-### Convert SOAR PB to Lambda (e.g XSOAR)
+* Python 3.10 or higher
 
-```bash
-python lambdaC.py convert samples/xsoar-alert.yml --vendor xsoar
+* Install dependencies:
+
+  ```bash
+  pip install -r requirements.txt
+  ```
+
+* Optional: Install `demisto-sdk` for validation
+
+  ```bash
+  pip install demisto-sdk
+  ```
+
+---
+
+## 🧱 Directory Structure
+
+LambdaC expects to be inside a repo like:
+
 ```
-
-### Convert FortiSOAR to Lambda
-
-```bash
-python lambdaC.py convert samples/fortisoar-alert.json --vendor fortisoar
-```
-
-### Use AI fallback for unknown vendor format
-
-```bash
-python lambdaC.py convert samples/unknown-playbook.json --vendor sentinel --ai-fallback
-```
-
-### Convert XSOAR with SDK validation
-
-```bash
-python lambdaC.py convert samples/xsoar-block-ip.yml --vendor xsoar --sdk-validate
+Lambda-Actions/
+├── LambdaC/
+│   ├── lambdaC.py
+│   ├── exporters/
+│   ├── parsers/
+│   ├── transformers/
+│   ├── validators/
+│   └── cache/
+├── Playbooks_Repo/
+│   ├── xsoar/
+│   ├── fortisoar/
+│   └── lambda/
+├── samples/
+└── ...
 ```
 
 ---
 
-## 🗂️ Output Structure
+## 🚀 How to Use
 
-When you convert a playbook, LambdaC will:
+```bash
+python lambdaC.py --input-file <path> --input-vendor <vendor> --output-vendor <vendor> [--ai-fallback] [--sdk-validate]
+```
 
-* Save the **converted vendor-specific output** to:
-  `Playbooks_Repo/<vendor>/<name>.json` *(or `.yml` if Lambda output)*
+### Example Commands:
 
-* Always save the **intermediate Lambda-Actions format** to:
-  `Playbooks_Repo/lambda/<name>.yml`
+#### ✅ Convert XSOAR to FortiSOAR + Lambda:
 
-* Maintain **cached AI transformations** in:
-  `LambdaC/cache/<vendor>/`
+```bash
+python lambdaC.py --input-file samples/prod_sample_xsoar.yml --input-vendor xsoar --output-vendor fortisoar
+```
 
-### Where Output is Stored:
+#### ✅ Convert FortiSOAR to XSOAR + Lambda:
+
+```bash
+python lambdaC.py --input-file samples/prod_sample_fsoar2.json --input-vendor fortisoar --output-vendor xsoar
+```
+
+#### ✅ Convert unknown format using AI:
+
+```bash
+python lambdaC.py --input-file samples/custom_playbook.json --input-vendor sentinel --output-vendor lambda --ai-fallback
+```
+
+#### ✅ Validate generated XSOAR output with demisto-sdk:
+
+```bash
+python lambdaC.py --input-file samples/block-ip.yml --input-vendor xsoar --output-vendor xsoar --sdk-validate
+```
+
+---
+
+## 📤 Output Behavior
+
+* Vendor-formatted playbooks (e.g. FortiSOAR, XSOAR) are saved to:
+
+  ```
+  Playbooks_Repo/<vendor>/<original-name>.json|.yml
+  ```
+
+* **Always** generates a Lambda-Actions YAML (intermediate) to:
+
+  ```
+  Playbooks_Repo/lambda/LA - <Playbook Name>.yml
+  ```
+
+* Skips overwriting output files **if existing content differs** to avoid accidental loss.
+
+* AI fallback transformations are cached under:
+
+  ```
+  LambdaC/cache/<vendor>/
+  ```
+
+---
+
+## 🧾 Output Example
+
+After running a conversion, you’ll get:
 
 ```
 Playbooks_Repo/
 ├── xsoar/
-│   └── alert-response.json
+│   └── prod_sample_fsoar2.yml
 ├── fortisoar/
-│   └── endpoint-block.json
+│   └── prod_sample_xsoar.json
 ├── lambda/
-│   └── alert-response.yml
+│   └── LA - Action_-_Domain_-_Block_(Indicator).yml
 LambdaC/
 └── cache/
-    └── xsoar/
-        └── <hash>.json
+    └── fortisoar/
+        └── [cached hash].json
 ```
 
 ---
 
-## 🔁 How It Works
+## 🧠 Notes
 
-1. **Parses input** using intelligent & advanced techniques with a mix of custom parsers & the power of AI.
-2. Converts to **Lambda-Actions schema**
-3. Exports to native vendor format (where supported)
-4. Writes to the proper folders for:
-
-   * Vendor format
-   * Lambda-Actions format
-   * AI cache (if used)
+* The `--output-vendor` controls only the **main target format**. The Lambda-Actions YAML is always generated unless you specify `output-vendor=lambda`, in which case only the Lambda YAML is saved.
+* Filenames are derived from input filenames or playbook names, sanitized and prefixed with `LA -` for Lambda exports.
 
 ---
 
-## 🧠 Need Help?
+## ✅ Ready to Use?
 
-See the [main README](../README.md) for more context about Lambda-Actions, goals, and playbook examples.
-
----
-
-## ✅ Ready to use LambdaC?
+LambdaC bridges platforms, enhances reusability, and accelerates SOAR deployments.
 
 Convert once. Deploy anywhere.
