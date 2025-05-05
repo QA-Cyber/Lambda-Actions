@@ -1,0 +1,271 @@
+id: Containment Plan - Isolate Device
+name: Containment Plan - Isolate Device
+description: "## Containment Plan - Isolate Device\n\nThis playbook is a sub-playbook
+  within the containment plan playbook.\nThe playbook isolates devices using core
+  commands."
+trigger:
+steps:
+- id: 972c3692-925c-4f6f-8d88-9f4c2598429d
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 9813918f-0c56-4d9f-8128-4012f120247e
+  type: action
+  description: Isolates the specified endpoint.
+  action:
+  connector:
+  inputs:
+    endpoint_id:
+      complex:
+        root: EndpointsIDToIsolate
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f1fa1236-07c7-4291-8230-fa48fb2e2d4a
+  type: action
+  description: commands.local.cmd.set.parent.incident.context
+  action:
+  connector:
+  inputs:
+    key:
+      simple: IsolatedEndpointsID
+    value:
+      complex:
+        root: Core.Isolation
+        accessor: endpoint_id
+        transformers:
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6c786033-9c64-4365-83af-dec8a718764c
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: a0690559-7fbb-4a1e-8eb1-051f88912afd
+  type: action
+  description: Gets a list of endpoints, according to the passed filters. If there
+    are no filters, all endpoints are returned. Filtering by multiple fields is concatenated
+    using the AND condition (OR is not supported). Maximum result set size is 100.
+    Offset is the zero-based number of endpoints from the start of the result set
+    (start by counting from 0).
+  action:
+  connector:
+  inputs:
+    endpoint_id_list:
+      complex:
+        root: inputs.EndpointID
+        transformers:
+        - operator: SetIfEmpty
+          args:
+            applyIfEmpty: {}
+            defaultValue:
+              value:
+                simple: 'null'
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 967d72b1-110e-4966-884c-8e5f75feb07e
+  type: action
+  description: "Set a value in context under the key you entered. If no value is entered,
+    the script doesn't do anything.\n\nThis automation runs using the default Limited
+    User role, unless you explicitly change the permissions.\nFor more information,
+    see the section about permissions here:\n- For Cortex XSOAR 6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+    \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n
+    - For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+  action: SetAndHandleEmpty
+  connector:
+  inputs:
+    key:
+      simple: EndpointsIDToIsolate
+    value:
+      complex:
+        root: Core.Endpoint
+        accessor: endpoint_id
+        transformers:
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 1b35e319-899a-4a2b-80e4-591c3b92a9ae
+  type: condition
+  description: Whether to isolate the endpoint based on the input values.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 28a11db5-8870-402e-8fee-8d815b2fc6a9
+    else_:
+  - if_: ''
+    then: 967d72b1-110e-4966-884c-8e5f75feb07e
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 677be289-10e0-46ea-8380-a44f18e8a047
+  type: action
+  description: commands.local.cmd.set.parent.incident.context
+  action:
+  connector:
+  inputs:
+    key:
+      simple: IsolatedEndpointsID
+    value:
+      complex:
+        root: Core.Endpoint
+        accessor: endpoint_id
+        transformers:
+        - operator: SetIfEmpty
+          args:
+            applyIfEmpty: {}
+            defaultValue:
+              value:
+                simple: No Values
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 65bfa257-2884-4787-8dd5-64589ea2ad55
+  type: condition
+  description: Checks if the endpoint ID or name defined.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 6c786033-9c64-4365-83af-dec8a718764c
+    else_:
+  - if_: ''
+    then: 6e3d0a66-444e-4d5d-803a-82f81ef2afdf
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6e3d0a66-444e-4d5d-803a-82f81ef2afdf
+  type: action
+  description: Gets a list of endpoints, according to the passed filters. If there
+    are no filters, all endpoints are returned. Filtering by multiple fields is concatenated
+    using the AND condition (OR is not supported). Maximum result set size is 100.
+    Offset is the zero-based number of endpoints from the start of the result set
+    (start by counting from 0).
+  action:
+  connector:
+  inputs:
+    hostname:
+      complex:
+        root: inputs.EndpointHostName
+        transformers:
+        - operator: SetIfEmpty
+          args:
+            applyIfEmpty: {}
+            defaultValue:
+              value:
+                simple: 'null'
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 28a11db5-8870-402e-8fee-8d815b2fc6a9
+  type: condition
+  description: Checks if the endpoint is already isolated.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 6c786033-9c64-4365-83af-dec8a718764c
+    else_:
+  - if_: ''
+    then: 677be289-10e0-46ea-8380-a44f18e8a047
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

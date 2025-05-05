@@ -69,7 +69,10 @@ def convert(
         typer.echo(f"❌ Error parsing {input_vendor} input: {e}")
         raise typer.Exit(1)
 
-    out_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(input_file))[0]}")
+    base_name = os.path.splitext(os.path.basename(input_file))[0]
+    safe_name = "".join(c for c in base_name if c.isalnum() or c in (" ", "_", "-")).strip().replace(" ", "_")
+    output_filename = f"LA - {safe_name}.yml"
+    out_path = os.path.join(output_dir, output_filename)
 
     if output_vendor == 'xsoar':
         try:

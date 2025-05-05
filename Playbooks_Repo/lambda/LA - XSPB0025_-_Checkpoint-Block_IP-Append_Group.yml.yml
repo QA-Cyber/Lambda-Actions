@@ -1,0 +1,765 @@
+id: Checkpoint - Block IP - Append Group
+name: Checkpoint - Block IP - Append Group
+description: The playbook receives malicious IP addresses as inputs, checks if the
+  object group exists (if not, the object group is created), and  appends the related
+  IPs to that object. If you have not assigned the appended group to a rule in your
+  firewall policy, you can use `rule_name` and the playbook creates a new rule.
+trigger:
+steps:
+- id: 175f9378-f1cc-48b8-8c7e-72a87d6dbe5c
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: a5061a87-98a0-4a5d-87d2-c89d2974666c
+  type: condition
+  description: Is Check Point Firewall enabled?
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: f4e1af90-6b1e-4436-84b2-54ed3e44be8d
+    else_:
+  - if_: ''
+    then: dc0c9f6f-469d-42fb-84c7-81288ef8ba3e
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f4e1af90-6b1e-4436-84b2-54ed3e44be8d
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f7d98ba6-c559-4ba1-800c-c74a8e2b6995
+  type: condition
+  description: Validate if the IP object is already in Check Point.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: e045e3d4-2528-4d55-8f10-b2b13394a858
+    else_:
+  - if_: ''
+    then: a4e24f56-878c-4103-82c6-cfe996941475
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e045e3d4-2528-4d55-8f10-b2b13394a858
+  type: action
+  description: Add host object to Check Point Firewall.
+  action:
+  connector:
+  inputs:
+    ip_address:
+      complex:
+        root: inputs.IP
+        transformers:
+        - operator: split
+          args:
+            delimiter:
+              value:
+                simple: ','
+    name:
+      complex:
+        root: inputs.IP
+        transformers:
+        - operator: split
+          args:
+            delimiter:
+              value:
+                simple: ','
+    session_id:
+      complex:
+        root: CheckPoint
+        accessor: Login.session-id
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: dc0c9f6f-469d-42fb-84c7-81288ef8ba3e
+  type: action
+  description: Log in to Check Point to get unique session ID.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f7944d23-cc81-4753-8c14-6c77e3ac41d6
+  type: subplaybook
+  description: "Publish the Check Point Firewall configuration and install policy
+    on all available gateways.\n"
+  action:
+  connector:
+  inputs:
+    auto_logout:
+      simple: 'False'
+    checkpoint_error_handling:
+      simple: ${inputs.checkpoint_error_handling}
+    discard_changes:
+      simple: ${inputs.discard_changes}
+    install_policy:
+      simple: ${inputs.install_policy}
+    policy_package:
+      simple: ${inputs.policy_package}
+    sid:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 5e20d3a5-7db5-4047-8779-01c514e3a1b3
+  type: condition
+  description: Check if the access rule was added correctly.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 922d5167-f153-4c36-890a-2f38b58ed920
+    else_:
+  - if_: ''
+    then: 13874ea2-f0ad-4734-86f9-34478083b464
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: ea9ccc02-67ef-4924-8380-3e0ba3a03d6c
+  type: action
+  description: Log out with specific session ID from Check Point firewall.
+  action:
+  connector:
+  inputs:
+    session_id:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 8a240505-8a06-4e3b-8560-a2eb16393129
+  type: action
+  description: Prints text to war room (Markdown supported).
+  action: Print
+  connector:
+  inputs:
+    value:
+      simple: There was a problem appending the network object
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e525a6d4-a03b-403e-845a-72778ef4699e
+  type: condition
+  description: Check whether given entry/entries returned an error. Use ${lastCompletedTaskEntries}
+    to check the previous task entries. If array is provided, return yes if one of
+    the entries returns an error.
+  action: isError
+  connector:
+  inputs:
+    entryId:
+      simple: ${lastCompletedTaskEntries}
+  outputs:
+  conditions:
+  - if_: ''
+    then: f7944d23-cc81-4753-8c14-6c77e3ac41d6
+    else_:
+  - if_: ''
+    then: 8a240505-8a06-4e3b-8560-a2eb16393129
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 2f9bdcc5-cc5f-4449-8b1e-95a1805ff022
+  type: condition
+  description: Validate host object added successfully.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 6eb870df-6055-46f3-8162-590b10fcc4a4
+    else_:
+  - if_: ''
+    then: e418b023-1569-4098-883d-2644e655811f
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6eb870df-6055-46f3-8162-590b10fcc4a4
+  type: action
+  description: Prints text to war room (Markdown supported).
+  action: Print
+  connector:
+  inputs:
+    value:
+      simple: There was problem adding object host.
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 1e54c248-daf5-4479-876d-cf71a9b99d88
+  type: action
+  description: Get host object to check if IP already exist.
+  action:
+  connector:
+  inputs:
+    filter_search:
+      complex:
+        root: inputs.IP
+        transformers:
+        - operator: split
+          args:
+            delimiter:
+              value:
+                simple: ','
+    ip_only:
+      simple: 'true'
+    session_id:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 922d5167-f153-4c36-890a-2f38b58ed920
+  type: action
+  description: Prints text to war room (Markdown supported).
+  action: Print
+  connector:
+  inputs:
+    value:
+      simple: There was a problem appending network object
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e418b023-1569-4098-883d-2644e655811f
+  type: subplaybook
+  description: "Publish the Check Point Firewall configuration and install policy
+    on all available gateways.\n"
+  action:
+  connector:
+  inputs:
+    auto_logout:
+      simple: 'False'
+    checkpoint_error_handling:
+      simple: ${inputs.checkpoint_error_handling}
+    discard_changes:
+      simple: ${inputs.discard_changes}
+    install_policy:
+      simple: ${inputs.install_policy}
+    policy_package:
+      simple: ${inputs.policy_package}
+    sid:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: fb571b4b-09de-44eb-8382-758633671f4c
+  type: condition
+  description: If action manual handling is enabled, the playbook will pause and wait
+    for manual review.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: ea9ccc02-67ef-4924-8380-3e0ba3a03d6c
+    else_:
+  - if_: ''
+    then: b2bfee2e-854f-4f48-8e56-dfe26e9ceea7
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: b2bfee2e-854f-4f48-8e56-dfe26e9ceea7
+  type: action
+  description: User manually publishes on Check Point Firwall console.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: a4e24f56-878c-4103-82c6-cfe996941475
+  type: action
+  description: Compare two lists and put the differences in context.
+  action: CompareLists
+  connector:
+  inputs:
+    left:
+      complex:
+        root: inputs.IP
+        transformers:
+        - operator: split
+          args:
+            delimiter:
+              value:
+                simple: ','
+    right:
+      simple: ${CheckPoint.Objects.ipv4-address}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c856d307-d035-4a15-8e11-dcee37e6599b
+  type: condition
+  description: Check if there is an IP without an object in the Firewall.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 0ccc3589-1788-4672-8c04-dabe9a6b1677
+    else_:
+  - if_: ''
+    then: 6bdf7795-cd12-4ece-825f-701cc62b6457
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 0ccc3589-1788-4672-8c04-dabe9a6b1677
+  type: action
+  description: Add host object to Check Point Firewall.
+  action:
+  connector:
+  inputs:
+    ip_address:
+      simple: ${ListCompare.LeftOnly}
+    name:
+      simple: ${ListCompare.LeftOnly}
+    session_id:
+      complex:
+        root: CheckPoint
+        accessor: Login.session-id
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6254b6c8-754e-4c75-88d3-28d6d486b5d5
+  type: action
+  description: Updates the specified group object.
+  action:
+  connector:
+  inputs:
+    identifier:
+      simple: ${inputs.group_name}
+    members:
+      complex:
+        root: CheckPoint.Objects
+        filters:
+        - - operator: inList
+            left:
+              value:
+                simple: CheckPoint.Objects.ipv4-address
+              iscontext: true
+            right:
+              value:
+                simple: inputs.IP
+              iscontext: true
+        accessor: name
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: currentMembers
+              iscontext: true
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 349f52ff-4284-48eb-8a65-56ecc408d9dd
+  type: action
+  description: Gets full data for the specified group.
+  action:
+  connector:
+  inputs:
+    identifier:
+      simple: ${inputs.group_name}
+    session_id:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: baea1d16-46fb-4af7-84b0-f6c6f5bb3bf8
+  type: condition
+  description: Check whether given entry/entries returned an error. Use ${lastCompletedTaskEntries}
+    to check the previous task entries. If array is provided, return yes if one of
+    the entries returns an error.
+  action: isError
+  connector:
+  inputs:
+    entryId:
+      simple: ${lastCompletedTaskEntries}
+  outputs:
+  conditions:
+  - if_: ''
+    then: f7d98ba6-c559-4ba1-800c-c74a8e2b6995
+    else_:
+  - if_: ''
+    then: 64783553-e7f4-4109-8271-5fb5bb6822e9
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 64783553-e7f4-4109-8271-5fb5bb6822e9
+  type: action
+  description: Adds a group.
+  action:
+  connector:
+  inputs:
+    name:
+      simple: ${inputs.group_name}
+    session_id:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: a23a1727-94a2-4a01-82ea-55e7c5f947f6
+  type: action
+  description: Gets full data for the specified group.
+  action:
+  connector:
+  inputs:
+    identifier:
+      simple: ${inputs.group_name}
+    session_id:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6bdf7795-cd12-4ece-825f-701cc62b6457
+  type: action
+  description: "Sets a value in context under the key you entered. If no value is
+    entered, nothing is done.\n\nThis automation runs using the default Limited User
+    role, unless you explicitly change the permissions.\nFor more information, see
+    the section about permissions here:\n- For Cortex XSOAR 6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+    \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n
+    - For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+  action: SetAndHandleEmpty
+  connector:
+  inputs:
+    key:
+      simple: currentMembers
+    value:
+      complex:
+        root: CheckPoint.Group
+        filters:
+        - - operator: isEqualString
+            left:
+              value:
+                simple: CheckPoint.Group.name
+              iscontext: true
+            right:
+              value:
+                simple: inputs.group_name
+              iscontext: true
+            ignorecase: true
+        accessor: members.member-name
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: a807ae25-6d0b-48df-851c-748ab0edefc6
+  type: action
+  description: Get host object to check if IP already exists.
+  action:
+  connector:
+  inputs:
+    filter_search:
+      complex:
+        root: inputs.IP
+        transformers:
+        - operator: split
+          args:
+            delimiter:
+              value:
+                simple: ','
+    ip_only:
+      simple: 'true'
+    session_id:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 14846fc4-2eec-45d2-8cb3-e96e09b197ca
+  type: action
+  description: Add access rule to Check Point firewall.
+  action:
+  connector:
+  inputs:
+    destination:
+      simple: ${inputs.group_name}
+    layer:
+      simple: ${inputs.rule_layer}
+    name:
+      simple: ${inputs.rule_name}
+    position:
+      simple: ${inputs.rule_position}
+    session_id:
+      complex:
+        root: CheckPoint
+        accessor: Login.session-id
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f3ce033e-4562-4224-8193-4459a023d9c8
+  type: condition
+  description: Validate if access rule was added.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 581e2e17-8f47-4668-8e30-8ca4cc0097ae
+    else_:
+  - if_: ''
+    then: ea9ccc02-67ef-4924-8380-3e0ba3a03d6c
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 13874ea2-f0ad-4734-86f9-34478083b464
+  type: condition
+  description: Check if rule name was defined in the inputs.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: ea9ccc02-67ef-4924-8380-3e0ba3a03d6c
+    else_:
+  - if_: ''
+    then: 14846fc4-2eec-45d2-8cb3-e96e09b197ca
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 581e2e17-8f47-4668-8e30-8ca4cc0097ae
+  type: action
+  description: Prints text to war room (Markdown supported).
+  action: Print
+  connector:
+  inputs:
+    value:
+      simple: There was a problem creating a blocking rule with the defined group
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

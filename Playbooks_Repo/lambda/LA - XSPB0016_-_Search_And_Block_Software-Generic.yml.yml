@@ -1,0 +1,319 @@
+id: Search And Block Software - Generic
+name: Search And Block Software - Generic
+description: "This playbook will search a file or process activity of a software by
+  a given image file name. The analyst can then choose the files to block.\nThe following
+  integrations are supported:\n\n- Cortex XDR XQL Engine \n- Microsoft Defender For
+  Endpoint"
+trigger:
+steps:
+- id: db561466-7b5a-4cea-8350-4a871a84518c
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c1f24703-cccd-4aa8-894a-24936aeccb8f
+  type: condition
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 1d034069-83cc-4e4b-8d6c-d2faec53535a
+    else_:
+  - if_: ''
+    then: 7b4a666f-b896-4219-81f5-6af0f8aed8f6
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 1d034069-83cc-4e4b-8d6c-d2faec53535a
+  type: action
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 7b4a666f-b896-4219-81f5-6af0f8aed8f6
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 51fcc25e-607e-43af-899b-d4e19570ddd0
+  type: subplaybook
+  description: This playbook will search a file or process activity of a software
+    by a given image file name using Cortex XDR XQL Engine. The analyst can then choose
+    the files to block.
+  action:
+  connector:
+  inputs:
+    Filename:
+      complex:
+        root: inputs.FileName
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: Please provide a software name to block and a timeframe.Answers.0
+              iscontext: true
+        - operator: StringifyArray
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: '"'
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: '['
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: ']'
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: ','
+        - operator: uniq
+    TimeFrame:
+      complex:
+        root: inputs.TimeFrame
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: Please provide a software name to block and a timeframe.Answers.1
+              iscontext: true
+        - operator: StringifyArray
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: '"'
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: '['
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: ']'
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: ','
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 72d74415-fffc-4a35-88cc-2c11c3955b0c
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6c6d4e63-db04-452b-8862-29e7093753f5
+  type: subplaybook
+  description: This playbook will search a file or process activity of a software
+    by a given image file name using Microsoft Defender For Endpoint. The analyst
+    can then choose the files to block.
+  action:
+  connector:
+  inputs:
+    Defender Indicator Title:
+      simple: XSOAR Software Block
+    Filename:
+      complex:
+        root: inputs.FileName
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: Please provide a software name to block and a timeframe.Answers.0
+              iscontext: true
+        - operator: StringifyArray
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: '"'
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: '['
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: ']'
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: ','
+        - operator: uniq
+    Indicator Expiration:
+      complex:
+        root: inputs.Indicator Expiration
+    TimeFrame:
+      complex:
+        root: inputs.TimeFrame
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: Please provide a software name to block and a timeframe.Answers.1
+              iscontext: true
+        - operator: StringifyArray
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: '"'
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: '['
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: ']'
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: ','
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 11d21beb-8d7b-44c3-8b16-22a685bd134d
+  type: action
+  description: "Delete field from context.\n\nThis automation runs using the default
+    Limited User role, unless you explicitly change the permissions.\nFor more information,
+    see the section about permissions here:\n- For Cortex XSOAR 6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+    \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n
+    - For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+  action: DeleteContext
+  connector:
+  inputs:
+    key:
+      simple: Please provide a software name to block and a timeframe
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

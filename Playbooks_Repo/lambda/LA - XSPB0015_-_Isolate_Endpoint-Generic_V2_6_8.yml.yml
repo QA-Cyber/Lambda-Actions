@@ -1,0 +1,197 @@
+id: Isolate Endpoint - Generic V2
+name: Isolate Endpoint - Generic V2
+description: "This playbook isolates a given endpoint using various endpoint product
+  integrations.\nMake sure to provide valid playbook inputs for the integration you
+  are using."
+trigger:
+steps:
+- id: 20f01f93-7b37-4f3f-8c17-a466dac351ef
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 050d36dd-0ec3-4490-827e-e210ac5e9a04
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 31a268a0-3862-4dcb-8549-b55d0ad936a0
+  type: subplaybook
+  description: This playbook isolates an endpoint based on the hostname provided.
+  action:
+  connector:
+  inputs:
+    Hostname:
+      complex:
+        root: inputs.Endpoint_hostname
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 46562ad2-14ed-4064-8ce8-9adfb791d660
+  type: subplaybook
+  description: This playbook accepts an XDR endpoint ID and isolates it using the
+    'Palo Alto Networks Cortex XDR - Investigation and Response' integration.
+  action:
+  connector:
+  inputs:
+    endpoint_id:
+      complex:
+        root: inputs.Endpoint_id
+    hostname:
+      complex:
+        root: inputs.Endpoint_hostname
+    ip_list:
+      complex:
+        root: inputs.Endpoint_ip
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 2604374d-9538-4451-8064-2f5bb5c6dd81
+  type: subplaybook
+  description: This playbook will auto isolate endpoints by the device ID that was
+    provided in the playbook.
+  action:
+  connector:
+  inputs:
+    Device_id:
+      complex:
+        root: inputs.Endpoint_id
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 48226108-0787-44b0-80f6-cf333758b5e8
+  type: subplaybook
+  description: This playbook will auto isolate endpoints by the endpoint ID that was
+    provided in the playbook.
+  action:
+  connector:
+  inputs:
+    Endpoint_id:
+      complex:
+        root: inputs.Endpoint_id
+    Hostname:
+      complex:
+        root: inputs.Endpoint_hostname
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: d438379a-5602-49f9-8d6d-404f9dbe3919
+  type: subplaybook
+  description: ''
+  action:
+  connector:
+  inputs:
+    Device_IP:
+      complex:
+        root: inputs.Endpoint_ip
+    Device_id:
+      complex:
+        root: inputs.Endpoint_id
+    Hostname:
+      complex:
+        root: inputs.Endpoint_hostname
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6288e7cc-1f1c-4132-834c-02efaf383aee
+  type: action
+  description: Isolates the specified endpoint.
+  action:
+  connector:
+  inputs:
+    endpoint_id:
+      complex:
+        root: inputs.Endpoint_id
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 73a03b52-b75a-4d47-8220-376956270c68
+  type: subplaybook
+  description: Carbon Black Response - isolates an endpoint for a given hostname.
+  action:
+  connector:
+  inputs:
+    Hostname:
+      complex:
+        root: inputs.Endpoint_hostname
+    Sensor_id:
+      complex:
+        root: inputs.Endpoint_id
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

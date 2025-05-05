@@ -1,0 +1,425 @@
+id: Checkpoint - Block URL
+name: Checkpoint - Block URL
+description: "This playbook blocks URLs using Check Point Firewall through Custom
+  URL Categories.\nThe playbook checks whether the input URL category already exists,
+  and if the URLs are a part of this category. Otherwise, it creates the category,
+  blocks the URLs, and publishes the configuration."
+trigger:
+steps:
+- id: 752c8366-9954-40bb-81f7-25944a795ef9
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 637bf853-b339-434f-82f5-ad53762b2e89
+  type: subplaybook
+  description: "Publish the Check Point Firewall configuration and install policy\
+    \  on all available gateways.\n"
+  action:
+  connector:
+  inputs:
+    auto_logout:
+      simple: 'True'
+    checkpoint_error_handling:
+      simple: ${inputs.checkpoint_error_handling}
+    discard_changes:
+      simple: ${inputs.discard_changes}
+    install_policy:
+      simple: ${inputs.install_policy}
+    policy_package:
+      simple: ${inputs.policy_package}
+    sid:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 15efb195-e8c1-4309-82f9-ac5b71f89872
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6de4c75e-2094-4333-878b-169f73a7d3bf
+  type: action
+  description: Add the URL as application site in Check Point Firewall.
+  action:
+  connector:
+  inputs:
+    identifier:
+      complex:
+        root: inputs.URL
+        transformers:
+        - operator: split
+          args:
+            delimiter:
+              value:
+                simple: ','
+    name:
+      simple: ${inputs.application_site_name}
+    primary_category:
+      simple: ${inputs.URL_application_site_category}
+    session_id:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: a25d05d5-5d23-4d8b-856d-015b3bd5862d
+  type: action
+  description: Log in to Check Point to get unique session ID.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: d3b456a4-5da6-441d-897a-5dbe043fbf67
+  type: condition
+  description: Is Checkpoint firewall enabled
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 15efb195-e8c1-4309-82f9-ac5b71f89872
+    else_:
+  - if_: ''
+    then: a25d05d5-5d23-4d8b-856d-015b3bd5862d
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6284f556-ab72-4787-8586-a79422d3d4b1
+  type: action
+  description: Log out with specific session ID from Checkpoint firewall.
+  action:
+  connector:
+  inputs:
+    session_id:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 0a45e01c-feb1-4ecb-8016-bc262d9f3410
+  type: condition
+  description: Validate if URL was added to application site successfully.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 28beae0e-0e08-4fcb-8490-bf56b83f8566
+    else_:
+  - if_: ''
+    then: 637bf853-b339-434f-82f5-ad53762b2e89
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 0ee35904-5636-4247-84dd-788fcc94df9e
+  type: action
+  description: Prints text to war room (Markdown supported).
+  action: Print
+  connector:
+  inputs:
+    value:
+      simple: 'The URL was not added to application site due to error. '
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 739a1d5a-d361-47a9-8869-2ac6e480eb64
+  type: condition
+  description: Validate if URL application site category exists.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 03dc594c-c844-4fa4-8b0f-01788a808b3f
+    else_:
+  - if_: ''
+    then: 6de4c75e-2094-4333-878b-169f73a7d3bf
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: aabcbca8-e6ab-4e1b-8dc9-55027b523d19
+  type: subplaybook
+  description: "Publish the Check Point Firewall configuration and install policy\
+    \  on all available gateways.\n"
+  action:
+  connector:
+  inputs:
+    auto_logout:
+      simple: 'False'
+    checkpoint_error_handling:
+      simple: ${inputs.checkpoint_error_handling}
+    discard_changes:
+      simple: ${inputs.discard_changes}
+    install_policy:
+      simple: ${inputs.install_policy}
+    policy_package:
+      simple: ${inputs.policy_package}
+    sid:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 03dc594c-c844-4fa4-8b0f-01788a808b3f
+  type: action
+  description: Add URL application site category in Check Point Firewall.
+  action:
+  connector:
+  inputs:
+    identifier:
+      simple: ${inputs.URL_application_site_category}
+    session_id:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: cf5f8fb4-12b4-4940-8814-b787d76eb876
+  type: action
+  description: Get application site category to check if the category already exists.
+  action:
+  connector:
+  inputs:
+    identifier:
+      simple: ${inputs.URL_application_site_category}
+    session_id:
+      simple: ${CheckPoint.Login.session-id}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: fa43eea8-11cd-44d5-8929-326f1ca64434
+  type: action
+  description: Prints text to war room (Markdown supported).
+  action: Print
+  connector:
+  inputs:
+    value:
+      simple: There was a problem adding the URL Category.
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f08aa17b-4127-4aa2-8702-129292de3973
+  type: condition
+  description: Validate if URL was added successfully in Check Point Firewall.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: fa43eea8-11cd-44d5-8929-326f1ca64434
+    else_:
+  - if_: ''
+    then: aabcbca8-e6ab-4e1b-8dc9-55027b523d19
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 5a2510e1-95ab-46ce-8d66-19129a2849f6
+  type: condition
+  description: If action manual handling is enabled, the playbook will pause and wait
+    for manual review.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 6284f556-ab72-4787-8586-a79422d3d4b1
+    else_:
+  - if_: ''
+    then: e56d12bd-27a4-4c85-8b16-f4096daa642e
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e56d12bd-27a4-4c85-8b16-f4096daa642e
+  type: action
+  description: User manually publishes on Check Point Firwall console.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 28beae0e-0e08-4fcb-8490-bf56b83f8566
+  type: action
+  description: "Edits an existing application using the object name or UID. \nIt is
+    not possible to set 'application-signature' when the application was initialized
+    with 'url-list' and vice-versa."
+  action:
+  connector:
+  inputs:
+    identifier:
+      simple: ${inputs.application_site_name}
+    primary_category:
+      simple: ${inputs.URL_application_site_category}
+    session_id:
+      simple: ${CheckPoint.Login.session-id}
+    url_list_to_add:
+      complex:
+        root: inputs.URL
+        transformers:
+        - operator: split
+          args:
+            delimiter:
+              value:
+                simple: ','
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 492d875a-b6d8-4b18-85b0-12477df2de55
+  type: condition
+  description: Validate if URL was added to application site successfully.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 0ee35904-5636-4247-84dd-788fcc94df9e
+    else_:
+  - if_: ''
+    then: 637bf853-b339-434f-82f5-ad53762b2e89
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}
