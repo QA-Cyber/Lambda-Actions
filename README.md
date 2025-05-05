@@ -28,7 +28,7 @@ The following diagram shows how Lambda-Actions standardizes playbooks and enable
 
 ---
 
-### 🌀 [`LambdaC`](./LambdaC/)
+### 🌀 [`LambdaC`](./LambdaC/LambdaC_README.md)
 - A powerful convertor tool that converts playbooks to/from different platforms. (Currently Supporting to/from XSOAR, FortiSOAR, Lambda) 
 
 - Platform specific parsers + Intelligent transformation techniques with AI + Validation
