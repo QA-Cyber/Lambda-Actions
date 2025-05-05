@@ -1,0 +1,281 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Scenario - Generate Malicious Outbound C2 Traffic Alert",
+    "aliasName": null,
+    "tag": null,
+    "description": "Generates demo alert for the Alert Type 'Beconing' for 'Malicious C2 Outbound Traffic'",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/7fc569b3-669e-4d7a-8587-ecfc2015add4",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/dbeffc83-30b3-4a63-bd10-b8da6279eab1",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute Description Summary",
+            "description": null,
+            "arguments": {
+                "desc_table": "<table>\n<tr>\n<td colspan=\"10\" style=\"border:0px;padding-left: 0px;padding-right: 0px;\">\n<h4 style=\"color: orange;\" class=\"body-default-bgcolor margin-bottom-0 margin-top-0 padding-bottom-md padding-left-md padding-top-md text-align-left\">{{vars.data['incident_data'].eventName}}-{{vars.data['incident_data'].eventType}}<\/h4>\n<\/td>\n<\/tr>\n<tr>\n{%if vars.data['incident_data'].incidentSrc.srcIpAddr%}\n<th>Incident Source<\/th>\n{%endif%}\n{%if vars.data['incident_data'].incidentTarget.destIpAddr%}\n<th>Incident Target<\/th>\n{%endif%}\n{%if vars.data['incident_data'].incidentRptIp%}\n<th>Incident Reporting IP<\/th>\n{%endif%}\n{%if vars.data['incident_data'].incidentSrc.srcIpAddr or vars.data['incident_data'].incidentRptDevName or vars.data['incident_data'].incidentRptIp %}\n<th>Reporting Device<\/th>\n{%endif%}\n{%if vars.data['incident_data'].incidentFirstSeen%}\n<th>First Occurred<\/th>\n{%endif%}\n{%if vars.data['incident_data'].incidentLastSeen%}\n<th>Last Occurred<\/th>\n{%endif%}\n{%if vars.data['incident_data'].phIncidentCategory%}\n<th>Incident Category<\/th>\n{%endif%}\n{%if vars.data['incident_data'].phSubIncidentCategory%}\n<th>Incident Sub-Category<\/th>\n{%endif%}\n{%if 'CVE' in vars.data['incident_data'].incidentComments %}\n<th>Detected CVE<\/th>\n{%endif%}\n{%if vars.data['incident_data'].phIncidentImpacts %}\n<th>Incident Impacts<\/th>\n{%endif%}\n{%if vars.data['incident_data'].incidentComments%}\n<th>Incident Analysts Comments<\/th>\n{%endif%}\n{%if vars.data['incident_data'].attackTechnique%}\n<th>Attack Technique<\/th>\n{%endif%}\n{%if vars.data['incident_data'].incidentDetail%}\n<th>Incident Details<\/th>\n{%endif%}\n<\/tr>\n<tr>\n{%if vars.data['incident_data'].incidentSrc.srcIpAddr%}\n<td>{{vars.data['incident_data'].incidentSrc.srcIpAddr}}<\/td>\n{%endif%}\n{%if vars.data['incident_data'].incidentTarget.destIpAddr%}\n<td>{{vars.data['incident_data'].incidentTarget.destIpAddr}}<\/td>\n{%endif%}\n{%if vars.data['incident_data'].incidentRptIp%}\n<td>{{vars.data['incident_data'].incidentRptIp}}<\/td>\n{%endif%}\n{%if vars.data['incident_data'].incidentSrc.srcIpAddr or vars.data['incident_data'].incidentRptDevName or vars.data['incident_data'].incidentRptIp %}\n<td>{{vars.data['incident_data'].incidentSrc.srcIpAddr or vars.data['incident_data'].incidentRptDevName or vars.data['incident_data'].incidentRptIp}}<\/td>\n{%endif%}\n{%if vars.data['incident_data'].incidentFirstSeen%}\n<td>{{arrow.get(vars.data['incident_data'][\"incidentFirstSeen\"]).to(\"UTC\").format(\"YYYY-MM-DD HH:mm:ss ZZ\")}}<\/td>\n{%endif%}\n{%if vars.data['incident_data'].incidentLastSeen%}\n<td>{{arrow.get(vars.data['incident_data'][\"incidentLastSeen\"]).to(\"UTC\").format(\"YYYY-MM-DD HH:mm:ss ZZ\")}}<\/td>\n{%endif%}\n{%if vars.data['incident_data'].phIncidentCategory%}\n<td>{{vars.data['incident_data'].phIncidentCategory | resolveRange(vars.category_map)}}<\/td>\n{%endif%}\n{%if vars.data['incident_data'].phSubIncidentCategory%}\n<td>{{vars.data['incident_data'].phSubIncidentCategory}}<\/td>\n{%endif%}\n{%if 'CVE' in vars.data['incident_data'].incidentComments %}\n<td>{{vars.data['incident_data'].incidentComments|regex_search(\"CVE[^]]*\")}}<\/td>\n{%endif%}\n{%if vars.data['incident_data'].phIncidentImpacts %}\n<td>{{vars.data['incident_data'].phIncidentImpacts}}<\/td>\n{%endif%}\n{%if vars.data['incident_data'].incidentComments%}\n<td>{{vars.data['incident_data'].incidentComments}}<\/td>\n{%endif%}\n{%if vars.data['incident_data'].attackTechnique%}\n<td>{{vars.data['incident_data'].attackTechnique[0][\"techniqueid\"]}} - {{vars.data['incident_data'].attackTechnique[0][\"name\"]}}<\/div>\n{%endif%}\n{%if vars.data['incident_data'].incidentDetail%}\n<td>{{vars.data['incident_data'].incidentDetail.replace(',',' ')}}<\/td>\n{%endif%}\n<\/tr>\n<\/table>"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "18b63154-1fc0-4b16-81cc-da228c489472"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "data": "{\n  \"incident_data\": {\n    \"count\": 20,\n    \"customer\": \"Super\",\n    \"eventName\": \"Outbound connection using a common C2 port is detected\",\n    \"eventType\": \"PH_RULE_MALICIOUS_OUTBOUND_CONNECTION\",\n    \"incidentId\": 1679,\n    \"incidentSrc\": {\n      \"srcIpAddr\": \"192.168.60.132\"\n    },\n    \"attackTactic\": \"Command and Control\",\n    \"incidentReso\": 1,\n    \"eventSeverity\": 9,\n    \"incidentRptIp\": \"192.168.60.132\",\n    \"incidentTitle\": \"Outbound connection from 192.168.60.132 to 103.224.212.222 on port 31337\",\n    \"incidentDetail\": \"ipProto:6, \",\n    \"incidentStatus\": 0,\n    \"incidentTarget\": {\n      \"destIpAddr\": \"103.224.212.222\",\n      \"destIpPort\": \"31337\"\n    },\n    \"attackTechnique\": [\n      {\n        \"name\": \"Commonly Used Port\",\n        \"techniqueid\": \"T1043\"\n      }\n    ],\n    \"eventSeverityCat\": \"HIGH\",\n    \"incidentLastSeen\": 1702027650000,\n    \"incidentFirstSeen\": 1702026150000,\n    \"incidentRptDevName\": \"\",\n    \"phIncidentCategory\": 4,\n    \"incidentClearedTime\": 0,\n    \"phSubIncidentCategory\": \"Command and Control\"\n  },\n  \"associated_events\": [\n    {\n      \"id\": 1533334935638805200,\n      \"nid\": \"1533334935638805124\",\n      \"index\": 0,\n      \"custId\": 1,\n      \"dataStr\": {},\n      \"eventType\": \"IOS-NETFLOW-BI\",\n      \"attributes\": {\n        \"Event ID\": 1533334935638805200,\n        \"Source IP\": \"192.168.60.132\",\n        \"Event Type\": \"IOS-NETFLOW-BI\",\n        \"Source TOS\": 166,\n        \"IP Protocol\": 6,\n        \"Relaying IP\": \"192.168.60.132\",\n        \"Source DSCP\": 41,\n        \"Total Flows\": 1,\n        \"Reporting IP\": \"192.168.60.132\",\n        \"Sent Bytes64\": 4428,\n        \"Total Bytes64\": 4428,\n        \"Destination IP\": \"103.224.212.222\",\n        \"Sent Packets64\": 36,\n        \"Organization ID\": 1,\n        \"Reporting Model\": \"IOS\",\n        \"Total Packets64\": 36,\n        \"Destination City\": \"Malung\",\n        \"Received Bytes64\": 0,\n        \"Reporting Device\": \"localhost\",\n        \"Reporting Vendor\": \"Cisco\",\n        \"Destination State\": \"Dalarna\",\n        \"Event Parse Status\": 1,\n        \"Event Receive Time\": 1702027578000,\n        \"Received Packets64\": 0,\n        \"Destination Country\": \"Sweden\",\n        \"Source TCP\/UDP Port\": 56346,\n        \"Destination Latitude\": \"60.68637\",\n        \"Destination Longitude\": \"13.72097\",\n        \"System Event Category\": 4,\n        \"Destination Country Code\": \"SE\",\n        \"Destination Organization\": \"TELIANET-SWEDEN Telia Company  SE\",\n        \"Destination TCP\/UDP Port\": 31337,\n        \"Source Interface SNMP Index\": 0,\n        \"External Event Receive Protocol\": \"NetFlow\",\n        \"Destination Interface SNMP Index\": 0\n      },\n      \"rawMessage\": null,\n      \"receiveTime\": 1702027578000,\n      \"eventAttributes\": []\n    },\n    {\n      \"id\": 1533334935638805200,\n      \"nid\": \"1533334935638805218\",\n      \"index\": 1,\n      \"custId\": 1,\n      \"dataStr\": {},\n      \"eventType\": \"IOS-NETFLOW-BI\",\n      \"attributes\": {\n        \"Event ID\": 1533334935638805200,\n        \"Source IP\": \"192.168.60.132\",\n        \"Event Type\": \"IOS-NETFLOW-BI\",\n        \"Source TOS\": 166,\n        \"IP Protocol\": 6,\n        \"Relaying IP\": \"192.168.60.132\",\n        \"Source DSCP\": 41,\n        \"Total Flows\": 1,\n        \"Reporting IP\": \"192.168.60.132\",\n        \"Sent Bytes64\": 3813,\n        \"Total Bytes64\": 3813,\n        \"Destination IP\": \"103.224.212.222\",\n        \"Sent Packets64\": 31,\n        \"Organization ID\": 1,\n        \"Reporting Model\": \"IOS\",\n        \"Total Packets64\": 31,\n        \"Destination City\": \"Malung\",\n        \"Received Bytes64\": 0,\n        \"Reporting Device\": \"localhost\",\n        \"Reporting Vendor\": \"Cisco\",\n        \"Destination State\": \"Dalarna\",\n        \"Event Parse Status\": 1,\n        \"Event Receive Time\": 1702027578000,\n        \"Received Packets64\": 0,\n        \"Destination Country\": \"Sweden\",\n        \"Source TCP\/UDP Port\": 54453,\n        \"Destination Latitude\": \"60.68637\",\n        \"Destination Longitude\": \"13.72097\",\n        \"System Event Category\": 4,\n        \"Destination Country Code\": \"SE\",\n        \"Destination Organization\": \"TELIANET-SWEDEN Telia Company  SE\",\n        \"Destination TCP\/UDP Port\": 31337,\n        \"Source Interface SNMP Index\": 0,\n        \"External Event Receive Protocol\": \"NetFlow\",\n        \"Destination Interface SNMP Index\": 0\n      },\n      \"rawMessage\": null,\n      \"receiveTime\": 1702027578000,\n      \"eventAttributes\": []\n    }\n  ]\n}",
+                "iri_list": "[]",
+                "category_map": "{1: \"Availability\", 2: \"Performance\", 3: \"Change\", 4: \"Security\", 5: \"Other\"}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "45ac015c-52e3-4bfa-aa42-5dc676b89e94"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Alert Record",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "{{vars.data['incident_data'].incidentTitle or vars.data['incident_data'].incidentId~\":\"~vars.data['incident_data'].eventName}}",
+                    "rule": "{{vars.data['incident_data'].eventType}}",
+                    "type": "\/api\/3\/picklists\/844c0b64-04fa-494f-9795-7c8406e59f69",
+                    "state": "\/api\/3\/picklists\/a1bac09b-1441-45aa-ad1b-c88744e48e72",
+                    "domain": "{{vars.data['incident_data'].incidentTarget.domain or None }}",
+                    "source": "Fortinet FortiSIEM",
+                    "status": "\/api\/3\/picklists\/7de816ff-7140-4ee5-bd05-93ce22002146",
+                    "severity": "\/api\/3\/picklists\/40187287-89fc-4e9c-b717-e9443d57eedb",
+                    "sourceId": "{{vars.data['incident_data'][\"incidentId\"]}}",
+                    "sourceIp": "{{vars.data['incident_data'].incidentSrc.srcIpAddr or None}}",
+                    "userName": "{{vars.data['incident_data'].incidentTarget.user or None}}",
+                    "__replace": "true",
+                    "epochTime": "{{vars.data['incident_data'][\"incidentLastSeen\"]}}",
+                    "eventTime": "{{arrow.get(vars.data['incident_data'][\"incidentLastSeen\"]).to(\"UTC\").format(\"YYYY-MM-DD HH:mm:ss ZZ\")}}",
+                    "assignedTo": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+                    "sourcePort": "{{vars.data['incident_data'].incidentSrc.srcIpPort or None}}",
+                    "sourcedata": "{{vars.data | toJSON}}",
+                    "description": "{{vars.desc_table}}",
+                    "targetAsset": "{{vars.data['incident_data'].incidentTarget.hostIpAddr or None}}",
+                    "ackSlaStatus": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "computerName": "{{vars.data['incident_data'].incidentTarget.hostName or vars.data['incident_data'].incidentTarget.destName or None}}",
+                    "closureReason": "\/api\/3\/picklists\/8590c81e-3307-4645-97f5-c3e1bec4e05a",
+                    "destinationIp": "{{vars.data['incident_data'].incidentTarget.destIpAddr or None}}",
+                    "mitreattackid": "{{vars.data['incident_data'][\"attackTechnique\"][0][\"techniqueid\"] or None}}",
+                    "respSlaStatus": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "killChainPhase": "\/api\/3\/picklists\/8153c438-9fe4-4eef-b3af-752e26f665ab",
+                    "mitreTechnique": "{{vars.data['incident_data'].attackTactic or None}}",
+                    "priorityWeight": 1,
+                    "destinationPort": "{{vars.data['incident_data'].incidentTarget.destIpPort or None}}",
+                    "escalatedtoincident": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5",
+                    "resolvedAutomatedly": false,
+                    "alertRemainingAckSLA": 0
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/upsert\/alerts",
+                "__recommend": [],
+                "tagsOperation": "OverwriteTags",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": {
+                    "__temp": "{{vars.iri_list.append(vars.steps.Create_Alert_Record['@id'])}}"
+                }
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "5004f214-7d94-42a5-a8f3-87eb84e922ab"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Asset Record",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "ip": "192.168.60.132",
+                    "name": "web2.cs.com",
+                    "state": "\/api\/3\/picklists\/b31da3b9-6f87-469e-a1bf-2517c48a7001",
+                    "status": "\/api\/3\/picklists\/421c20cd-e63d-4e32-9a25-774b2155cd24",
+                    "hostname": "web2.cs.com",
+                    "__replace": "true",
+                    "assetRisk": "\/api\/3\/picklists\/04909452-49c8-449f-9991-d1437f64949a",
+                    "assetType": "\/api\/3\/picklists\/15fa2e79-88ac-4a63-a623-3ac03980b850",
+                    "macAddress": "00:1A:2B:3C:4D:5E",
+                    "criticality": "\/api\/3\/picklists\/f734dfbb-fd61-425e-8a14-ebd560289fac",
+                    "operatingSystem": "\/api\/3\/picklists\/f0fc6b95-965f-4b65-9b3c-bb3c7f790c1d"
+                },
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/upsert\/assets",
+                "__recommend": [],
+                "fieldOperation": [],
+                "step_variables": {
+                    "__temp": "{{vars.iri_list.append(vars.steps.Create_Asset_Record['@id'])}}"
+                }
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "a3aa0c32-dd95-4eb0-a036-a88909d012c9"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Task Record",
+            "description": null,
+            "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "thread": false,
+                    "content": "<p><a href=\"\/modules\/tasks\/{{vars.steps.Create_Task_Record.uuid}}\" target=\"_blank\" rel=\"noopener\">Task#{{vars.steps.Create_Task_Record.id}} - {{vars.steps.Create_Task_Record.name}}<\/a> is created to determine if traffic from this alert really is C2 activity or a false positive.<\/p>",
+                    "records": "{{vars.steps.Create_Alert_Record['@id']}}"
+                },
+                "resource": {
+                    "name": "Pull network data and investigate",
+                    "type": "\/api\/3\/picklists\/30300411-a2e0-42dc-9180-513904f73ab9",
+                    "alerts": "['{{vars.steps.Create_Alert_Record['@id']}}']",
+                    "status": "\/api\/3\/picklists\/959021fc-c19d-4aee-8e51-5395c5029719",
+                    "priority": "\/api\/3\/picklists\/90088ebe-0a7d-4aa6-9c9c-93b937a4e4f8",
+                    "__replace": "",
+                    "description": "<p>Download relevant packet capture and netflow data, determine if traffic from this alert really is C2 activity or a false positive.<\/p>",
+                    "assignedToPerson": "{{vars.assignee}}"
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/tasks",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": {
+                    "__temp": "{{vars.iri_list.append(vars.steps.Create_Task_Record['@id'])}}"
+                }
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "3350a521-0bba-4da5-ac9b-db44b655ed33"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Result",
+            "description": null,
+            "arguments": {
+                "@id": "{{vars.iri_list}}"
+            },
+            "status": null,
+            "top": "840",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "47b32011-a2c3-4622-8b93-9957351b324b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": []
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "group": null,
+            "uuid": "dbeffc83-30b3-4a63-bd10-b8da6279eab1"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "cas -> Create Alert Record",
+            "targetStep": "\/api\/3\/workflow_steps\/5004f214-7d94-42a5-a8f3-87eb84e922ab",
+            "sourceStep": "\/api\/3\/workflow_steps\/18b63154-1fc0-4b16-81cc-da228c489472",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "1e3b7d49-4264-4550-a895-fbcdc65f887e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> cas",
+            "targetStep": "\/api\/3\/workflow_steps\/18b63154-1fc0-4b16-81cc-da228c489472",
+            "sourceStep": "\/api\/3\/workflow_steps\/45ac015c-52e3-4bfa-aa42-5dc676b89e94",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "7d86fd44-98c9-49b8-ae19-ee4bbde068ac"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Alert Record -> Create Task",
+            "targetStep": "\/api\/3\/workflow_steps\/3350a521-0bba-4da5-ac9b-db44b655ed33",
+            "sourceStep": "\/api\/3\/workflow_steps\/5004f214-7d94-42a5-a8f3-87eb84e922ab",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "48cb19e5-41de-419d-911e-5f0bc132e54e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Asset Record -> RecordIRI",
+            "targetStep": "\/api\/3\/workflow_steps\/47b32011-a2c3-4622-8b93-9957351b324b",
+            "sourceStep": "\/api\/3\/workflow_steps\/a3aa0c32-dd95-4eb0-a036-a88909d012c9",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "2616aa2c-a60a-4390-8af9-4e70e639e06c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Task -> Create Asset Record",
+            "targetStep": "\/api\/3\/workflow_steps\/a3aa0c32-dd95-4eb0-a036-a88909d012c9",
+            "sourceStep": "\/api\/3\/workflow_steps\/3350a521-0bba-4da5-ac9b-db44b655ed33",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "eb257906-1fdc-4b08-9267-c9160818111d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/45ac015c-52e3-4bfa-aa42-5dc676b89e94",
+            "sourceStep": "\/api\/3\/workflow_steps\/dbeffc83-30b3-4a63-bd10-b8da6279eab1",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "2338153c-6b64-4815-8206-abcd6ded975f"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "8089902b-a235-4868-b5e0-b0d7869c3c93",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Referenced",
+        "Scenario"
+    ]
+}

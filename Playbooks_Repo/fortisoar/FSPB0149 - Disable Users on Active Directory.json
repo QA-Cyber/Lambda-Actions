@@ -1,0 +1,102 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": ">> Disable Users on Active Directory",
+    "aliasName": null,
+    "tag": null,
+    "description": "Disables user on AD",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "parameters"
+    ],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/160d414b-d1d2-44a6-ab10-0df6b1f694fd",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/4eb77089-1253-4335-bd87-e32271d6392f",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Data Output",
+            "description": null,
+            "arguments": {
+                "op_status": "{{vars.steps.Disable_user.data.description}}"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "2b8748bb-5ec9-4cbf-b193-e6fdf4988f38"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Disable user",
+            "description": null,
+            "arguments": {
+                "name": "Active Directory",
+                "config": "bee4fd2880d2404d9ee8a478f59aaf2f",
+                "params": {
+                    "search_attr_name": "SamAccount Name",
+                    "search_attr_value": "{{vars.input.params.parameters.username}}"
+                },
+                "version": "2.2.0",
+                "connector": "activedirectory",
+                "operation": "disable_user_account",
+                "mock_result": "{\n  \"data\": {\n    \"dn\": \"\",\n    \"type\": \"modifyResponse\",\n    \"result\": 0,\n    \"message\": \"\",\n    \"referrals\": null,\n    \"description\": \"success\"\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null\n}",
+                "operationTitle": "Disable User Account",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "300f3460-685d-43f2-a14f-9e43022cfcb0"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "useMockOutput": "{{globalVars.Demo_mode}}"
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "4eb77089-1253-4335-bd87-e32271d6392f"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Disable user",
+            "targetStep": "\/api\/3\/workflow_steps\/300f3460-685d-43f2-a14f-9e43022cfcb0",
+            "sourceStep": "\/api\/3\/workflow_steps\/4eb77089-1253-4335-bd87-e32271d6392f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "0c4e4111-cae1-4c9e-b737-c8341238a6a3"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Disable user -> Data Output",
+            "targetStep": "\/api\/3\/workflow_steps\/2b8748bb-5ec9-4cbf-b193-e6fdf4988f38",
+            "sourceStep": "\/api\/3\/workflow_steps\/300f3460-685d-43f2-a14f-9e43022cfcb0",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "245b06f7-7f5b-47ae-9641-e992791d5181"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "8304f11f-7dbd-441d-8017-b9e248b17c5b",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": []
+}

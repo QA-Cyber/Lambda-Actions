@@ -1,0 +1,507 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Generate > DLP Alert",
+    "aliasName": null,
+    "tag": null,
+    "description": "Generates a DLP Alert",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1645297690,
+    "collection": "\/api\/3\/workflow_collections\/67319d70-c960-4624-991a-8828a3f29ce3",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/ff6d6add-5159-4e2a-9e9e-23788ba17d16",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Get available assignees",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "iri": "\/api\/3\/people",
+                    "body": "",
+                    "method": "GET"
+                },
+                "version": "2.6.0",
+                "connector": "cyops_utilities",
+                "operation": "make_cyops_request",
+                "operationTitle": "CyOPs: Make CyOPs API Call",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "ab83fe1d-5554-4433-b948-b0cd4fb4bc0b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": []
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "ff6d6add-5159-4e2a-9e9e-23788ba17d16"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Escalate Alert",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "escalationreason": "<p>Analyst notes: Data leakage confirmed. Outbound email successfully made it past email gateway.<\/p>",
+                    "escalatedtoincident": {
+                        "id": 6807,
+                        "@id": "\/api\/3\/picklists\/fa12313b-66af-4a2e-864e-a5f19241b734",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#bf0a0a",
+                        "display": "Yes",
+                        "listName": "\/api\/3\/picklist_names\/e131cc54-9ae4-43c9-b830-af6e331fe024",
+                        "itemValue": "Yes",
+                        "orderIndex": 0
+                    }
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.steps.Create_DLP_Alert['@id']}}",
+                "collectionType": "\/api\/3\/alerts",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "uuid": "3ffe239a-e086-4c77-a99d-9bbb54d92a28"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create DLP Alert",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "Symantec DLP- Outbound email with unencrypted PII",
+                    "type": {
+                        "id": 5265,
+                        "@id": "\/api\/3\/picklists\/3eb31470-7a13-4029-9b48-6f5f3d493002",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Data Leakage",
+                        "listName": "\/api\/3\/picklist_names\/a7087b9c-5660-495f-a8ac-c3b198ddb8c2",
+                        "itemValue": "Data Leakage",
+                        "orderIndex": 11
+                    },
+                    "state": {
+                        "id": 220,
+                        "@id": "\/api\/3\/picklists\/a1bac09b-1441-45aa-ad1b-c88744e48e72",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "New",
+                        "listName": "\/api\/3\/picklist_names\/2f9ed741-25fe-475a-9f12-64336288eebf",
+                        "itemValue": "New",
+                        "orderIndex": 0
+                    },
+                    "source": "Symantec DLP",
+                    "status": {
+                        "id": 22,
+                        "@id": "\/api\/3\/picklists\/7de816ff-7140-4ee5-bd05-93ce22002146",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Open",
+                        "listName": "\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a",
+                        "itemValue": "Open",
+                        "orderIndex": 1
+                    },
+                    "emailTo": "{{vars.data.email_details.recipient}}",
+                    "fileHash": "8359e029989b712bfd33b6b82d36ab46",
+                    "severity": {
+                        "id": 60,
+                        "@id": "\/api\/3\/picklists\/40187287-89fc-4e9c-b717-e9443d57eedb",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#DE7A13",
+                        "display": "High",
+                        "listName": "\/api\/3\/picklist_names\/4e80cba3-032f-48b4-ac03-17e3ec247aac",
+                        "itemValue": "High",
+                        "orderIndex": 3
+                    },
+                    "userName": "{{vars.data.user}}",
+                    "__replace": "true",
+                    "emailFrom": "{{vars.data.email_details.sender}}",
+                    "epochTime": "{{arrow.get(vars.data.time).timestamp}}",
+                    "eventTime": "{{vars.data.time}}",
+                    "assignedTo": "{{vars.assignee}}",
+                    "sourcedata": "{{vars.data | toJSON}}",
+                    "description": "<p>An outbound email sent by {{vars.data.email_details.sender}} was not encrypted and contains an attachment with PII.<\/p>\n<p>PII type: {{vars.data.pii_type}}<\/p>",
+                    "ackSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "computerName": "{{vars.data.hostname}}",
+                    "emailSubject": "{{vars.data.email_details.subject}}",
+                    "closureReason": {
+                        "id": 251,
+                        "@id": "\/api\/3\/picklists\/8590c81e-3307-4645-97f5-c3e1bec4e05a",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Tasks Completed",
+                        "listName": "\/api\/3\/picklist_names\/4ebacea1-88cd-4ea8-9dcc-385bea42cc59",
+                        "itemValue": "Tasks Completed",
+                        "orderIndex": 0
+                    },
+                    "respSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "attachmentNames": "{{vars.data.email_details.attachment_name}}",
+                    "senderEmailAddress": "{{vars.data.email_details.sender}}",
+                    "escalatedtoincident": {
+                        "id": 6808,
+                        "@id": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "No",
+                        "listName": "\/api\/3\/picklist_names\/e131cc54-9ae4-43c9-b830-af6e331fe024",
+                        "itemValue": "No",
+                        "orderIndex": 1
+                    },
+                    "recipientEmailAddress": "{{vars.data.email_details.recipient}}"
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/upsert\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "uuid": "d654ad04-123e-40c7-8cba-6dd7ad24368d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "recordIRI",
+            "description": null,
+            "arguments": {
+                "recordIRI": "{{vars.steps.Create_DLP_Alert}}"
+            },
+            "status": null,
+            "top": "1110",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "53d0afa2-5329-4655-ae79-6b9ffff302cc"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Incident",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "Outbound Unencrypted PII Detected",
+                    "phase": {
+                        "id": 147,
+                        "@id": "\/api\/3\/picklists\/bb7407e0-f699-11e7-8c3f-9a214cf093ae",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Containment",
+                        "listName": "\/api\/3\/picklist_names\/b862eb1f-b385-40ca-baa7-5a1b1f91a651",
+                        "itemValue": "Containment",
+                        "orderIndex": 3
+                    },
+                    "alerts": "['{{vars.steps.Create_DLP_Alert['@id']}}']",
+                    "resSla": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "source": "Symantec DLP",
+                    "status": {
+                        "id": 224,
+                        "@id": "\/api\/3\/picklists\/bb73fe9e-f699-11e7-8c3f-9a214cf093ae",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Open",
+                        "listName": "\/api\/3\/picklist_names\/a549e41c-31ca-406d-89ae-eab3de5c06c4",
+                        "itemValue": "Open",
+                        "orderIndex": 0
+                    },
+                    "category": {
+                        "id": 6795,
+                        "@id": "\/api\/3\/picklists\/703218fc-f69a-11e7-8c3f-9a214cf093ae",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Malware",
+                        "listName": "\/api\/3\/picklist_names\/f3938848-6220-4b27-af2d-a5329cf63656",
+                        "itemValue": "Malware",
+                        "orderIndex": 8
+                    },
+                    "filehash": "{{vars.steps.Create_DLP_Alert.filehash}}",
+                    "severity": {
+                        "id": 59,
+                        "@id": "\/api\/3\/picklists\/b3c20a3a-ecfd-4adc-a225-0205968e6793",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#D2AC1A",
+                        "display": "Medium",
+                        "listName": "\/api\/3\/picklist_names\/4e80cba3-032f-48b4-ac03-17e3ec247aac",
+                        "itemValue": "Medium",
+                        "orderIndex": 2
+                    },
+                    "slaState": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "__replace": "true",
+                    "description": "<p>An outbound email sent by {{vars.steps.Create_DLP_Alert.senderEmailAddress}} was not encrypted and contains an attachment with PII.<\/p>\n<p>PII type: SSN<\/p>",
+                    "senderEmailAddress": "{{vars.data.email_details.sender}}",
+                    "receipientEmailAddress": "{{vars.steps.Create_DLP_Alert.recipientEmailAddress}}"
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/upsert\/incidents",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "uuid": "f3237515-2225-42f1-a8eb-7f3c72d8a2d2"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Assign Task",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "Counsel user about appropriate PII practices",
+                    "type": {
+                        "id": 70,
+                        "@id": "\/api\/3\/picklists\/30300411-a2e0-42dc-9180-513904f73ab9",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "To Do",
+                        "listName": "\/api\/3\/picklist_names\/b837e375-76af-4ba5-b6a1-bd1c3cd27292",
+                        "itemValue": "To Do",
+                        "orderIndex": 8
+                    },
+                    "alerts": "['{{vars.steps.Create_DLP_Alert['@id']}}']",
+                    "status": {
+                        "id": 117,
+                        "@id": "\/api\/3\/picklists\/959021fc-c19d-4aee-8e51-5395c5029719",
+                        "icon": null,
+                        "uuid": "959021fc-c19d-4aee-8e51-5395c5029719",
+                        "@type": "Picklist",
+                        "color": "#ffce1f",
+                        "display": "In progress",
+                        "listName": "\/api\/3\/picklist_names\/21ddbcfd-b4a3-4273-adea-c674fe47d643",
+                        "itemValue": "In progress",
+                        "orderIndex": 0
+                    },
+                    "priority": {
+                        "id": 109,
+                        "@id": "\/api\/3\/picklists\/539083a6-01f6-4ff9-a588-778cfdad4671",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#d1b524",
+                        "display": "Medium",
+                        "listName": "\/api\/3\/picklist_names\/bea9a490-50d1-4597-8ad9-24422e10676e",
+                        "itemValue": "Medium",
+                        "orderIndex": 3
+                    },
+                    "__replace": "",
+                    "incidents": "['{{vars.steps.Create_Incident['@id']}}']",
+                    "description": "<p>Counsel user about appropriate PII practices.<\/p>\n<p>Have the user re-take PII training module.<\/p>",
+                    "assignedToPerson": "{{vars.assignee}}"
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/tasks",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "975",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "uuid": "6eefff75-5293-4043-8934-7d9edef84864"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Add comment to alert",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "alerts": "['{{vars.steps.Create_DLP_Alert['@id']}}']",
+                    "content": "<p>This Alert has been escalated to <a href=\"https:\/\/{{globalVars.Server_fqhn}}\/modules\/incidents\/{{vars.steps.Create_Incident['@id'].split('\/')[4]}}\" target=\"_blank\" rel=\"noopener noreferrer\">Incident #{{vars.steps.Create_Incident.id}}<\/a><\/p>",
+                    "__replace": ""
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "840",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "uuid": "2630380f-e675-47aa-8211-ec41423451b0"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "data": "{\n  \"time\": \"2019-06-17T23:22:57.100Z\",\n  \"uuid\": \"3379f1a0-398a-a6e8-222d-009000000045\",\n  \"state\": 1,\n  \"summary\": \"Unencrypted Outbound Email with attachment containing PII\",\n  \"updated\": \"2019-06-18T08:05:20.120Z\",\n  \"filehash\": \"8359e029989b712bfd33b6b82d36ab46\",\n \"hostname\": \"acct-station-1\",\n \"user\": \"CORP\\\\BobTheAccountant\",\n  \"log_name\": \"DLP-Outbound_SMTP_with_PII\",\n  \"deviceUid\": [\n    \"512ece93-dc91-44a6-8fc4-ba3177d50473\"\n  ],\n  \"event_count\": 1,\n  \"priority_level\": 2,\n  \"alert_id\": 67,\n  \"pii_type\": \"SSN\",\n  \"email_details\": \n    {\"sender\": \"bobtheaccountant@company.biz\",\n    \"recipient\": \"taxes@irs.taxes.net\",\n    \"subject\": \"Re: Kindly Requesting Tax Records\",\n    \"attachment_name\": \"W-2_records_extract.xlsx\"}\n}",
+                "assignee": "{{(vars.steps.Get_available_assignees.data['hydra:member'] | json_query('[*].[\"@id\"][]') | shuffle)[0]}}"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "048d8b84-c0a2-4b46-b52d-0bdd46b21758"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get available assignees -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/048d8b84-c0a2-4b46-b52d-0bdd46b21758",
+            "sourceStep": "\/api\/3\/workflow_steps\/ab83fe1d-5554-4433-b948-b0cd4fb4bc0b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a10dcf7e-78e8-4b57-89a8-ddfcb5fce0de"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Create DLP Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/d654ad04-123e-40c7-8cba-6dd7ad24368d",
+            "sourceStep": "\/api\/3\/workflow_steps\/048d8b84-c0a2-4b46-b52d-0bdd46b21758",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "856443bf-95a4-4d5b-a217-fde951358c82"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Add comment to alert -> Assign Task",
+            "targetStep": "\/api\/3\/workflow_steps\/6eefff75-5293-4043-8934-7d9edef84864",
+            "sourceStep": "\/api\/3\/workflow_steps\/2630380f-e675-47aa-8211-ec41423451b0",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ad213073-3995-4bb8-bbee-3307b3927609"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Escalate Alert -> Add comment to alert",
+            "targetStep": "\/api\/3\/workflow_steps\/2630380f-e675-47aa-8211-ec41423451b0",
+            "sourceStep": "\/api\/3\/workflow_steps\/3ffe239a-e086-4c77-a99d-9bbb54d92a28",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "addf1f57-4cbc-4fee-8a46-8e35381f0f7e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Assign Task -> recordIRI",
+            "targetStep": "\/api\/3\/workflow_steps\/53d0afa2-5329-4655-ae79-6b9ffff302cc",
+            "sourceStep": "\/api\/3\/workflow_steps\/6eefff75-5293-4043-8934-7d9edef84864",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3156b29b-650e-4b8d-be61-0cfde6219450"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Incident Record -> Escalate Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/3ffe239a-e086-4c77-a99d-9bbb54d92a28",
+            "sourceStep": "\/api\/3\/workflow_steps\/f3237515-2225-42f1-a8eb-7f3c72d8a2d2",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "85a01a26-40b6-4e34-aa2f-52f1ae681885"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create DLP Alert -> Create Incident Record",
+            "targetStep": "\/api\/3\/workflow_steps\/f3237515-2225-42f1-a8eb-7f3c72d8a2d2",
+            "sourceStep": "\/api\/3\/workflow_steps\/d654ad04-123e-40c7-8cba-6dd7ad24368d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f67fa3f8-d7f9-4cf1-862c-c1b7f98c7f8f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Get available assignees",
+            "targetStep": "\/api\/3\/workflow_steps\/ab83fe1d-5554-4433-b948-b0cd4fb4bc0b",
+            "sourceStep": "\/api\/3\/workflow_steps\/ff6d6add-5159-4e2a-9e9e-23788ba17d16",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f702ae74-e079-454b-902f-bdb621d424ec"
+        }
+    ],
+    "priority": null,
+    "uuid": "9262191b-504b-4bd6-a12f-b67cd8e57546",
+    "recordTags": [
+        "Referenced"
+    ],
+    "id": "616",
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1645297690.368702,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1645297690.368702,
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null
+}

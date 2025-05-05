@@ -1,0 +1,657 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "> Escalate Alert to Incident",
+    "aliasName": null,
+    "tag": null,
+    "description": "Escalates the alert to T2 (incident) since malicious\/suspicious indicators were found",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "alert_IRI",
+        "automated"
+    ],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/389c8b50-4172-4340-8b0c-ad759d1703fa",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/7ff454d2-ca30-421f-ac51-e30c329f52cb",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Comment_Set Status and Phase",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "people": [],
+                    "content": "<p>{{globalVars.Action_Icon}} As T2 Analyst start the Incident Management by setting:<\/p>\n<ul>\n<li>Incident <span style=\"text-decoration: underline;\">Status<\/span> to :<span style=\"font-size: 12pt;\"> <strong><span style=\"font-size: 10pt; color: #e67e23;\">In Progress<\/span> <\/strong><\/span><\/li>\n<li><span style=\"font-size: 12pt;\"><span style=\"font-size: 10pt;\"><span style=\"text-decoration: underline;\">Phase<\/span> to : <span style=\"color: #e67e23;\"><strong>Confirmation <br><\/strong><\/span><\/span><\/span><\/li>\n<\/ul>",
+                    "__replace": "",
+                    "incidents": "{{vars.incident['@id']}}",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "980",
+            "left": "120",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "09a1f1f2-19b5-4f26-a658-9edb58ef46f0"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Find File Indicator",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "alerts.id",
+                            "value": "{{vars.alert_to_escalate.id}}",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        },
+                        {
+                            "type": "primitive",
+                            "field": "value",
+                            "value": "SystemUpdate64.exe",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        }
+                    ]
+                },
+                "module": "indicators?$limit=30",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "720",
+            "left": "540",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "15a90f7a-ee3b-49e5-a6ee-d81537ab5309"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Related Objects Data",
+            "description": null,
+            "arguments": {
+                "source_ip": "{{vars.alert_to_escalate.sourceIp}}",
+                "linked_users_IRIs": "{% if vars.alert_to_escalate.users | length > 0 %}{{(vars.alert_to_escalate|json_query('users[].\\\"@id\\\"'))|unique}}{% endif %}",
+                "linked_assets_IRIs": "{% if vars.alert_to_escalate.assets | length > 0 %}{{(vars.alert_to_escalate|json_query('assets[].\\\"@id\\\"'))|unique}}{% endif %}",
+                "linked_attachments": "{% if vars.alert_to_escalate.attachments | length > 0 %}{{(vars.alert_to_escalate|json_query('attachments[].\\\"@id\\\"'))|unique}}{% endif %}",
+                "attachment_filename": "{%set tmp_ind=vars.alert_to_escalate|json_query('indicators[]')|json_query('[?file != null]')%}{%if tmp_ind|length>0%}{{tmp_ind.0.value}}{%endif%}",
+                "linked_comments_IRI": "{% if vars.alert_to_escalate.comments | length > 0 %}{{(vars.alert_to_escalate|json_query('comments[].\\\"@id\\\"'))|unique}}{% endif %}",
+                "linked_indicator_incidents": "{% if vars.alert_to_escalate.indicators | length > 0 %}{{(vars.alert_to_escalate|json_query('indicators[].\\\"@id\\\"'))|unique}}{% endif %}"
+            },
+            "status": null,
+            "top": "320",
+            "left": "120",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "3486902f-f33b-4b1c-8755-67c4f9aff4af"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Comment_Graphical correlation",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "people": [],
+                    "content": "<div>\n<div style=\"text-align: left;\">{{globalVars.Hint_Icon}} Check the Incident correlation graph to get a visual description of the ticket<\/div>\n<\/div>",
+                    "__replace": "",
+                    "incidents": "{{vars.incident['@id']}}",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "180",
+            "left": "540",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "3c1558c0-d728-4ba1-8cb4-a00228d725f7"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Comment_Add Attachment Guiding",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "people": [],
+                    "content": "<p>{{globalVars.Hint_Icon}} Malware lateral movement is very common with each malware infection. It Is vital to identify the malware indicators and run a hunt for all potentially infected devices in the network.<\/p>\n<p>While moving laterally it's very easy for malwares to change their file names, hunting with its hash is more effective except for polymorphic malwares. MD5,SHA1 and SHA256 hashes are all computed automatically for the file indicators.<\/p>",
+                    "__replace": "",
+                    "incidents": "{{vars.incident['@id']}}",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "460",
+            "left": "540",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "3e19669e-f840-4b11-b442-b014a720b381"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Close Alert Post Escalation",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "state": "\/api\/3\/picklists\/8675a07f-2d0d-4e3a-89af-4822b8341df8",
+                    "status": "\/api\/3\/picklists\/fac53e73-8d16-4189-98d5-95fbd1555232",
+                    "emailFrom": "{{vars.input.params['alert_description_source_data'][\"Email Sender\"] or None}}",
+                    "description": "{{vars.alert_to_escalate.description or \"<br>\"}}\n<p><span style=\"background-color:yellow;color:black;font-weight:bold\">Alert has been escalated to an Incident with ID: <\/span><span style=\"color:orange;font-weight:bold\">{{vars.steps.Escalate_Alert_to_Incident.id}}<\/span><\/p>\n<span style=\"color:orange;font-weight:bold\">Escalation reason:<\/span>   Malicious Indicator(s) Found",
+                    "closureNotes": "Ticket Escalated to T2, it is being investigated as Ticket: **{{vars.steps.Escalate_Alert_to_Incident.id}}**",
+                    "senderDomain": "{%if vars.input.params['alert_description_source_data'][\"Email Sender\"]%}{{vars.input.params['alert_description_source_data'][\"Email Sender\"].split('@')[1]}}{%endif%}",
+                    "closureReason": "\/api\/3\/picklists\/672aef13-a684-422e-be6c-15e10ec49915",
+                    "escalationReason": "<p><span style=\"color:red;font-weight:bold\">Malicious Indicator Detected !<\/span><\/p>",
+                    "senderEmailAddress": "{{vars.input.params['alert_description_source_data'][\"Email Sender\"] or None}}",
+                    "escalatedtoincident": "\/api\/3\/picklists\/fa12313b-66af-4a2e-864e-a5f19241b734"
+                },
+                "_showJson": false,
+                "operation": "Create New",
+                "collection": "{{vars.alert_to_escalate[\"@id\"]}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "860",
+            "left": "120",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "430bee74-8ea4-4d4f-81c6-9179d90b62f3"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Escalate Alert to Incident",
+            "description": null,
+            "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "content": "<p>{{globalVars.Exclamation_Icon}} Alert has been <span class=\"badge badge-pill badge-danger\" style=\"background: #e31b1d; color: #fff;\">Escalated<\/span> due to malicious indicator<\/p>",
+                    "records": "{{vars.input.params['alert_IRI']}}"
+                },
+                "resource": {
+                    "name": "{{vars.alert_to_escalate.name+', ID: '+(vars.alert_to_escalate.id|string)  or 'Escalated Incident'}}",
+                    "phase": "\/api\/3\/picklists\/bb740542-f699-11e7-8c3f-9a214cf093ae",
+                    "alerts": "{{vars.alert_to_escalate[\"@id\"]}}",
+                    "assets": "{{vars.linked_assets_IRIs}}",
+                    "owners": "{{vars.alert_to_escalate.owners[0][\"@id\"]}}",
+                    "resSla": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "source": "FortiSIEM",
+                    "status": "\/api\/3\/picklists\/bb73fe9e-f699-11e7-8c3f-9a214cf093ae",
+                    "metrics": "{{vars.alert_to_escalate.metrics or None}}",
+                    "category": "\/api\/3\/picklists\/703218fc-f69a-11e7-8c3f-9a214cf093ae",
+                    "fileName": "{{vars.alert_to_escalate.filePath or None}}",
+                    "filehash": "{{vars.alert_to_escalate.fileHash or None}}",
+                    "severity": "{{vars.alert_to_escalate.severity[\"@id\"] or None}}",
+                    "slaState": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "sourceIP": "{{vars.alert_to_escalate.sourceIp or None}}",
+                    "sourceId": "{{vars.alert_to_escalate.sourceId}}-{{globalVars.Current_Date}}",
+                    "__replace": "",
+                    "deviceUID": "{{vars.alert_to_escalate.deviceUID or None}}",
+                    "indicators": "{{vars.linked_indicator_incidents}}",
+                    "recordTags": "{{vars.alert_to_escalate.recordTags}}",
+                    "resolution": "{%if vars.input.params.automated%}Automated{%endif%}",
+                    "sourcedata": "{{vars.alert_to_escalate.sourcedata|toDict|toJSON}}",
+                    "attachments": "{{vars.linked_attachments}}",
+                    "description": "{{vars.alert_to_escalate.description}}",
+                    "processName": "{{vars.alert_to_escalate.fileName or None}}",
+                    "targetAsset": "{{vars.alert_to_escalate.targetAsset}}",
+                    "affectedHost": "{{vars.alert_to_escalate.sourceIp or None}}",
+                    "affectedUser": "{{vars.alert_to_escalate.userName or None}}",
+                    "discoveredOn": "{{globalVars.Current_Date}}",
+                    "incidentLead": "{{vars.alert_to_escalate.incidentLead or None}}",
+                    "destinationIP": "{{vars.alert_to_escalate.destinationIp}}",
+                    "slaPercentage": 0,
+                    "dateOfIncident": "{{globalVars.Current_Date}}",
+                    "confirmationDate": "{{globalVars.Current_Date}}"
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/incidents",
+                "__recommend": [],
+                "tagsOperation": "OverwriteTags",
+                "fieldOperation": {
+                    "category": "Overwrite",
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": {
+                    "incident": "{{ vars.result }}"
+                }
+            },
+            "status": null,
+            "top": "440",
+            "left": "120",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "567804e9-426a-44fa-b02a-19d4277c39fc"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait for comment 1",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "hostname",
+                            "value": "unobtainium.vhost.org",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        }
+                    ]
+                },
+                "module": "assets?$limit=30",
+                "do_until": {
+                    "delay": 3,
+                    "retries": 1,
+                    "condition": "{{vars.result | length > 0}}"
+                },
+                "checkboxFields": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "40",
+            "left": "540",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "58b56454-a32c-4785-bafe-cce45a3b6afa"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Alert Severity",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "state": "\/api\/3\/picklists\/8675a07f-2d0d-4e3a-89af-4822b8341df8",
+                    "emailFrom": "{{vars.input.params['alert_description_source_data'][\"Email Sender\"] or None}}",
+                    "description": "{{vars.alert_to_escalate.description or \"<br>\"}}\n<p><span style=\"background-color:yellow;color:black;font-weight:bold\">Alert has been escalated to an Incident with ID: <\/span><span style=\"color:orange;font-weight:bold\">{{vars.steps.Escalate_Alert_to_Incident.id}}<\/span><\/p>\n<span style=\"color:orange;font-weight:bold\">Escalation reason:<\/span>   Malicious Indicator(s) Found",
+                    "senderDomain": "{%if vars.input.params['alert_description_source_data'][\"Email Sender\"]%}{{vars.input.params['alert_description_source_data'][\"Email Sender\"].split('@')[1]}}{%endif%}",
+                    "escalationReason": "<p><span style=\"color:red;font-weight:bold\">Malicious Indicator Detected !<\/span><\/p>",
+                    "senderEmailAddress": "{{vars.input.params['alert_description_source_data'][\"Email Sender\"] or None}}",
+                    "escalatedtoincident": "\/api\/3\/picklists\/fa12313b-66af-4a2e-864e-a5f19241b734"
+                },
+                "_showJson": false,
+                "operation": "Create New",
+                "collection": "{{vars.alert_to_escalate[\"@id\"]}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "580",
+            "left": "120",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "5b94ec42-4f31-49cf-886c-10c1fbced248"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "red_style": "<span style=\"background-color:red;color:white;font-weight:bold; border: 1px solid; padding: 5px; box-shadow: 0px 2px 8px green;\">{}<\/span>"
+                }
+            },
+            "status": null,
+            "top": "40",
+            "left": "120",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "group": null,
+            "uuid": "7ff454d2-ca30-421f-ac51-e30c329f52cb"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Comments IRIs",
+            "description": null,
+            "arguments": {
+                "comments_IRIs": "{{vars.steps.Comment_Hunt_Lateral_Movement['@id']}}"
+            },
+            "status": null,
+            "top": "1000",
+            "left": "540",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "92163928-c56b-4f98-ae78-dfa74805209b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Incident Phase",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "phase": "\/api\/3\/picklists\/37f637f0-2e7a-41cc-a6e4-502d7263b2d0"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.incident[\"@id\"]}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/incidents",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "580",
+            "left": "540",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "92469391-6a05-434d-a706-1ff53163d9fa"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait for comment 2",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "hostname",
+                            "value": "unobtainium.vhost.org",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        }
+                    ]
+                },
+                "module": "assets?$limit=30",
+                "do_until": {
+                    "delay": 3,
+                    "retries": 1,
+                    "condition": "{{vars.result | length > 0}}"
+                },
+                "checkboxFields": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "320",
+            "left": "540",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "9fd887c9-b6aa-4a56-8360-b5bbdc814400"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "alert_to_escalate": "{{(vars.input.params['alert_IRI']+'?$relationships=true')|fromIRI}}"
+            },
+            "status": null,
+            "top": "180",
+            "left": "120",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "aacebf7a-5c60-437b-b2ec-add58355b14f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait For SLA Updates",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "hostname",
+                            "value": "unobtainium.vhost.org",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        }
+                    ]
+                },
+                "module": "assets?$limit=30",
+                "do_until": {
+                    "delay": 2,
+                    "retries": 2,
+                    "condition": "{{vars.result | length > 0}}"
+                },
+                "checkboxFields": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "720",
+            "left": "120",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "c908eb2a-3aa3-4ab9-acaf-131d491d807f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Comment_Hunt Lateral Movement",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "people": [],
+                    "content": "<p>{{globalVars.Action_Icon}}&nbsp;<\/p>\n<ul>\n<li>Open the file indicator: <span style=\"color: #e67e23;\">SystemUpdate64.exe <\/span>[<span style=\"color: #e03e2d;\"><strong>Warning!<\/strong><\/span> do not download it]<\/li>\n<li><span style=\"font-size: 12pt;\"><span style=\"font-size: 10pt;\">Run <span style=\"font-size: 12pt;\"><span style=\"font-size: 10pt;\">playbook:&nbsp;<\/span><\/span><span style=\"background-color: #e67e23;\"><strong>Hunt Lateral Movement<\/strong><\/span> to search for the file hash on all available workstations<strong style=\"color: #e67e23;\"><br><\/strong><\/span><\/span><\/li>\n<\/ul>",
+                    "__replace": "",
+                    "incidents": "{{vars.incident['@id']}}",
+                    "indicators": "{{vars.steps.Find_File_Indicator[0]['@id']}}",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "860",
+            "left": "540",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "e3ed9337-e349-42c1-b09b-7f7ac68c96b8"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Wait for comment 2 -> Add Attachment Guiding Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/3e19669e-f840-4b11-b442-b014a720b381",
+            "sourceStep": "\/api\/3\/workflow_steps\/9fd887c9-b6aa-4a56-8360-b5bbdc814400",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "021b8d14-2c62-4d68-92dd-b298b3b6b166"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Add Attachment Guiding Comment -> Update Incident Phase",
+            "targetStep": "\/api\/3\/workflow_steps\/92469391-6a05-434d-a706-1ff53163d9fa",
+            "sourceStep": "\/api\/3\/workflow_steps\/3e19669e-f840-4b11-b442-b014a720b381",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "0602b0f3-cfb7-4f8a-bd85-87a15e4139f0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Wait For SLA Updates -> Close Alert Post Escalation",
+            "targetStep": "\/api\/3\/workflow_steps\/430bee74-8ea4-4d4f-81c6-9179d90b62f3",
+            "sourceStep": "\/api\/3\/workflow_steps\/c908eb2a-3aa3-4ab9-acaf-131d491d807f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "105b6d1f-01e1-4b8c-9a21-0db779ae1bae"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "_GC_ Hunt Lateral Mvmt -> Comments IRIs",
+            "targetStep": "\/api\/3\/workflow_steps\/92163928-c56b-4f98-ae78-dfa74805209b",
+            "sourceStep": "\/api\/3\/workflow_steps\/e3ed9337-e349-42c1-b09b-7f7ac68c96b8",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "31266533-050d-4a1e-a6a1-0c9e78bf0500"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Get Related Objects Data",
+            "targetStep": "\/api\/3\/workflow_steps\/3486902f-f33b-4b1c-8755-67c4f9aff4af",
+            "sourceStep": "\/api\/3\/workflow_steps\/aacebf7a-5c60-437b-b2ec-add58355b14f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4832bd8e-5b4e-47e1-9c68-3a77d2a98d83"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Find File Indicator -> _GC_ Hunt Lateral Mvmt",
+            "targetStep": "\/api\/3\/workflow_steps\/e3ed9337-e349-42c1-b09b-7f7ac68c96b8",
+            "sourceStep": "\/api\/3\/workflow_steps\/15a90f7a-ee3b-49e5-a6ee-d81537ab5309",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "72f0a907-2f50-4d27-8f69-55d95c3bd000"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Copy of Set Escalate Status on Alert -> Add Start Guiding Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/09a1f1f2-19b5-4f26-a658-9edb58ef46f0",
+            "sourceStep": "\/api\/3\/workflow_steps\/430bee74-8ea4-4d4f-81c6-9179d90b62f3",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "75698687-c57b-4ad8-a2c0-280888c1b353"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Incident Phase -> Find File Indicator",
+            "targetStep": "\/api\/3\/workflow_steps\/15a90f7a-ee3b-49e5-a6ee-d81537ab5309",
+            "sourceStep": "\/api\/3\/workflow_steps\/92469391-6a05-434d-a706-1ff53163d9fa",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "7992020b-6d6c-41b0-b438-2c644652f65b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Escalate Alert to Incident -> Set Escalate Status on Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/5b94ec42-4f31-49cf-886c-10c1fbced248",
+            "sourceStep": "\/api\/3\/workflow_steps\/567804e9-426a-44fa-b02a-19d4277c39fc",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "7c48873d-6cf9-4dc7-af20-15cd57fa4fb8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Wait for comment 1 -> Add Indicator Guiding Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/3c1558c0-d728-4ba1-8cb4-a00228d725f7",
+            "sourceStep": "\/api\/3\/workflow_steps\/58b56454-a32c-4785-bafe-cce45a3b6afa",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "bf11c8c3-f8e7-4937-8f2f-3715d5399cd8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Related Objects Data -> Escalate Alert to Incident",
+            "targetStep": "\/api\/3\/workflow_steps\/567804e9-426a-44fa-b02a-19d4277c39fc",
+            "sourceStep": "\/api\/3\/workflow_steps\/3486902f-f33b-4b1c-8755-67c4f9aff4af",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "bfce7281-3b23-414b-beb9-1ae7f4d7423a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Add Indicator Guiding Comment -> Wait for comment 2",
+            "targetStep": "\/api\/3\/workflow_steps\/9fd887c9-b6aa-4a56-8360-b5bbdc814400",
+            "sourceStep": "\/api\/3\/workflow_steps\/3c1558c0-d728-4ba1-8cb4-a00228d725f7",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "cdf823ec-f953-4210-b4d2-74dbc2d3b9cb"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Alert Severity -> Copy 1 of Wait S1",
+            "targetStep": "\/api\/3\/workflow_steps\/c908eb2a-3aa3-4ab9-acaf-131d491d807f",
+            "sourceStep": "\/api\/3\/workflow_steps\/5b94ec42-4f31-49cf-886c-10c1fbced248",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d13580b2-9712-4d7d-aa31-b2e1fc1db68e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Copy  of Get Alert Data",
+            "targetStep": "\/api\/3\/workflow_steps\/aacebf7a-5c60-437b-b2ec-add58355b14f",
+            "sourceStep": "\/api\/3\/workflow_steps\/7ff454d2-ca30-421f-ac51-e30c329f52cb",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "dd9220d1-0c25-4445-9a8f-66e5291a5be5"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Add Start Guiding Comment -> Copy of Wait S1",
+            "targetStep": "\/api\/3\/workflow_steps\/58b56454-a32c-4785-bafe-cce45a3b6afa",
+            "sourceStep": "\/api\/3\/workflow_steps\/09a1f1f2-19b5-4f26-a658-9edb58ef46f0",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f8bebe50-aec6-415a-8826-f98bc7f4faeb"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "ca2dcb7f-2e0d-44d3-8c31-bfab33d20d31",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Incident",
+        "Escalation",
+        "Alert"
+    ]
+}

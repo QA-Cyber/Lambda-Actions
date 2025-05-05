@@ -1,0 +1,223 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "A - Scenario - Phishing Incident Management - Create Phishing Demo Records",
+    "aliasName": null,
+    "tag": null,
+    "description": "Creates records to populate dashboards and reports",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/6dadec2b-3024-4b1b-832c-c612f0bca071",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/1506c474-6407-4486-b2bf-e94b131efec7",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "domains": "['acuweather.com','amaazon.com','axieeninfinity.com','ayaubk.com','baiddu.com','bilibbili.com','being.com','t.me','turboopages.org','twitche.tv','twetter.com','verveforexx.com','vkk.com','weathers.com','whatsap.com','wikipeda.org','xhamster.com','xnx.com','xideos.com','yah0o.com','yendex.ru','youtoube.com','zoum.us']",
+                "usernames": "['Eros','Eryx','Evander','Ganymede','Griffin','Hades','Halcyon','Hector','Helios','Hercules','Hermes','Hero','Homer','Hyperion','Iapetos','Iason','Icarus','Janus','Jason','Jupiter','Leander']",
+                "__tmp_create_timestamps_list": "{%set now=arrow.utcnow().int_timestamp%}\n{% for n in range(vars.records_count|int) %}\n{%set x=range(1,84000)|random%}\n{{vars.records_timestamp_list.append(now - (x * (n\/20)))}}\n{% endfor %}"
+            },
+            "status": null,
+            "top": "160",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "77ffaca3-1e7a-4d27-b0a7-fa5c295188ee"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "INSERT Alert",
+            "description": null,
+            "arguments": {
+                "for_each": {
+                    "item": "{{vars.records_timestamp_list}}",
+                    "__bulk": true,
+                    "parallel": false,
+                    "condition": "",
+                    "batch_size": 100
+                },
+                "resource": {
+                    "name": "Suspected Phishing: Immediate action required ID: {{range(1,84000)|random}}",
+                    "type": "\/api\/3\/picklists\/c145394b-069a-449b-a05e-67980d0f4b82",
+                    "state": "\/api\/3\/picklists\/a1bac09b-1441-45aa-ad1b-c88744e48e72",
+                    "status": "{{\"AlertStatus\" | picklist(([\"Open\",\"Investigating\",\"Pending\",\"Closed\",\"Re-Opened\"]|random), \"@id\")}}",
+                    "reporter": "asmith@fortielab.com",
+                    "severity": "{{\"Severity\" | picklist(([\"Minimal\",\"Low\",\"Medium\",\"High\",\"Critical\"]|random), \"@id\")}}",
+                    "userName": "{{vars.usernames|random}}",
+                    "__replace": "",
+                    "emailFrom": "sysadmin \\u003Csysadmin@{{vars.domains|random}}\\u003E",
+                    "ackSlaStatus": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "senderDomain": "{{vars.domains|random}}",
+                    "closureReason": "{{\"Closure Reason\" | picklist(([\"Duplicate\",\"Escalated to Incident\",\"False Positive\",\"Invalid\",\"Resolved\",\"Tasks Completed\"]|random), \"@id\")}}",
+                    "respSlaStatus": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "priorityWeight": 1,
+                    "alertDetectionDate": "{{vars.item}}",
+                    "senderEmailAddress": "sysadmin \\u003Csysadmin@{{vars.domains|random}}\\u003E",
+                    "emailClassification": "\/api\/3\/picklists\/a1e5c01d-f703-4fa4-a5c4-b3a22f7591ab",
+                    "escalatedtoincident": "{{\"EscalatedToIncident\" | picklist(([\"Yes\",\"No\",\"No\"]|random), \"@id\")}}",
+                    "alertRemainingAckSLA": 0
+                },
+                "_showJson": false,
+                "collection": "\/api\/ingest-feeds\/alerts",
+                "__recommend": [],
+                "step_variables": []
+            },
+            "status": null,
+            "top": "320",
+            "left": "120",
+            "stepType": "\/api\/3\/workflow_step_types\/7b221880-716b-4726-a2ca-5e568d330b3e",
+            "group": null,
+            "uuid": "7912578f-6f3a-4656-815b-ce3920c5d360"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "INSERT Incident",
+            "description": null,
+            "arguments": {
+                "for_each": {
+                    "item": "{{vars.records_timestamp_list}}",
+                    "__bulk": true,
+                    "parallel": false,
+                    "condition": "{{range(1,3)|random % 2 == 0}}",
+                    "batch_size": 100
+                },
+                "resource": {
+                    "name": "Suspected Phishing: Immediate action required ID: {{range(1,84000)|random}}",
+                    "phase": "{{\"IncidentPhase\" | picklist(([\"Detection\",\"Identification\",\"Confirmation\",\"Containment\",\"Eradication\",\"Recovery\",\"Aftermath\"]|random), \"@id\")}}",
+                    "resSla": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "status": "{{\"IncidentStatus\" | picklist(([\"Open\",\"In Progress\",\"Awaiting\",\"Resolved\",\"Inactive\"]|random), \"@id\")}}",
+                    "ackDate": "{{vars.item + (range(600,1200)|random)}}",
+                    "resDate": "{{vars.item + (range(3600,4200)|random)}}",
+                    "category": "\/api\/3\/picklists\/703222e8-f69a-11e7-8c3f-9a214cf093ae",
+                    "severity": "{{\"Severity\" | picklist(([\"Minimal\",\"Low\",\"Medium\",\"High\",\"Critical\"]|random), \"@id\")}}",
+                    "slaState": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "__replace": "",
+                    "assigneddate": "{{vars.item + (range(300,600)|random)}}",
+                    "discoveredOn": "{{vars.item}}",
+                    "recoveryDate": "{{vars.item + (range(3600,4200)|random)}}",
+                    "resolveddate": "{{vars.item + (range(4200,4800)|random)}}",
+                    "senderDomain": "{{vars.domains|random}}",
+                    "aftermathDate": "{{vars.item + (range(4200,4800)|random)}}",
+                    "slaPercentage": 0,
+                    "dateOfIncident": "{{vars.item}}",
+                    "deliveryVector": "\/api\/3\/picklists\/21046bc4-3192-4070-9ca8-e37d4551327e",
+                    "containmentDate": "{{vars.item + (range(2400,3000)|random)}}",
+                    "eradicationDate": "{{vars.item + (range(3000,3600)|random)}}",
+                    "confirmationDate": "{{vars.item + (range(1800,5400)|random)}}",
+                    "identificationDate": "{{vars.item + (range(1200,1800)|random)}}",
+                    "senderEmailAddress": "sysadmin \\u003Csysadmin@{{vars.domains|random}}\\u003E"
+                },
+                "_showJson": false,
+                "collection": "\/api\/ingest-feeds\/incidents",
+                "__recommend": [],
+                "step_variables": []
+            },
+            "status": null,
+            "top": "320",
+            "left": "480",
+            "stepType": "\/api\/3\/workflow_step_types\/7b221880-716b-4726-a2ca-5e568d330b3e",
+            "group": null,
+            "uuid": "7d7ae37f-73d9-46a5-8a29-6e3fb557b540"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "26f4b59f-72e7-4ae1-ad12-4849e72b505b",
+                "resources": [
+                    "alerts",
+                    "incidents"
+                ],
+                "__triggerLimit": true,
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    },
+                    "records_count": "100",
+                    "records_timestamp_list": "[]"
+                },
+                "triggerOnSource": true,
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    },
+                    "incidents": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": true,
+                "showToasterMessage": {
+                    "visible": false,
+                    "messageVisible": true
+                },
+                "triggerOnReplicate": false,
+                "singleRecordExecution": false
+            },
+            "status": null,
+            "top": "20",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "1506c474-6407-4486-b2bf-e94b131efec7"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Config -> INSERT Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/7912578f-6f3a-4656-815b-ce3920c5d360",
+            "sourceStep": "\/api\/3\/workflow_steps\/77ffaca3-1e7a-4d27-b0a7-fa5c295188ee",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "b92527cf-0d2a-4a93-84b6-055e369b1f56"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Config -> INSERT Incident",
+            "targetStep": "\/api\/3\/workflow_steps\/7d7ae37f-73d9-46a5-8a29-6e3fb557b540",
+            "sourceStep": "\/api\/3\/workflow_steps\/77ffaca3-1e7a-4d27-b0a7-fa5c295188ee",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "dae62265-068c-4730-b6c6-472e1ba54a90"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Copy of Config",
+            "targetStep": "\/api\/3\/workflow_steps\/77ffaca3-1e7a-4d27-b0a7-fa5c295188ee",
+            "sourceStep": "\/api\/3\/workflow_steps\/1506c474-6407-4486-b2bf-e94b131efec7",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "0e3cd9b9-7537-4092-b1d8-b533e68a6ad2"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "ad99000e-feef-447b-8b67-f593c602ba8b",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "ManualTrigger",
+        "Demo_Data"
+    ]
+}

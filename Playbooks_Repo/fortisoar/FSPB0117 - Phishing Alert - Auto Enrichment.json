@@ -1,0 +1,982 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Phishing Alert - Auto Enrichment",
+    "aliasName": null,
+    "tag": null,
+    "description": "Extra Attributes Parsers and Alert Triage",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "alert_data",
+        "automated"
+    ],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/6dadec2b-3024-4b1b-832c-c612f0bca071",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/43ba6fa9-c4d2-4576-88e4-86bbf77c51b6",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Compile Description and Indicator Reputations",
+            "description": null,
+            "arguments": {
+                "__add_origin": "{{vars.alert_description.update({'Origin':vars.email_origin})}}",
+                "__add_mitre_desc": "{%if vars.attack_ids.description%}\n{%set desc=[]%}\n{%set long_desc=vars.attack_ids.description.split(' ')|batch(18)|list%}\n{%for line in long_desc%}\n{{desc.append(line|join(' '))}}\n{%endfor%}\n{{vars.alert_description.update({'Technique Description':desc|join('<br>')})}}\n{%endif%}",
+                "users_attributes": "",
+                "__add_email_reporter": "{{vars.alert_description.update({'Email Reporter':vars.email_reporter})}}",
+                "__add_email_recipients": "{{vars.alert_description.update({'Email Recipient(s)':vars.email_recipients|join(', ')})}}",
+                "indicators_reputations": "{%set indicators_data=(vars.alert_data[\"@id\"]+\"\/indicators?&__selectFields=reputation\")|fromIRI%}{{indicators_data[\"hydra:member\"]|json_query(\"[].reputation.itemValue\")}}"
+            },
+            "status": null,
+            "top": "720",
+            "left": "1700",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "a77be5e8-55a0-4108-817e-77c0ce88a9af"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute Local Attributes",
+            "description": null,
+            "arguments": {
+                "email_origin": "{%if vars.source_data.headers['return-path']%}{%if vars.my_domain in vars.source_data.headers['return-path']%}{{vars.internal_email}}{%else%}{{vars.external_email}}{%endif%}{%elif vars.my_domain in vars.source_data.headers.from%}{{vars.internal_email}}{%else%}{{vars.external_email}}{%endif%}",
+                "__tmp_add_sender": "{%if vars.source_data.headers['return-path']%}\n{%set tmp_from=vars.source_data.headers['return-path']%}\n{%elif vars.my_domain in vars.source_data.headers.from%}\n{%set tmp_from=vars.source_data.headers.from|regex_search(\"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+\")%}\n{%endif%}\n{{vars.alert_description.update({\"Email Sender\":tmp_from})}}",
+                "email_recipients": "{{vars.source_data.headers.to|regex_findall(\"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+\")|union(vars.source_data.headers.cc|regex_findall(\"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+\"))}}"
+            },
+            "status": null,
+            "top": "360",
+            "left": "1540",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "ca456b8a-e330-4b57-b36e-8aa7b6b5db2b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "action": "<span style=\"background-color:red;color:black;border-radius: 4px;font-size:8mm;\">&#10159;<font style=\"font-size:18px;font-weight: bold;font-family: 'Georgia', monospace;\">Action<\/font><\/span>",
+                "my_domain": "fortielab.com",
+                "my_subnet": "['10.200.0.0\/24']",
+                "email_body": "{%if vars.source_data.body.html %}{{vars.source_data.body.html}}{%else%}{{vars.source_data.body.text}}{%endif%}",
+                "email_headers": "{{vars.source_data.headers}}",
+                "external_email": "<p><span style=\"background-color:red;color:white;font-weight:bold; border: 1px solid; padding: 5px; box-shadow: 0px 2px 8px red;\">External Email<\/span><\/p>",
+                "internal_email": "<p><span style=\"background-color:green;color:white;font-weight:bold; border: 1px solid; padding: 5px; box-shadow: 0px 2px 8px green;\">Internal Email<\/span><\/p>",
+                "mitre_attack_id": "T1598.002",
+                "alert_description": "{\"Email Sender\":\"\"}"
+            },
+            "status": null,
+            "top": "60",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": "\/api\/3\/workflow_groups\/42474493-eaf1-4c3e-af1b-e93a29421810",
+            "uuid": "3155c414-5f2d-498f-9665-b3101bc8d691"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Recipients Users",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.email_recipients|length > 0}}",
+                "for_each": {
+                    "item": "{{vars.email_recipients}}",
+                    "parallel": false,
+                    "condition": ""
+                },
+                "arguments": {
+                    "username": "{{vars.item.split('@')[0]}}",
+                    "alert_iri": "{{vars.alert_data['@id']}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/27c4feaa-0ce1-422e-92ee-f1adb72636df"
+            },
+            "status": null,
+            "top": "480",
+            "left": "1620",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "86cca1c2-333e-484a-8aa5-2a6d2c1ab131"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Escalate To Incident",
+            "description": null,
+            "arguments": {
+                "message": {
+                    "tags": [
+                        "\/api\/3\/tags\/Scenario: Phishing Incident Management"
+                    ],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "thread": false,
+                    "content": "<p><span style=\"font-size: 10pt;\">{{globalVars.Action_Icon}} <\/span><\/p>\n<p><span style=\"font-size: 10pt;\">Open the escalated incident located at <\/span><br><span style=\"font-size: 10pt;\"><strong>Correlations &gt; Incidents<\/strong><\/span><\/p>",
+                    "records": "{{vars.alert_data['@id']}}",
+                    "parentstepid": "\/api\/3\/workflow_steps\/090a2225-89a5-4b1c-a3e5-54ebeaf55a02"
+                },
+                "arguments": {
+                    "automated": "{{vars.input.params.automated}}",
+                    "alert_data": "{{ (vars.alert_data['@id']+'?$relationships=true') | fromIRI }}",
+                    "mitre_technique_data": "{{vars.attack_ids}}",
+                    "alert_description_source_data": "{{vars.alert_description}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_parent_env": false,
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/677d9dd0-fb9d-4f5c-ba2f-3f11c9b9fca8"
+            },
+            "status": null,
+            "top": "360",
+            "left": "2820",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "cde6ce2b-0223-4dcb-91c1-f3494f1b3225"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Find Related MITRE Attack ID",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.mitre_attack_id}}",
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "mitreId",
+                            "value": "{{vars.mitre_attack_id}}",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        }
+                    ]
+                },
+                "module": "mitre_sub_techniques?$limit=1",
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "content": "<p>Info: Lookup MITRE Technique<\/p>",
+                    "records": "{{vars.alert_data['@id']}}"
+                },
+                "checkboxFields": false,
+                "step_variables": {
+                    "attack_ids": "{%if vars.result|length > 0%}{{vars.result.0}}{%endif%}"
+                }
+            },
+            "status": null,
+            "top": "600",
+            "left": "1660",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "b17e1034-7fd0-4e51-a245-eef4183601a9"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Main Email Attributes",
+            "description": null,
+            "arguments": {
+                "email_reporter": "{{vars.source_data.reporterEmailAddress|regex_search(\"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+\")}}",
+                "is_forwarded_inline": "{{(vars.email_body|regex_findall('From:|To:|Subject:'))|length}}"
+            },
+            "status": null,
+            "top": "160",
+            "left": "60",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": "\/api\/3\/workflow_groups\/42474493-eaf1-4c3e-af1b-e93a29421810",
+            "uuid": "296a2249-2d2b-4277-b3ad-faa7d5d9223a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Is it Original Email",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "no",
+                        "step_iri": "\/api\/3\/workflow_steps\/639a956e-2235-43ce-9815-212c07194461",
+                        "condition": "{{ vars.is_forwarded_inline >= 2 }}",
+                        "step_name": "Error Notification"
+                    },
+                    {
+                        "option": "yes",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/2f9d8ab6-e71e-4ce8-89ec-ed7a975a0fde",
+                        "step_name": "Wait For All Indicators To Be Rated"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "360",
+            "left": "660",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "group": null,
+            "uuid": "bee44ac2-56af-4d53-8f89-a359dc8f12e4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Is Malicious",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "yes",
+                        "step_iri": "\/api\/3\/workflow_steps\/cde6ce2b-0223-4dcb-91c1-f3494f1b3225",
+                        "condition": "{{ ('Malicious' in vars.indicators_reputations) or ('Suspicious' in vars.indicators_reputations) }}",
+                        "step_name": "Escalate To Incident"
+                    },
+                    {
+                        "option": "no",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/8f4a90dc-bb69-4b01-9350-f3f7e0e7da06",
+                        "step_name": "Update Alert Severity"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "360",
+            "left": "2240",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "group": null,
+            "uuid": "84040eff-6b0c-482e-b334-978b62c4ff94"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Notify Reporter Email is Safe",
+            "description": null,
+            "arguments": {
+                "config": "88c3d39c-2fa9-4731-b00d-29815008f17c",
+                "params": {
+                    "cc": "",
+                    "to": "{{vars.email_reporter}}",
+                    "bcc": "",
+                    "from": "SOC@{{vars.my_domain}}",
+                    "type": "Manual Input",
+                    "content": "Dear Sender,\nWe did not find any threat in your email with Subject: [{{vars.source_data.headers.subject}}] \nRegards,\nSOC Team",
+                    "subject": "Email previously submitted for analysis is Safe",
+                    "iri_list": "",
+                    "body_type": "Plain Text",
+                    "file_name": "",
+                    "file_path": ""
+                },
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "content": "<p>Info: Reporter Notified by Email: <span class=\"badge badge-pill badge-danger\" style=\"background: green; color: #fff;\">No Threat Found<\/span><\/p>",
+                    "records": "{{vars.alert_data['@id']}}",
+                    "parentstepid": "\/api\/3\/workflow_steps\/49cfd21a-910f-41b4-aebb-21197d726a93"
+                },
+                "version": "2.5.0",
+                "from_str": "admin@example.com",
+                "connector": "smtp",
+                "operation": "send_email_new",
+                "ignore_errors": true,
+                "operationTitle": "Send Email",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "840",
+            "left": "2820",
+            "stepType": "\/api\/3\/workflow_step_types\/4c0019b2-055c-44d0-968c-678a0c2d762e",
+            "group": null,
+            "uuid": "e16c9f6f-6b4f-424e-98f2-ad4d5f4fdcbd"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Send Error Notification",
+            "description": null,
+            "arguments": {
+                "config": "88c3d39c-2fa9-4731-b00d-29815008f17c",
+                "params": {
+                    "cc": "",
+                    "to": "{{vars.email_reporter}}",
+                    "bcc": "",
+                    "from": "SOC@{{vars.my_domain}}",
+                    "type": "Manual Input",
+                    "content": "Please re-Forward the email with Subject: [{{vars.source_data.headers.subject}}] As Attachment. Inline forwards are not processed.\nCheck the link below for more details:\nhttps:\/\/support.microsoft.com\/en-us\/office\/reply-to-or-forward-an-email-message-a843f8d3-01b0-48da-96f5-a71f70d0d7c8",
+                    "subject": "Email Forwarded in a Wrong Format",
+                    "iri_list": "",
+                    "body_type": "Plain Text",
+                    "file_name": "",
+                    "file_path": ""
+                },
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "content": "<p><span style=\"background-color: #e03e2d;\"><strong>Message Rejected<\/strong><\/span><\/p>\n<p>- Wrong attachment format<\/p>\n<p>- Reporter instructed to resend the email as attachment<\/p>",
+                    "records": ""
+                },
+                "version": "2.5.0",
+                "from_str": "admin@example.com",
+                "connector": "smtp",
+                "operation": "send_email_new",
+                "ignore_errors": true,
+                "operationTitle": "Send Email",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "760",
+            "left": "660",
+            "stepType": "\/api\/3\/workflow_step_types\/4c0019b2-055c-44d0-968c-678a0c2d762e",
+            "group": null,
+            "uuid": "639a956e-2235-43ce-9815-212c07194461"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "alert_data": "{{vars.input.params['alert_data']}}",
+                    "source_data": "{{vars.input.params.alert_data.sourcedata|toDict}}",
+                    "useMockOutput": "{{globalVars.Demo_mode}}"
+                }
+            },
+            "status": null,
+            "top": "360",
+            "left": "120",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "group": null,
+            "uuid": "43ba6fa9-c4d2-4576-88e4-86bbf77c51b6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Ticket Close_1",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "status": "\/api\/3\/picklists\/fac53e73-8d16-4189-98d5-95fbd1555232"
+                },
+                "operation": "Append",
+                "collection": "{{vars.steps.Update_Required_Attributes['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": [],
+                "step_variables": []
+            },
+            "status": null,
+            "top": "760",
+            "left": "940",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "9cc09e43-f38b-4a0c-9903-b7e2d08ac286"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Alert Attributes",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "Suspicious Email: {{vars.alert_data.emailSubject}}",
+                    "status": "\/api\/3\/picklists\/758925e7-629c-46d8-89db-fb36f5fbe88a",
+                    "tenant": "\/api\/3\/tenants\/b3a700f7-00be-4ef9-90c6-3c8fe6e1be63",
+                    "emailTo": "{{vars.email_recipients|join(', ')}}",
+                    "sourceId": "{{vars.source_data.headers['message-id']}}",
+                    "recordTags": [],
+                    "sourceType": "Email",
+                    "description": "{{vars.alert_description | json2html(row_fields=[], template=\"Stylized with row selection\", display=\"Vertical\", styling=true, table_style={})}}",
+                    "killChainPhase": "\/api\/3\/picklists\/d889ee08-9ddd-404b-a166-6e8c33414f5e",
+                    "mitre_sub_techniques": "{{vars.attack_ids['@id']}}"
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "{{vars.alert_data['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "840",
+            "left": "1760",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "5d549e4a-9d84-4682-b8cc-93942c3c3c00"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Alert Severity",
+            "description": null,
+            "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "content": "<p>Severity set to <span class=\"badge badge-pill badge-danger\" style=\"background: green; color: #fff;\">Minimal<\/span><\/p>",
+                    "records": "{{vars.alert_data['@id']}}"
+                },
+                "resource": {
+                    "tenant": "\/api\/3\/tenants\/b3a700f7-00be-4ef9-90c6-3c8fe6e1be63",
+                    "severity": "\/api\/3\/picklists\/0d609b08-45e0-469f-8910-41145c0b7c03",
+                    "recordTags": [],
+                    "description": "{{vars.alert_description | json2html(row_fields=[], template=\"Stylized with row selection\", display=\"Vertical\", styling=true, table_style={})}}",
+                    "closureNotes": "Alert closed as False Positive, No Malicious component found",
+                    "closureReason": "\/api\/3\/picklists\/2b0112f6-4746-4dab-ada6-a8cd1e675572",
+                    "escalatedtoincident": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5"
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "{{vars.alert_data['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "60",
+            "left": "20",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": "\/api\/3\/workflow_groups\/be5a0deb-419c-42f5-831c-dc3c22d99658",
+            "uuid": "8f4a90dc-bb69-4b01-9350-f3f7e0e7da06"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Alert Status",
+            "description": null,
+            "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "content": "<p>Alert closed as <span style=\"background: green; color: #fff;\" class=\"badge badge-pill badge-danger\">False Positive<\/span><\/p>",
+                    "records": "{{vars.alert_data['@id']}}"
+                },
+                "resource": {
+                    "status": "\/api\/3\/picklists\/fac53e73-8d16-4189-98d5-95fbd1555232",
+                    "tenant": "\/api\/3\/tenants\/b3a700f7-00be-4ef9-90c6-3c8fe6e1be63",
+                    "recordTags": [],
+                    "closureNotes": "Alert closed as False Positive, No Malicious component found",
+                    "closureReason": "\/api\/3\/picklists\/2b0112f6-4746-4dab-ada6-a8cd1e675572",
+                    "escalatedtoincident": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5"
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "{{vars.alert_data['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "260",
+            "left": "60",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": "\/api\/3\/workflow_groups\/be5a0deb-419c-42f5-831c-dc3c22d99658",
+            "uuid": "50230559-7554-4c64-a506-354f8ce8526d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Indicator Tag Scenario",
+            "description": null,
+            "arguments": {
+                "for_each": {
+                    "item": "{{vars.steps.Wait_for_Enrichment}}",
+                    "__bulk": true,
+                    "condition": "",
+                    "batch_size": 100
+                },
+                "resource": {
+                    "__link": {
+                        "recordTags": [
+                            "\/api\/3\/tags\/Scenario: Phishing Incident Management"
+                        ]
+                    }
+                },
+                "operation": "Append",
+                "collection": "{{vars.item['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/indicators",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "560",
+            "left": "1180",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "505771f8-150a-4a45-b552-4de6d15213ca"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Required Attributes",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "sourceIp": "{%if vars.source_data.headers.received|length >0%}{{vars.source_data.headers.received[-1]|regex_search('(?:[0-9]{1,3}\\.){3}[0-9]{1,3}')}}{%endif%}"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.alert_data['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "260",
+            "left": "80",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": "\/api\/3\/workflow_groups\/42474493-eaf1-4c3e-af1b-e93a29421810",
+            "uuid": "9f72d06d-35a4-4d1a-a678-b1046836282a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait For All Related Indicators Reputations",
+            "description": null,
+            "arguments": {
+                "do_until": {
+                    "delay": 10,
+                    "retries": 6,
+                    "condition": "{{vars.result.all_indicators_rated}}"
+                },
+                "arguments": {
+                    "alert_iri": "{{vars.alert_data[\"@id\"]}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_parent_env": false,
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/375b0755-e5b1-43d9-878c-de889429ee9b"
+            },
+            "status": null,
+            "top": "40",
+            "left": "20",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": "\/api\/3\/workflow_groups\/2b9171f2-a424-4df8-b9e1-76f788c980cb",
+            "uuid": "2f9d8ab6-e71e-4ce8-89ec-ed7a975a0fde"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait for Enrichment",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "alerts.id",
+                            "value": "{{vars.alert_data.id}}",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        },
+                        {
+                            "type": "object",
+                            "field": "reputation",
+                            "value": "\/api\/3\/picklists\/ae98ebc6-beef-4882-9980-1d88fc6d87cd",
+                            "_value": {
+                                "@id": "\/api\/3\/picklists\/ae98ebc6-beef-4882-9980-1d88fc6d87cd",
+                                "itemValue": "TBD"
+                            },
+                            "operator": "neq"
+                        }
+                    ]
+                },
+                "module": "indicators?$limit=30",
+                "do_until": {
+                    "delay": 10,
+                    "retries": 6,
+                    "condition": "{{vars.result | length > 0}}"
+                },
+                "checkboxFields": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "140",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": "\/api\/3\/workflow_groups\/2b9171f2-a424-4df8-b9e1-76f788c980cb",
+            "uuid": "854b1d66-18e9-4f34-9a55-19bf2ebe0b9c"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait For SLA Update",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "hostname",
+                            "value": "unobtainium.vhost.org",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        }
+                    ]
+                },
+                "module": "assets?$limit=30",
+                "do_until": {
+                    "delay": 3,
+                    "retries": 3,
+                    "condition": "{{vars.result | length > 0}}"
+                },
+                "checkboxFields": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "160",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": "\/api\/3\/workflow_groups\/be5a0deb-419c-42f5-831c-dc3c22d99658",
+            "uuid": "00826a23-6c29-4b09-bc7c-4b148dd3a4db"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compile Description and Indicator Reputations -> Copy  of Update Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/5d549e4a-9d84-4682-b8cc-93942c3c3c00",
+            "sourceStep": "\/api\/3\/workflow_steps\/a77be5e8-55a0-4108-817e-77c0ce88a9af",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "7f1411f0-d9a1-47c6-be00-1469b7048bf3"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compute Local Attributes -> Create Recipients Users",
+            "targetStep": "\/api\/3\/workflow_steps\/86cca1c2-333e-484a-8aa5-2a6d2c1ab131",
+            "sourceStep": "\/api\/3\/workflow_steps\/ca456b8a-e330-4b57-b36e-8aa7b6b5db2b",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "90282fd2-c639-4fc2-8ec1-5f971060225d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Get Forwarding Format",
+            "targetStep": "\/api\/3\/workflow_steps\/296a2249-2d2b-4277-b3ad-faa7d5d9223a",
+            "sourceStep": "\/api\/3\/workflow_steps\/3155c414-5f2d-498f-9665-b3101bc8d691",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "f56fcb30-3b8a-4773-9b3f-35cd62d9870f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Copy  of Update Alert -> Is Malicious",
+            "targetStep": "\/api\/3\/workflow_steps\/84040eff-6b0c-482e-b334-978b62c4ff94",
+            "sourceStep": "\/api\/3\/workflow_steps\/5d549e4a-9d84-4682-b8cc-93942c3c3c00",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "413d5962-2049-4cfd-aba2-1a8948824b50"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Copy of Wait for Enrichment -> Compute Local Attributes",
+            "targetStep": "\/api\/3\/workflow_steps\/ca456b8a-e330-4b57-b36e-8aa7b6b5db2b",
+            "sourceStep": "\/api\/3\/workflow_steps\/854b1d66-18e9-4f34-9a55-19bf2ebe0b9c",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "ffbf1fd9-7794-49b5-b413-c1f60848c347"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Recipients Users -> Find Related MITRE Attack ID",
+            "targetStep": "\/api\/3\/workflow_steps\/b17e1034-7fd0-4e51-a245-eef4183601a9",
+            "sourceStep": "\/api\/3\/workflow_steps\/86cca1c2-333e-484a-8aa5-2a6d2c1ab131",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "095efdb5-22bb-4f63-9b2e-6adbe57bd94a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Email Forwarded Inline -> Error Notification",
+            "targetStep": "\/api\/3\/workflow_steps\/639a956e-2235-43ce-9815-212c07194461",
+            "sourceStep": "\/api\/3\/workflow_steps\/bee44ac2-56af-4d53-8f89-a359dc8f12e4",
+            "label": "no",
+            "isExecuted": false,
+            "group": null,
+            "uuid": "9b6dbe5f-5f64-463a-ade1-95b3c242f03e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Email Forwarded Inline -> Wait For All Indicators To Be Rated",
+            "targetStep": "\/api\/3\/workflow_steps\/2f9d8ab6-e71e-4ce8-89ec-ed7a975a0fde",
+            "sourceStep": "\/api\/3\/workflow_steps\/bee44ac2-56af-4d53-8f89-a359dc8f12e4",
+            "label": "yes",
+            "isExecuted": false,
+            "group": null,
+            "uuid": "1e75babf-24ef-4813-a047-c23cbc5949f1"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Error Notification -> Ticket Close_1",
+            "targetStep": "\/api\/3\/workflow_steps\/9cc09e43-f38b-4a0c-9903-b7e2d08ac286",
+            "sourceStep": "\/api\/3\/workflow_steps\/639a956e-2235-43ce-9815-212c07194461",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "4327966f-466f-443d-b2e8-574b38514bea"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Find Related MITRE Attack ID -> Compile Description",
+            "targetStep": "\/api\/3\/workflow_steps\/a77be5e8-55a0-4108-817e-77c0ce88a9af",
+            "sourceStep": "\/api\/3\/workflow_steps\/b17e1034-7fd0-4e51-a245-eef4183601a9",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "4e48b186-51c0-4c44-84a3-dc002d176ad2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Main Email Attributes -> Update Required Attributes",
+            "targetStep": "\/api\/3\/workflow_steps\/9f72d06d-35a4-4d1a-a678-b1046836282a",
+            "sourceStep": "\/api\/3\/workflow_steps\/296a2249-2d2b-4277-b3ad-faa7d5d9223a",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "f5b2aca9-74f3-41c1-8aba-a92dc5483c8e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Indicator Status -> Create Recipient Users",
+            "targetStep": "\/api\/3\/workflow_steps\/cde6ce2b-0223-4dcb-91c1-f3494f1b3225",
+            "sourceStep": "\/api\/3\/workflow_steps\/84040eff-6b0c-482e-b334-978b62c4ff94",
+            "label": "yes",
+            "isExecuted": false,
+            "group": null,
+            "uuid": "2b7b2736-fe54-4ac7-b270-d48876b3a9f4"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Indicator Status -> Update Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/8f4a90dc-bb69-4b01-9350-f3f7e0e7da06",
+            "sourceStep": "\/api\/3\/workflow_steps\/84040eff-6b0c-482e-b334-978b62c4ff94",
+            "label": "no",
+            "isExecuted": false,
+            "group": null,
+            "uuid": "6b7d3cca-1076-4136-9027-573429689616"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/3155c414-5f2d-498f-9665-b3101bc8d691",
+            "sourceStep": "\/api\/3\/workflow_steps\/43ba6fa9-c4d2-4576-88e4-86bbf77c51b6",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "be4eb07d-e134-4c1b-9b21-9cab77d85a8c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Alert Severity -> Wait For SLA Update",
+            "targetStep": "\/api\/3\/workflow_steps\/00826a23-6c29-4b09-bc7c-4b148dd3a4db",
+            "sourceStep": "\/api\/3\/workflow_steps\/8f4a90dc-bb69-4b01-9350-f3f7e0e7da06",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "3d842739-2a70-48a0-9c1e-a2b7a5cf99c5"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Alert Status -> Notify Reporter Email is Safe",
+            "targetStep": "\/api\/3\/workflow_steps\/e16c9f6f-6b4f-424e-98f2-ad4d5f4fdcbd",
+            "sourceStep": "\/api\/3\/workflow_steps\/50230559-7554-4c64-a506-354f8ce8526d",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "8568ca30-f99b-4009-9c8c-1817ae97e1c9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Required Attributes -> Email Forwarded Inline",
+            "targetStep": "\/api\/3\/workflow_steps\/bee44ac2-56af-4d53-8f89-a359dc8f12e4",
+            "sourceStep": "\/api\/3\/workflow_steps\/9f72d06d-35a4-4d1a-a678-b1046836282a",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "a905060a-8830-4a87-8eac-0b8a34f06917"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Wait For All Indicators To Be Rated -> Wait for Enrichment",
+            "targetStep": "\/api\/3\/workflow_steps\/854b1d66-18e9-4f34-9a55-19bf2ebe0b9c",
+            "sourceStep": "\/api\/3\/workflow_steps\/2f9d8ab6-e71e-4ce8-89ec-ed7a975a0fde",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "927abed4-4a78-4ee6-bd81-f5cddccb74c5"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Wait for Enrichment -> Update Indicator Tag Scenario",
+            "targetStep": "\/api\/3\/workflow_steps\/505771f8-150a-4a45-b552-4de6d15213ca",
+            "sourceStep": "\/api\/3\/workflow_steps\/854b1d66-18e9-4f34-9a55-19bf2ebe0b9c",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "f938094d-312b-4782-af28-4dd85b93a0f4"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Wait For SLA Update -> Update Alert Status",
+            "targetStep": "\/api\/3\/workflow_steps\/50230559-7554-4c64-a506-354f8ce8526d",
+            "sourceStep": "\/api\/3\/workflow_steps\/00826a23-6c29-4b09-bc7c-4b148dd3a4db",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "53fe5a21-8bab-4a21-baba-027dc0294dbc"
+        }
+    ],
+    "groups": [
+        {
+            "@type": "WorkflowGroup",
+            "name": "Check if Mail is Malicious",
+            "description": "If the indicator contains 'Malicious' or 'Suspicious':\n  Mail is Malicious\nelse:\n  Mail is not Malicious",
+            "type": "note",
+            "isCollapsed": false,
+            "hasTriggerStep": false,
+            "hideInLogs": false,
+            "metadata": [],
+            "reusable": false,
+            "top": "220",
+            "left": "2240",
+            "height": "124",
+            "width": "371",
+            "uuid": "fdf7b829-6bd3-4293-9ae9-6537a4d30c76",
+            "recordTags": []
+        },
+        {
+            "@type": "WorkflowGroup",
+            "name": "Check the Email is Fowarded in inline",
+            "description": "if is_forward_inline is greater then 2:\n    # means that the email is NOT 'Original Email'\n    returns yes\nelse:\n    # the user have submitted the 'Original Email'\n    returns no",
+            "type": "note",
+            "isCollapsed": false,
+            "hasTriggerStep": false,
+            "hideInLogs": false,
+            "metadata": [],
+            "reusable": false,
+            "top": "180",
+            "left": "520",
+            "height": "170",
+            "width": "386",
+            "uuid": "e42e5f33-464c-4d66-989c-dd79fac087f4",
+            "recordTags": []
+        },
+        {
+            "@type": "WorkflowGroup",
+            "name": "Escalate to Incident",
+            "description": "We escalate the Alert to Incident so that tier 2 analysts can look at the incidents",
+            "type": "note",
+            "isCollapsed": false,
+            "hasTriggerStep": false,
+            "hideInLogs": false,
+            "metadata": [],
+            "reusable": false,
+            "top": "240",
+            "left": "2820",
+            "height": "111",
+            "width": "252",
+            "uuid": "3859fadb-a94d-4bfa-9626-4e6a9101a558",
+            "recordTags": []
+        },
+        {
+            "@type": "WorkflowGroup",
+            "name": "Extracts Email Data To Alert",
+            "description": "",
+            "type": "block",
+            "isCollapsed": false,
+            "hasTriggerStep": false,
+            "hideInLogs": false,
+            "metadata": [],
+            "reusable": false,
+            "top": "440",
+            "left": "120",
+            "height": "343",
+            "width": "400",
+            "uuid": "42474493-eaf1-4c3e-af1b-e93a29421810",
+            "recordTags": []
+        },
+        {
+            "@type": "WorkflowGroup",
+            "name": "Update Alert Severity",
+            "description": "We update the Alert severity so that the user does not have to look at it",
+            "type": "note",
+            "isCollapsed": false,
+            "hasTriggerStep": false,
+            "hideInLogs": true,
+            "metadata": [],
+            "reusable": false,
+            "top": "680",
+            "left": "2380",
+            "height": "0",
+            "width": "300",
+            "uuid": "040b8fa8-e7ca-4ccc-9ec3-4a8bf066a03f",
+            "recordTags": []
+        },
+        {
+            "@type": "WorkflowGroup",
+            "name": "Update the Alert Severity & Status",
+            "description": "",
+            "type": "block",
+            "isCollapsed": false,
+            "hasTriggerStep": false,
+            "hideInLogs": false,
+            "metadata": [],
+            "reusable": false,
+            "top": "780",
+            "left": "2220",
+            "height": "345",
+            "width": "374",
+            "uuid": "be5a0deb-419c-42f5-831c-dc3c22d99658",
+            "recordTags": []
+        },
+        {
+            "@type": "WorkflowGroup",
+            "name": "Wait for All Indicators to be Enriched",
+            "description": "",
+            "type": "block",
+            "isCollapsed": false,
+            "hasTriggerStep": false,
+            "hideInLogs": false,
+            "metadata": [],
+            "reusable": false,
+            "top": "320",
+            "left": "1120",
+            "height": "217",
+            "width": "310",
+            "uuid": "2b9171f2-a424-4df8-b9e1-76f788c980cb",
+            "recordTags": []
+        }
+    ],
+    "priority": null,
+    "uuid": "bc0b884e-6b1a-47fe-9644-1edb52ac700c",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Subroutine",
+        "Parsing",
+        "Investigation"
+    ]
+}

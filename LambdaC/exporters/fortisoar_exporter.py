@@ -1,6 +1,7 @@
 # fortisoar_exporter.py
 import json
 from uuid import uuid4
+import ruamel.yaml
 
 def export_fortisoar(pb) -> dict:
     """
@@ -8,7 +9,7 @@ def export_fortisoar(pb) -> dict:
     """
     # helper to pluck view coordinates
     def coord(meta, axis):
-        v = meta.get('view')
+        v = meta.get('view') if meta else None
         try:
             return int(ruamel.yaml.round_trip_load(v)['position'][axis])
         except:
@@ -25,7 +26,7 @@ def export_fortisoar(pb) -> dict:
             "status": None,
             "top": str(coord(s.metadata, 'y')),
             "left": str(coord(s.metadata, 'x')),
-            "stepType": s.metadata.get('stepType', '/api/3/workflow_step_types/PLACEHOLDER'),
+            "stepType": s.metadata.get('stepType', '/api/3/workflow_step_types/PLACEHOLDER') if s.metadata else '/api/3/workflow_step_types/PLACEHOLDER',
             "group": None,
             "uuid": s.id
         })
@@ -72,7 +73,7 @@ def export_fortisoar(pb) -> dict:
         "debug": False,
         "singleRecordExecution": False,
         "remoteExecutableFlag": False,
-        "parameters": [inp['name'] for inp in (pb.metadata.get('inputs') or [])],
+        "parameters": [inp['name'] for inp in (pb.metadata.get("inputs", []))] if pb.metadata else [],
         "synchronous": False,
         "collection": "/api/3/workflow_collections/PLACEHOLDER",
         "versions": [],

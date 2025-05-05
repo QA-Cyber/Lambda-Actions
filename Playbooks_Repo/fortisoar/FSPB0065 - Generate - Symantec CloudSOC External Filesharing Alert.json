@@ -1,0 +1,211 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Generate - Symantec CloudSOC External Filesharing Alert",
+    "aliasName": null,
+    "tag": "#Subroutine",
+    "description": "Create single alert for  symantec incidents",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "Incident"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1645297690,
+    "collection": "\/api\/3\/workflow_collections\/67319d70-c960-4624-991a-8828a3f29ce3",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/b7c8be2e-6234-4002-be22-4b8f98e00f1a",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Events",
+            "description": null,
+            "arguments": {
+                "name": "Symantec CloudSOC",
+                "params": {
+                    "app": "investigate",
+                    "from": "",
+                    "sort": "'desc'",
+                    "user": "",
+                    "limit": 1000,
+                    "search": "\"External File Sharing\"",
+                    "service": "",
+                    "subtype": "all",
+                    "severity": "high",
+                    "threat_score": "",
+                    "created_timestamp": "2018-01-01:T00:00:00",
+                    "updated_timestamp": "",
+                    "inserted_timestamp": "",
+                    "sort_inserted_timestamp": ""
+                },
+                "version": "1.0.0",
+                "connector": "symantec-cloudsoc",
+                "operation": "get_logs",
+                "mock_result": "{\n  \"status\": \"Success\",\n  \"data\": {\n    \"status\": \"success\",\n    \"meta\": {\n      \"limit\": 100,\n      \"from\": 0,\n      \"total\": 54\n    },\n    \"logs\": [\n      {\n        \"policy_type\": \"FileSharingAPI\",\n        \"alert_cleared_at\": \"2018-05-05T15:04:02\",\n        \"alert_cleared_by\": \"joe@cybersponse.com\",\n        \"source\": \"API\",\n        \"Resource_Id\": \"16dL37Fhd3eurdjoYA-1AiZQLka_icQToHgBirIjhXmU\",\n        \"activity_type\": \"Policy Violation\",\n        \"content_checks\": {\n          \"vk_ferpa\": 0,\n          \"vk_encryption\": 0,\n          \"vk_glba\": 0,\n          \"vk_pii\": 0,\n          \"vk_pci\": 0,\n          \"violations\": false,\n          \"vk_source_code\": 0,\n          \"vk_content_iq_violations\": [],\n          \"vk_hipaa\": 0,\n          \"vk_virus\": 0,\n          \"vk_vba_macros\": 0,\n          \"vk_dlp\": 0\n        },\n        \"object_name\": \"Product Architecture v8.2.vsdx\",\n        \"service\": \"Google Drive\",\n        \"severity\": \"high\",\n        \"user\": \"Peter.Gibbons\",\n        \"userName\": \"Peter.Gibbons@cyops.local\",\n        \"hostname\": \"webserver01.cyops.local\",\n        \"message\": \"[ALERT] Symantec DLP has detected a user (username: Peter.Gibbons@cyops.local) uploading a file named 'Product Architecture v8.2.vsdx' to Google Drive, which is a violation of policy: External File Sharing\",\n        \"policy_action\": \"ALERT\",\n        \"inserted_timestamp\": \"2018-05-05T15:04:02\",\n        \"instance\": \"C039vo88t\",\n        \"transaction_id\": \"9607d917-5b40-4e51-ae76-3cdc3bd182dc\",\n        \"_id\": \"54e0f6c3-e94f-47d8-84cf-eda2ed19343b\",\n        \"created_timestamp\": \"2018-05-05T15:04:02\",\n        \"policy_violated\": \"External File Sharing\",\n        \"org_unit\": \"id:03fu6vrn2juspq1\",\n        \"Actions_Taken\": [\n          \"Log Alert\"\n        ],\n        \"_domain\": \"cybersponse.local\"\n      },\n      {\n        \"policy_type\": \"FileSharingAPI\",\n        \"alert_cleared_at\": \"2018-05-05T15:10:05\",\n        \"alert_cleared_by\": \"joe@cybersponse.local\",\n        \"content_checks\": {\n          \"vk_ferpa\": 0,\n          \"vk_encryption\": 0,\n          \"vk_glba\": 0,\n          \"vk_pii\": 0,\n          \"vk_pci\": 0,\n          \"violations\": false,\n          \"vk_source_code\": 0,\n          \"vk_content_iq_violations\": [],\n          \"vk_hipaa\": 0,\n          \"vk_virus\": 0,\n          \"vk_vba_macros\": 0,\n          \"vk_dlp\": 0\n        },\n        \"alert_cleared\": true,\n        \"service\": \"Google Drive\",\n        \"policy_violated\": \"External File Sharing\",\n        \"message\": \"[ALERT] Symantec DLP has detected a user (username: Peter.Gibbons@cyops.local) uploading a file named 'Product Architecture v8.2.vsdx' to Google Drive, which is a violation of policy: External File Sharing\",\n        \"activity_type\": \"Policy Violation\",\n        \"transaction_id\": \"9607d917-5b40-4e51-ae76-3cdc3bd182dc\",\n        \"created_timestamp\": \"2018-05-05T15:04:02\",\n        \"inserted_timestamp\": \"2018-05-05T15:04:02\",\n        \"_domain\": \"cybersponse.local\",\n        \"source\": \"API\",\n        \"Resource_Id\": \"16dL37Fhd3eurdjoYA-1AiZQLka_icQToHgBirIjhXmU\",\n        \"object_name\": \"Product Roadmap 2018.vsdx\",\n        \"updated_timestamp\": \"2018-05-05T15:10:05\",\n        \"user\": \"Peter.Gibbons\",\n        \"severity\": \"high\",\n        \"policy_action\": \"ALERT\",\n        \"instance\": \"C039vo88t\",\n        \"_id\": \"c37b7901-46f5-4e45-8819-b19910f597df\",\n        \"org_unit\": \"id:03fu6vrn2juspq1\",\n        \"Actions_Taken\": [\n          \"Log Alert\"\n        ]\n      }\n    ]\n  },\n  \"operation\": \"get_logs\"\n}",
+                "operationTitle": "Get Event Logs",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "d34febb6-102c-4892-aa99-05b1196e620a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "cloudSocAlert": "{{vars.steps.Get_Events.data.logs[0]}}"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "184bf1ca-f9c3-4a1c-b3e6-270f949d909d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": {
+                            "Incident": "{{ vars.Incident }}"
+                        }
+                    },
+                    "useMockOutput": "{{globalVars.Demo_mode}}"
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "b7c8be2e-6234-4002-be22-4b8f98e00f1a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Alert",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "Symantec Cloud.SOC -> {{vars.cloudSocAlert.activity_type}} -> {{vars.cloudSocAlert.policy_violated}}",
+                    "type": "{{(\"AlertType\" | picklist(\"Data Leakage\"))[\"@id\"]}}",
+                    "source": "Symantec Cloud.SOC",
+                    "status": "{{(\"AlertStatus\" | picklist(\"Open\"))[\"@id\"]}}",
+                    "fileName": "{{vars.cloudSocAlert.object_name}}",
+                    "severity": "{{(\"Severity\" | picklist(\"Medium\"))[\"@id\"]}}",
+                    "sourceId": "{{vars.cloudSocAlert['_id']}}",
+                    "userName": "{{vars.cloudSocAlert.userName}}",
+                    "__replace": "true",
+                    "eventTime": "{{vars.cloudSocAlert.created_timestamp}}",
+                    "sourcedata": "{{vars.cloudSocAlert | toJSON}}",
+                    "description": "<p><strong>Message<\/strong> :&nbsp;{{vars.cloudSocAlert.message}}<\/p>\n<p>&nbsp;<\/p>\n<p><strong>Cloud.SOC Recommended Action<\/strong> :&nbsp;{{vars.cloudSocAlert.Actions_Taken}}<\/p>",
+                    "userDetails": "{{vars.cloudSocAlert.userName}}",
+                    "ackSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "computerName": "{{vars.cloudSocAlert.hostname}}",
+                    "closureReason": {
+                        "id": 251,
+                        "@id": "\/api\/3\/picklists\/8590c81e-3307-4645-97f5-c3e1bec4e05a",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Tasks Completed",
+                        "listName": "\/api\/3\/picklist_names\/4ebacea1-88cd-4ea8-9dcc-385bea42cc59",
+                        "itemValue": "Tasks Completed",
+                        "orderIndex": 0
+                    },
+                    "respSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "escalatedtoincident": {
+                        "id": 6808,
+                        "@id": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "No",
+                        "listName": "\/api\/3\/picklist_names\/e131cc54-9ae4-43c9-b830-af6e331fe024",
+                        "itemValue": "No",
+                        "orderIndex": 1
+                    }
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/upsert\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "uuid": "0e0d06c9-9dab-4814-a2a2-9c83e25ac533"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Create Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/0e0d06c9-9dab-4814-a2a2-9c83e25ac533",
+            "sourceStep": "\/api\/3\/workflow_steps\/184bf1ca-f9c3-4a1c-b3e6-270f949d909d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "2818016d-74ac-4d6e-aae8-fef62fecab3a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Events -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/184bf1ca-f9c3-4a1c-b3e6-270f949d909d",
+            "sourceStep": "\/api\/3\/workflow_steps\/d34febb6-102c-4892-aa99-05b1196e620a",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "14ddb573-bf78-44f9-800e-ed70478e688c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Get Events",
+            "targetStep": "\/api\/3\/workflow_steps\/d34febb6-102c-4892-aa99-05b1196e620a",
+            "sourceStep": "\/api\/3\/workflow_steps\/b7c8be2e-6234-4002-be22-4b8f98e00f1a",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "00b52128-5029-435e-b1da-6cb46d43c3f1"
+        }
+    ],
+    "priority": null,
+    "uuid": "6a73c322-2ec3-4c96-b6df-7a6f2076cfe9",
+    "recordTags": [
+        "Referenced"
+    ],
+    "id": "615",
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1645297690.368359,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1645297690.368359,
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null
+}

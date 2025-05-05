@@ -1,0 +1,180 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Sync Alert Comment on Jira",
+    "aliasName": null,
+    "tag": "#Jira",
+    "description": "When a comment is added to an alert, adds the same comment to the corresponding Jira ticket",
+    "isActive": false,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/fa4eec60-7f32-4f47-a1b7-11ee16f78ed1",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/ff673d2a-26a0-407a-8f4c-70374f562e6a",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Add Comment",
+            "description": null,
+            "arguments": {
+                "name": "Jira",
+                "when": "{{vars.steps.Get_Related[0].alerts | length > 0}}",
+                "config": "d455152e-2989-4a90-8ae2-72bb4a5ffb8e",
+                "params": {
+                    "comment": "{{vars.input.records[0].content| html2text}}",
+                    "issue_key": "{{vars.steps.Get_Related[0].alerts[0].jiraTicketID}}"
+                },
+                "version": "1.1.1",
+                "connector": "jira",
+                "operation": "add_comment",
+                "mock_result": "{\n  \"result\": [\n    {\n      \"data\": {\n        \"id\": \"10010\",\n        \"body\": \"Added New Comment\",\n        \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/issue\/10026\/comment\/10033\",\n        \"author\": {\n          \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/user?accountId=62b610a01479a75d631e279e\",\n          \"active\": true,\n          \"timeZone\": \"Asia\/Calcutta\",\n          \"accountId\": \"62b610a01479a75d631e279e\",\n          \"avatarUrls\": {\n            \"16x16\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"24x24\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"32x32\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"48x48\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\"\n          },\n          \"accountType\": \"atlassian\",\n          \"displayName\": \"Demo\",\n          \"emailAddress\": \"demo@gmail.com\"\n        },\n        \"created\": \"2023-04-19T17:09:25.640+0530\",\n        \"updated\": \"2023-04-19T17:09:25.640+0530\",\n        \"jsdPublic\": true,\n        \"updateAuthor\": {\n          \"self\": \"https:\/\/demo.atlassian.net\/rest\/api\/2\/user?accountId=62b610a01479a75d631e279e\",\n          \"active\": true,\n          \"timeZone\": \"Asia\/Calcutta\",\n          \"accountId\": \"62b610a01479a75d631e279e\",\n          \"avatarUrls\": {\n            \"16x16\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"24x24\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"32x32\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\",\n            \"48x48\": \"https:\/\/secure.gravatar.com\/avatar\/e59f1d4d55c17dbb3fe158fdefdba444?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAG-0.png\"\n          },\n          \"accountType\": \"atlassian\",\n          \"displayName\": \"Demo\",\n          \"emailAddress\": \"demo@gmail.com\"\n        }\n      },\n      \"status\": \"Success\",\n      \"message\": \"\",\n      \"operation\": null\n    }\n  ],\n  \"execution_time\": \"1 seconds 728 ms\",\n  \"status\": \"finished\"\n}",
+                "operationTitle": "Add Comment",
+                "step_variables": [],
+                "operationOutput": {
+                    "body": ""
+                }
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "5dd3302d-baf3-43fb-ab78-45a0c6eb88b8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "useMockOutput": "{{globalVars.Demo_mode}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "74b8b9b4-d338-43f2-9aae-c24b020874b8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Related",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "uuid",
+                            "value": "{{vars.input.records[0].uuid}}",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        },
+                        {
+                            "type": "primitive",
+                            "field": "alerts.jiraTicketID",
+                            "value": "false",
+                            "operator": "isnull",
+                            "_operator": "isnull"
+                        }
+                    ],
+                    "__selectFields": [
+                        "id",
+                        "alerts"
+                    ]
+                },
+                "module": "comments?$limit=30&$relationships=true&$fsr_max_relation_count=100",
+                "checkboxFields": true,
+                "step_variables": {
+                    "jiraTicketIDs": "{{vars.steps.Get_Related[0].alerts | json_query('[].jiraTicketID[]')}}"
+                }
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "656213b5-03e7-413c-876d-6b2a135e441f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "resource": "comments",
+                "resources": [
+                    "comments"
+                ],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": [
+                            "{{vars.input.records[0]}}"
+                        ]
+                    }
+                },
+                "fieldbasedtrigger": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": []
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/ea155646-3821-4542-9702-b246da430a8d",
+            "group": null,
+            "uuid": "ff673d2a-26a0-407a-8f4c-70374f562e6a"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Get Related",
+            "targetStep": "\/api\/3\/workflow_steps\/656213b5-03e7-413c-876d-6b2a135e441f",
+            "sourceStep": "\/api\/3\/workflow_steps\/74b8b9b4-d338-43f2-9aae-c24b020874b8",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "53f333e7-53a2-4481-9afb-a78ba1ad47db"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Related -> Add Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/5dd3302d-baf3-43fb-ab78-45a0c6eb88b8",
+            "sourceStep": "\/api\/3\/workflow_steps\/656213b5-03e7-413c-876d-6b2a135e441f",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "84bcf216-f960-4610-bbe7-a7d86c827ffe"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/74b8b9b4-d338-43f2-9aae-c24b020874b8",
+            "sourceStep": "\/api\/3\/workflow_steps\/ff673d2a-26a0-407a-8f4c-70374f562e6a",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "c050639c-fb20-4358-95a2-a7cfb3bc58cd"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "6dfcc3b0-be42-43cd-9203-0db4edbd4e8e",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "PostCreate",
+        "Alert",
+        "Comment",
+        "Jira"
+    ]
+}

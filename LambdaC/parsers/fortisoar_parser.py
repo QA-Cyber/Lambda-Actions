@@ -7,29 +7,23 @@ def identify_step_type(step_data: dict, incoming_routes: set) -> str:
     args = step_data.get("arguments", {})
     name = (step_data.get("name") or "").strip().lower()
 
-    # 1. Manual Task if user input required
     if "response_mapping" in args:
-        return "Manual Task"
+        return "manual"
 
-    # 2. Condition if multiple branches or explicit conditions
     if args.get("conditions") or args.get("response_mapping", {}).get("options"):
-        return "Condition"
+        return "condition"
 
-    # 3. Start: name contains “start” OR no one ever routes *to* this step
     uid = step_data.get("uuid")
     if "start" in name or uid not in incoming_routes:
-        return "Start"
+        return "start"
 
-    # 4. Title if step is purely UI (no script/op and no next steps)
     if not args.get("operation") and not args.get("scriptName") and not args.get("response_mapping"):
-        return "Title"
+        return "title"
 
-    # 5. Fallback
-    return "WorkflowStep"
+    return "action"
 
 
 def parse_fortisoar(filepath: str) -> LambdaPlaybook:
-
     with open(filepath) as f:
         data = json.load(f)
 
@@ -67,7 +61,6 @@ def parse_fortisoar(filepath: str) -> LambdaPlaybook:
         )
         steps.append(step)
 
-    # Routes handling
     uuid_to_nextsteps = {}
     for r in data.get("routes", []):
         source = r.get("sourceStep", "").split("/")[-1]

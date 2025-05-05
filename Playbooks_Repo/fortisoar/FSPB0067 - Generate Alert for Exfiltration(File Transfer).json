@@ -1,0 +1,171 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Generate Alert for Exfiltration(File Transfer)",
+    "aliasName": null,
+    "tag": null,
+    "description": "Generates alert from FortiSIEM incident where an attacker performes outbound file transfer.",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1646386613,
+    "collection": "\/api\/3\/workflow_collections\/bf76719d-d2fb-4b42-93e5-0f4562f9edf4",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/dc31eaea-4b49-429a-9096-2eb1e57a1ae0",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Alert",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "{{vars.alert_data.incident_data.attributes.eventName}}",
+                    "type": {
+                        "id": 117,
+                        "@id": "\/api\/3\/picklists\/a043fb35-f373-44c0-bfa9-5bce2f711141",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Data Exfiltration",
+                        "listName": "\/api\/3\/picklist_names\/a7087b9c-5660-495f-a8ac-c3b198ddb8c2",
+                        "itemValue": "Data Exfiltration",
+                        "orderIndex": 5
+                    },
+                    "source": "FortiSIEM",
+                    "status": {
+                        "id": 21,
+                        "@id": "\/api\/3\/picklists\/7de816ff-7140-4ee5-bd05-93ce22002146",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Open",
+                        "listName": "\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a",
+                        "itemValue": "Open",
+                        "orderIndex": 1
+                    },
+                    "severity": "{% if (vars.alert_data.incident_data.attributes.eventSeverityCat == \"CRITICAL\") %}{{(\"Severity\" | picklist(\"Critical\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"HIGH\") %}{{(\"Severity\" | picklist(\"High\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"MEDIUM\") %}{{(\"Severity\" | picklist(\"Medium\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"LOW\") %}{{(\"Severity\" | picklist(\"Low\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"MINIMAL\") %}{{(\"Severity\" | picklist(\"Minimal\"))[\"@id\"]}}{% endif %}",
+                    "sourceId": "{{vars.alert_data.incident_data.nid}}",
+                    "userName": "{{ vars.alert_data.incident_data.attributes.incidentSrc | regex_search('(?<=srcUser:)([^,]+)') }}",
+                    "__replace": "false",
+                    "sourcedata": "{{vars.alert_data | toJSON}}",
+                    "description": "{{vars.alert_data.incident_data.attributes.incidentDetail}}\n{{vars.alert_data.incident_data.attributes.incidentTarget}}",
+                    "ackSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "computerName": "{{vars.alert_data.incident_data.attributes.hostName}}",
+                    "closureReason": {
+                        "id": 251,
+                        "@id": "\/api\/3\/picklists\/8590c81e-3307-4645-97f5-c3e1bec4e05a",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Tasks Completed",
+                        "listName": "\/api\/3\/picklist_names\/4ebacea1-88cd-4ea8-9dcc-385bea42cc59",
+                        "itemValue": "Tasks Completed",
+                        "orderIndex": 0
+                    },
+                    "destinationIp": "{{vars.alert_data.incident_data.attributes.incidentRptIp}}",
+                    "respSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "escalatedtoincident": {
+                        "id": 201,
+                        "@id": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "No",
+                        "listName": "\/api\/3\/picklist_names\/e131cc54-9ae4-43c9-b830-af6e331fe024",
+                        "itemValue": "No",
+                        "orderIndex": 1
+                    }
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "\/api\/3\/upsert\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "220",
+            "left": "448",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "uuid": "56bab40e-3585-448b-937e-57ae724ef939"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": []
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "dc31eaea-4b49-429a-9096-2eb1e57a1ae0"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "alert_data": "{\n  \"incident_data\": {\n    \"id\": \"0\",\n    \"nid\": \"445\",\n    \"index\": \"1\",\n    \"custId\": \"1\",\n    \"dataStr\": null,\n    \"eventType\": \"Outbound_File_Transfer\",\n    \"attributes\": {\n      \"count\": \"1\",\n      \"customer\": \"Super\",\n      \"eventName\": \"Outbound File Transfer\",\n      \"eventType\": \"Outbound_File_Transfer\",\n      \"srcIpAddr\": \"10.0.1.11\",\n      \"bizService\": \"\",\n      \"destIpAddr\": \"172.16.1.10\",\n      \"incidentId\": \"445\",\n      \"phRecvTime\": \"Thu Apr 09 12:32:00 UTC 2020\",\n      \"incidentSrc\": \"srcIpAddr:10.0.1.11,\",\n      \"incidentReso\": \"1 (Open)\",\n      \"eventSeverity\": \"8\",\n      \"incidentRptIp\": \"10.0.1.1\",\n      \"incidentDetail\": \"sentBytes64:12408696,\",\n      \"incidentStatus\": \"0 (Active)\",\n      \"incidentTarget\": \"destIpAddr:172.16.1.10,\",\n      \"incidentExtUser\": \"\",\n      \"phEventCategory\": \"1 (Incident)\",\n      \"eventSeverityCat\": \"MEDIUM\",\n      \"incidentComments\": \"\",\n      \"incidentLastSeen\": \"Thu Apr 09 12:32:00 UTC 2020\",\n      \"incidentTicketId\": \"\",\n      \"incidentFirstSeen\": \"Thu Apr 09 12:32:00 UTC 2020\",\n      \"incidentViewUsers\": \"\",\n      \"phIncidentImpacts\": \"Network\",\n      \"incidentNotiStatus\": \"\",\n      \"incidentRptDevName\": \"FGVM04TM20001861\",\n      \"incidentTicketUser\": \"\",\n      \"incidentViewStatus\": \"1 (Read)\",\n      \"phIncidentCategory\": \"4\",\n      \"incidentClearedTime\": \"Thu Jan 01 00:00:00 UTC 1970\",\n      \"incidentClearedUser\": \"\",\n      \"incidentExtTicketId\": \"\",\n      \"incidentRptDevStatus\": \"1 (Pending)\",\n      \"incidentTicketStatus\": \"6 (None)\",\n      \"incidentClearedReason\": \"\",\n      \"incidentExtTicketType\": \"\",\n      \"phSubIncidentCategory\": \"PH_RULE_SECURITY_EXFILTRATION\",\n      \"incidentExtClearedTime\": \"Thu Jan 01 00:00:00 UTC 1970\",\n      \"incidentExtTicketState\": \"\",\n      \"incidentNotiRecipients\": \"\"\n    },\n    \"receiveTime\": \"2020-04-09T12:32:00Z\"\n  },\n  \"associated_events\": {\n    \"event_ids\": \"5933914721529938758, 5933914721529990215\",\n    \"event_details\": [\n      [\n        {\n          \"id\": \"5933914721529938758\",\n          \"nid\": \"5933914721529938758\",\n          \"index\": \"0\",\n          \"custId\": \"1\",\n          \"dataStr\": null,\n          \"eventType\": \"FortiGate-traffic-allowed\",\n          \"attributes\": {\n            \"uuid\": \"ef88d2fe-5eca-51ea-d03f-17ffa6070600\",\n            \"vdom\": \"root\",\n            \"count\": \"1\",\n            \"fwRule\": \"1\",\n            \"osType\": \"Windows\",\n            \"eventId\": \"5933914721529938758\",\n            \"ipProto\": \"6 (TCP)\",\n            \"srcName\": \"DC1.fortipoc.test\",\n            \"subtype\": \"forward\",\n            \"customer\": \"Super\",\n            \"destName\": \"HOST-172.16.1.10\",\n            \"fwAction\": \"allow\",\n            \"logLevel\": \"notice\",\n            \"memberID\": \"0000000013\",\n            \"totFlows\": \"1\",\n            \"trandisp\": \"snat\",\n            \"eventName\": \"Permitted traffic\",\n            \"eventType\": \"FortiGate-traffic-allowed\",\n            \"reptModel\": \"FortiOS\",\n            \"sessionId\": \"9952\",\n            \"srcIpAddr\": \"10.0.1.11\",\n            \"srcIpPort\": \"61120\",\n            \"totPkts64\": \"8496\",\n            \"destIpAddr\": \"172.16.1.10\",\n            \"destIpPort\": \"80 (HTTP)\",\n            \"deviceTime\": \"Thu Apr 09 13:31:10 UTC 2020\",\n            \"parserName\": \"FortiGateParser-17:9:32\",\n            \"phRecvTime\": \"Thu Apr 09 12:31:10 UTC 2020\",\n            \"recvPkts64\": \"218\",\n            \"reptVendor\": \"Fortinet\",\n            \"sentPkts64\": \"8278\",\n            \"srcMACAddr\": \"02:09:0f:00:01:04\",\n            \"totBytes64\": \"12417439\",\n            \"collectorId\": \"1\",\n            \"eventAction\": \"0 (Permit)\",\n            \"rawEventMsg\": \"<189>date=2020-04-09 time=13:31:10 devname=\\\"FortiGate-VM64-KVM\\\" devid=\\\"FGVM04TM20001861\\\" logid=\\\"0000000013\\\" type=\\\"traffic\\\" subtype=\\\"forward\\\" level=\\\"notice\\\" vd=\\\"root\\\" eventtime=1586435470785822648 tz=\\\"+0100\\\" srcip=10.0.1.11 srcname=\\\"DC1.fortipoc.test\\\" srcport=61120 srcintf=\\\"port2\\\" srcintfrole=\\\"lan\\\" dstip=172.16.1.10 dstport=80 dstintf=\\\"port1\\\" dstintfrole=\\\"undefined\\\" sessionid=9952 proto=6 action=\\\"close\\\" policyid=1 policytype=\\\"policy\\\" poluuid=\\\"ef88d2fe-5eca-51ea-d03f-17ffa6070600\\\" service=\\\"HTTP\\\" dstcountry=\\\"Reserved\\\" srccountry=\\\"Reserved\\\" trandisp=\\\"snat\\\" transip=172.16.1.1 transport=61120 duration=61 sentbyte=12408454 rcvdbyte=8985 sentpkt=8278 rcvdpkt=218 appcat=\\\"unscanned\\\" utmaction=\\\"allow\\\" countweb=1 srchwvendor=\\\"Fortinet\\\" osname=\\\"Windows\\\" srcswversion=\\\"8.1\\\" mastersrcmac=\\\"02:09:0f:00:01:04\\\" srcmac=\\\"02:09:0f:00:01:04\\\" srcserver=0\",\n            \"recvBytes64\": \"8985\",\n            \"reptDevName\": \"FGVM04TM20001861\",\n            \"sentBytes64\": \"12408454\",\n            \"serviceName\": \"HTTP\",\n            \"srcIntfName\": \"port2\",\n            \"timeSkewSec\": \"0\",\n            \"appGroupName\": \"unscanned\",\n            \"destIntfName\": \"port1\",\n            \"durationMSec\": \"61000\",\n            \"eventParsedOk\": \"1\",\n            \"eventSeverity\": \"3\",\n            \"reptDevIpAddr\": \"10.0.1.1\",\n            \"profileDetails\": \"policy\",\n            \"relayDevIpAddr\": \"10.0.1.1\",\n            \"phEventCategory\": \"4 (Traffic)\",\n            \"webFilterAction\": \"allow\",\n            \"eventRuleTrigger\": \"1\",\n            \"eventSeverityCat\": \"LOW\",\n            \"masterSrcMACAddr\": \"02:09:0f:00:01:04\",\n            \"postNATSrcIpAddr\": \"172.16.1.1\",\n            \"postNATSrcIpPort\": \"61120\",\n            \"extEventRecvProto\": \"Syslog\"\n          },\n          \"receiveTime\": \"2020-04-09T12:31:10Z\"\n        }\n      ],\n      [\n        {\n          \"id\": \"5933914721529990215\",\n          \"nid\": \"5933914721529990215\",\n          \"index\": \"0\",\n          \"custId\": \"1\",\n          \"dataStr\": null,\n          \"eventType\": \"FortiGate-URL-visited\",\n          \"attributes\": {\n            \"vdom\": \"root\",\n            \"count\": \"1\",\n            \"fwRule\": \"1\",\n            \"usrMsg\": \"URL has been visited\",\n            \"eventId\": \"5933914721529990215\",\n            \"infoURL\": \"http:\/\/172.16.1.10\/\",\n            \"ipProto\": \"6 (TCP)\",\n            \"srcName\": \"DC1\",\n            \"subtype\": \"webfilter\",\n            \"uriStem\": \"http:\/\/172.16.1.10\/\",\n            \"customer\": \"Super\",\n            \"destName\": \"172.16.1.10\",\n            \"fwAction\": \"passthrough\",\n            \"hostName\": \"172.16.1.10\",\n            \"logLevel\": \"notice\",\n            \"memberID\": \"0319013317\",\n            \"totFlows\": \"1\",\n            \"direction\": \"outgoing\",\n            \"eventName\": \"FortiGate URL visited\",\n            \"eventType\": \"FortiGate-URL-visited\",\n            \"reptModel\": \"FortiOS\",\n            \"sessionId\": \"9952\",\n            \"srcIpAddr\": \"10.0.1.11\",\n            \"srcIpPort\": \"61120\",\n            \"destIpAddr\": \"172.16.1.10\",\n            \"destIpPort\": \"80 (HTTP)\",\n            \"deviceTime\": \"Thu Apr 09 13:31:01 UTC 2020\",\n            \"parserName\": \"FortiGateParser-17:9:32\",\n            \"phRecvTime\": \"Thu Apr 09 12:31:01 UTC 2020\",\n            \"reptVendor\": \"Fortinet\",\n            \"srcMACAddr\": \"02:09:0F:00:01:04\",\n            \"totBytes64\": \"242\",\n            \"collectorId\": \"1\",\n            \"eventAction\": \"0 (Permit)\",\n            \"profileName\": \"monitor-all\",\n            \"rawEventMsg\": \"<189>date=2020-04-09 time=13:31:01 devname=\\\"FortiGate-VM64-KVM\\\" devid=\\\"FGVM04TM20001861\\\" logid=\\\"0319013317\\\" type=\\\"utm\\\" subtype=\\\"webfilter\\\" eventtype=\\\"urlmonitor\\\" level=\\\"notice\\\" vd=\\\"root\\\" eventtime=1586435461680120597 tz=\\\"+0100\\\" policyid=1 sessionid=9952 srcip=10.0.1.11 srcport=61120 srcintf=\\\"port2\\\" srcintfrole=\\\"lan\\\" dstip=172.16.1.10 dstport=80 dstintf=\\\"port1\\\" dstintfrole=\\\"undefined\\\" proto=6 service=\\\"HTTP\\\" hostname=\\\"172.16.1.10\\\" profile=\\\"monitor-all\\\" action=\\\"passthrough\\\" reqtype=\\\"direct\\\" url=\\\"http:\/\/172.16.1.10\/\\\" sentbyte=242 rcvdbyte=0 direction=\\\"outgoing\\\" msg=\\\"URL has been visited\\\" method=\\\"domain\\\" cat=255\",\n            \"recvBytes64\": \"0\",\n            \"reptDevName\": \"FGVM04TM20001861\",\n            \"sentBytes64\": \"242\",\n            \"serviceName\": \"HTTP\",\n            \"srcIntfName\": \"port2\",\n            \"timeSkewSec\": \"0\",\n            \"destIntfName\": \"port1\",\n            \"eventParsedOk\": \"1\",\n            \"eventSeverity\": \"3\",\n            \"reptDevIpAddr\": \"10.0.1.1\",\n            \"profileDetails\": \"monitor-all\",\n            \"relayDevIpAddr\": \"10.0.1.1\",\n            \"phEventCategory\": \"0 (External)\",\n            \"eventRuleTrigger\": \"1\",\n            \"eventSeverityCat\": \"LOW\",\n            \"extEventRecvProto\": \"Syslog\"\n          },\n          \"receiveTime\": \"2020-04-09T12:31:01Z\"\n        }\n      ]\n    ]\n  }\n}"
+            },
+            "status": null,
+            "top": "120",
+            "left": "288",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "1c07f2b2-4ce1-4ba6-aa25-e878b6331534"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Create Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/56bab40e-3585-448b-937e-57ae724ef939",
+            "sourceStep": "\/api\/3\/workflow_steps\/1c07f2b2-4ce1-4ba6-aa25-e878b6331534",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "cae8b296-3668-462e-af00-99ce906515a7"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/1c07f2b2-4ce1-4ba6-aa25-e878b6331534",
+            "sourceStep": "\/api\/3\/workflow_steps\/dc31eaea-4b49-429a-9096-2eb1e57a1ae0",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "8bb8407c-8b28-4a89-a49f-81995f88e3ec"
+        }
+    ],
+    "priority": null,
+    "uuid": "687769ea-b4e0-4f3b-b870-5e8d7e2e6e89",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Referenced"
+    ]
+}

@@ -1,0 +1,151 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Scenario - FortiNDR Cloud Demo Alert Creation",
+    "aliasName": null,
+    "tag": null,
+    "description": "Creates demo alert for FortiNDR Cloud detection.",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "detection",
+        "eventlimit"
+    ],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/a07f5e51-f153-4c8b-a158-56ab4934d704",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/e6cf05cf-249c-4742-9d31-f603b87b4d9d",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Step Output",
+            "description": null,
+            "arguments": {
+                "@id": "{{vars.steps.Create_Record['@id']}}"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "3b6aceb3-7bb0-4df1-bef6-b85df93f2b50"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "demo_alert_data": "{\n  \"rules\": [\n    {\n      \"name\": \"Trickbot Data Exfiltration\",\n      \"uuid\": \"732df04c-fdbc-4715-93ce-809a6b9ebd74\",\n      \"created\": \"2021-12-18T15:26:31.390000Z\",\n      \"enabled\": true,\n      \"updated\": \"2021-12-18T15:26:31.390000Z\",\n      \"category\": \"Attack:Exfiltration\",\n      \"severity\": \"high\",\n      \"confidence\": \"moderate\",\n      \"description\": \"This logic is intended to detect data exfiltration by the Trickbot banking trojan. Trickbot attempts to harvest credentials for web sites, primarily for financial institutions. Trickbot typically exfiltrates data to its C2 servers using a self-signed certificate and communicates over non-standard ports such as 447 or 449.\\n\\nGigamon ATR considers this detection to be high severity, as it is indicative of successful malicious code execution and potential compromise of user credentials. Gigamon ATR considers this detection to be moderate confidence because, while it has not been seen to have false positives, certificate subjects are easy to change and impersonate.\\n\\n### Next Steps\\n1. Determine if this is a true positive by:\\n   1. Checking the server name indication as most malicious traffic will be directly to a compromised IP address, rather than a domain.\\n   2. Checking the impacted asset for other indicators of compromise.\\n2. Quarantine the impacted device.\\n3. Begin incident response procedures on the impacted device.\\n4. Block traffic to attacker infrastructure.\\n5. Search for other impacted devices.\",\n      \"specificity\": \"tool_implementation\",\n      \"account_uuid\": \"dc9ab97f-9cdf-46af-8ca2-e71e8e8243c8\",\n      \"rule_accounts\": [\n        {\n          \"muted\": false,\n          \"last_seen\": \"2023-03-26T15:03:27.719750Z\",\n          \"first_seen\": \"2021-12-20T09:04:19.258000Z\",\n          \"account_uuid\": \"dc9ab97f-9cdf-46af-8ca2-e71e8e8243c8\",\n          \"query_filter\": null,\n          \"muted_comment\": null,\n          \"detection_count\": 2,\n          \"muted_timestamp\": null,\n          \"muted_user_uuid\": null,\n          \"detection_muted_count\": 0,\n          \"detection_resolved_count\": 102\n        }\n      ],\n      \"source_excludes\": [\n        \"Zscaler\"\n      ],\n      \"critical_updated\": \"2021-12-18T15:26:31.390000Z\",\n      \"device_ip_fields\": [\n        \"DEFAULT\"\n      ],\n      \"indicator_fields\": null,\n      \"created_user_uuid\": \"b7943c6c-d6a7-421f-b2be-cc0a5134932d\",\n      \"primary_attack_id\": \"T1048.001\",\n      \"run_account_uuids\": [\n        \"dc9ab97f-9cdf-46af-8ca2-e71e8e8243c8\"\n      ],\n      \"updated_user_uuid\": \"b7943c6c-d6a7-421f-b2be-cc0a5134932d\",\n      \"secondary_attack_id\": null,\n      \"shared_account_uuids\": null,\n      \"auto_resolution_minutes\": 10080\n    }\n  ],\n  \"uuid\": \"cac482fc-533f-40d4-8557-c885b1fbc18c\",\n  \"muted\": false,\n  \"status\": \"active\",\n  \"created\": \"2023-01-29T12:21:22.832913Z\",\n  \"updated\": \"2023-03-26T15:11:18.187027Z\",\n  \"hostname\": null,\n  \"username\": null,\n  \"device_ip\": \"10.10.31.5\",\n  \"last_seen\": \"2023-03-26T15:03:27.719750Z\",\n  \"rule_uuid\": \"732df04c-fdbc-4715-93ce-809a6b9ebd74\",\n  \"sensor_id\": \"gdm3\",\n  \"first_seen\": \"2023-01-29T12:16:47.259255Z\",\n  \"indicators\": null,\n  \"muted_rule\": false,\n  \"resolution\": null,\n  \"event_count\": 459,\n  \"account_uuid\": \"dc9ab97f-9cdf-46af-8ca2-e71e8e8243c8\",\n  \"muted_comment\": null,\n  \"muted_timestamp\": null,\n  \"muted_user_uuid\": null,\n  \"muted_device_uuid\": null,\n  \"resolution_comment\": null,\n  \"resolution_timestamp\": null,\n  \"resolution_user_uuid\": null\n}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "ae65f679-c305-4d5c-9d41-e0cabb345bcb"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Record",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "{{vars.demo_alert_data.device_ip}} : {{vars.demo_alert_data.rules[0].name}}",
+                    "type": "\/api\/3\/picklists\/574a6ee2-7265-4701-815e-cff83b053bce",
+                    "state": "\/api\/3\/picklists\/a1bac09b-1441-45aa-ad1b-c88744e48e72",
+                    "domain": "{{ vars.domain|join(\", \") }}",
+                    "source": "FortiNDR Cloud",
+                    "status": "{{vars.demo_alert_data.status | resolveRange(vars.alerts_status_map)}}",
+                    "severity": "{{vars.demo_alert_data.rules[0].severity | resolveRange(vars.alerts_severity_map)}}",
+                    "sourceId": "{{vars.demo_alert_data.uuid}}",
+                    "sourceIp": "{{vars.demo_alert_data.device_ip}}",
+                    "__replace": "true",
+                    "confidence": "\/api\/3\/picklists\/edf3947a-742e-4701-a0b8-3049209b6671",
+                    "sourcePort": "{{vars.steps.Get_Events_List.data.events[0].event.src.port}}",
+                    "sourcedata": "{% set x = vars.demo_alert_data.update({'rules': vars.demo_alert_data.rules}) %}{{vars.demo_alert_data | toJSON}}",
+                    "description": "{{vars.demo_alert_data.rules[0].description}}\n\n\n<table border=\\\"1\\\"><thead><tr><th width=\\\"250\\\"> Fields<\/th><th width=\\\"250\\\"> Values<\/th><\/tr><\/thead>\n<tbody>\n<tr><td>Confidence<\/td>\n<td>{{vars.demo_alert_data.rules[0].confidence}}<\/td><\/tr>\n<td>Category<\/td>\n<td>{{vars.demo_alert_data.rules[0].category}}<\/td><\/tr>\n<td>Specificity<\/td>\n<td>{{vars.demo_alert_data.rules[0].specificity}}<\/td><\/tr>\n<\/tbody>\n<\/table>",
+                    "ackSlaStatus": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "mitreattackid": "{{vars.demo_alert_data.rules[0].primary_attack_id}}",
+                    "respSlaStatus": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "priorityWeight": 1,
+                    "escalatedtoincident": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5",
+                    "resolvedAutomatedly": false,
+                    "alertRemainingAckSLA": 0
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/upsert\/alerts",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "cd8479d2-dfe4-4696-9b34-1c696f62b4c7"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    }
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "group": null,
+            "uuid": "e6cf05cf-249c-4742-9d31-f603b87b4d9d"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/ae65f679-c305-4d5c-9d41-e0cabb345bcb",
+            "sourceStep": "\/api\/3\/workflow_steps\/e6cf05cf-249c-4742-9d31-f603b87b4d9d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4da310f9-186d-4fcd-85a0-da366a41554e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Create Record",
+            "targetStep": "\/api\/3\/workflow_steps\/cd8479d2-dfe4-4696-9b34-1c696f62b4c7",
+            "sourceStep": "\/api\/3\/workflow_steps\/ae65f679-c305-4d5c-9d41-e0cabb345bcb",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "6ef8cde4-7237-48f0-921f-fdfd44ad00af"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Record -> Step Output",
+            "targetStep": "\/api\/3\/workflow_steps\/3b6aceb3-7bb0-4df1-bef6-b85df93f2b50",
+            "sourceStep": "\/api\/3\/workflow_steps\/cd8479d2-dfe4-4696-9b34-1c696f62b4c7",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "802af914-ecd6-4c1b-be92-fd10239a221a"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "83dfbd95-2239-4a5f-96bc-b281d473e434",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Referenced",
+        "Scenario"
+    ]
+}

@@ -1,0 +1,195 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Generate Alert - Device Lost or Stolen",
+    "aliasName": null,
+    "tag": null,
+    "description": "Generate a device lost\/stolen email alert",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1646804418,
+    "collection": "\/api\/3\/workflow_collections\/6f00bdc4-a280-450f-9ad3-5d0682f64648",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/a3d8aa53-465a-455b-a28d-7378a114d20b",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": []
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "a3d8aa53-465a-455b-a28d-7378a114d20b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "data": "{\n      \"body\": {\n        \"html\": \"<html xmlns:v=\\\"urn:schemas-microsoft-com:vml\\\" xmlns:o=\\\"urn:schemas-microsoft-com:office:office\\\" xmlns:w=\\\"urn:schemas-microsoft-com:office:word\\\" xmlns:m=\\\"http:\/\/schemas.microsoft.com\/office\/2004\/12\/omml\\\" xmlns=\\\"http:\/\/www.w3.org\/TR\/REC-html40\\\"><head>\\r\\n<meta http-equiv=\\\"Content-Type\\\" content=\\\"text\/html; charset=utf-8\\\">\\r\\n<meta name=\\\"Generator\\\" content=\\\"Microsoft Word 15 (filtered medium)\\\">\\r\\n<!--[if !mso]><style>v\\\\:* {behavior:url(#default#VML);}\\r\\no\\\\:* {behavior:url(#default#VML);}\\r\\nw\\\\:* {behavior:url(#default#VML);}\\r\\n.shape {behavior:url(#default#VML);}\\r\\n<\/style><![endif]--><style><!--\\r\\n\/* Font Definitions *\/\\r\\n@font-face\\r\\n\\t{font-family:\\\"Cambria Math\\\";\\r\\n\\tpanose-1:2 4 5 3 5 4 6 3 2 4;}\\r\\n@font-face\\r\\n\\t{font-family:Calibri;\\r\\n\\tpanose-1:2 15 5 2 2 2 4 3 2 4;}\\r\\n@font-face\\r\\n\\t{font-family:\\\"Segoe UI\\\";\\r\\n\\tpanose-1:2 11 6 4 2 2 2 2 2 4;}\\r\\n\/* Style Definitions *\/\\r\\np.MsoNormal, li.MsoNormal, div.MsoNormal\\r\\n\\t{margin:0cm;\\r\\n\\tmargin-bottom:.0001pt;\\r\\n\\tfont-size:12.0pt;\\r\\n\\tfont-family:\\\"Calibri\\\",sans-serif;}\\r\\na:link, span.MsoHyperlink\\r\\n\\t{mso-style-priority:99;\\r\\n\\tcolor:#0563C1;\\r\\n\\ttext-decoration:underline;}\\r\\na:visited, span.MsoHyperlinkFollowed\\r\\n\\t{mso-style-priority:99;\\r\\n\\tcolor:#954F72;\\r\\n\\ttext-decoration:underline;}\\r\\nspan.EmailStyle17\\r\\n\\t{mso-style-type:personal-compose;\\r\\n\\tfont-family:\\\"Calibri\\\",sans-serif;\\r\\n\\tcolor:windowtext;}\\r\\n.MsoChpDefault\\r\\n\\t{mso-style-type:export-only;\\r\\n\\tfont-family:\\\"Calibri\\\",sans-serif;}\\r\\n@page WordSection1\\r\\n\\t{size:612.0pt 792.0pt;\\r\\n\\tmargin:72.0pt 72.0pt 72.0pt 72.0pt;}\\r\\ndiv.WordSection1\\r\\n\\t{page:WordSection1;}\\r\\n--><\/style><!--[if gte mso 9]><xml>\\r\\n<o:shapedefaults v:ext=\\\"edit\\\" spidmax=\\\"1026\\\" \/>\\r\\n<\/xml><![endif]--><!--[if gte mso 9]><xml>\\r\\n<o:shapelayout v:ext=\\\"edit\\\">\\r\\n<o:idmap v:ext=\\\"edit\\\" data=\\\"1\\\" \/>\\r\\n<\/o:shapelayout><\/xml><![endif]-->\\r\\n<\/head>\\r\\n<body lang=\\\"EN-IN\\\" link=\\\"#0563C1\\\" vlink=\\\"#954F72\\\">\\r\\n<div class=\\\"WordSection1\\\">\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:11.0pt;color:black\\\">Hello Team<br>\\r\\n<br>\\r\\nLost device, below are the details:<\/span><span style=\\\"color:black\\\"><o:p><\/o:p><\/span><\/p>\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:11.0pt;color:black\\\">&nbsp;<\/span><span style=\\\"color:black\\\"><o:p><\/o:p><\/span><\/p>\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:10.5pt;font-family:&quot;Segoe UI&quot;;color:black\\\">Device Owner : Tony Stark<\/span><span style=\\\"color:black\\\"><o:p><\/o:p><\/span><\/p>\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:10.5pt;font-family:&quot;Segoe UI&quot;;color:black\\\">Device Type : Computer<\/span><span style=\\\"color:black\\\"><o:p><\/o:p><\/span><\/p>\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:11.0pt\\\"><o:p>&nbsp;<\/o:p><\/span><\/p>\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:11.0pt\\\"><o:p>&nbsp;<\/o:p><\/span><\/p>\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:11.0pt;color:black\\\">Thanks,<\/span><span style=\\\"color:black\\\"><o:p><\/o:p><\/span><\/p>\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:11.0pt;color:black\\\">&nbsp;<\/span><span style=\\\"color:black\\\"><o:p><\/o:p><\/span><\/p>\\r\\n<table class=\\\"MsoNormalTable\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\" width=\\\"300\\\" style=\\\"width:225.0pt;background:white;border-collapse:collapse\\\">\\r\\n<tbody>\\r\\n<tr>\\r\\n<td style=\\\"padding:0cm 0cm 0cm 0cm\\\">\\r\\n<p class=\\\"MsoNormal\\\"><b>Tony Stark<\/b><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<\/tr>\\r\\n<tr>\\r\\n<td style=\\\"padding:0cm 0cm 18.75pt 0cm\\\">\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:10.0pt;font-family:&quot;Arial&quot;,sans-serif;color:black\\\">System Engineer<\/span><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<\/tr>\\r\\n<tr>\\r\\n<td style=\\\"padding:0cm 0cm 11.25pt 0cm\\\">\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-family:&quot;Times New Roman&quot;,serif;color:black\\\"><img width=\\\"155\\\" height=\\\"18\\\" style=\\\"width:1.6145in;height:.1875in\\\" id=\\\"Picture_x0020_6\\\" src=data:image\/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJsAAAASCAYAAABM3qycAAAGbklEQVRoge2aa2xURRTHf7N7d7vtlpZq6YPiA1RQMTEaUauQoB8IQREJCUZjTHxFI1ET8fEBRSEkEhHwg29i+KQG5QM1Bo3xiYIvMBHBClpBpPIQAwXa7XZ37\/hh7qW307l3792lsU38Jzezd+bMmTMz554558wKYB3QAEjKgwBWJ4R4761zm5lXN6rlWL7wHDAViHnoFgLvAC8Ds3143QF8Brzt9HfRDbyejsVW7enLMaujk9+zfQC3A3dHnIMACkAX0AF8Cnyo0TwFXB+Rr5f\/CmAjcCdqTtKp\/xG1DgWgEXgRqC9B\/l5gN\/CBQXaAm4GHS5TfHeMn4CGgGXgVqCmBnwAOW8ANQLpEYXS0TalKcV11VSJTsF8C5hhoap2yBRjnw6faKc820KzM2HbXxFTyjTm1aVYf7gO4CJhenug8Aqx1yhNO3dVl8l3vlJM1PnWoDQCoQu1BZYljzAQWAGuAR1EfpIvzKH9d6p2yGripDD7dMeBomcJ4kWutTnFmIj6zT0qTogHknDITwCfvlD2mRhsWCWhoTVe6OxbEKyziwD3Ag5663jJ5unPV59Hl+W1T\/h7EgfuBpVp9ufJD\/9raDFTkqOiJGSoLqM0u5cmOtSyA2wIGTTllTQBN0ilrfdrHSylbmxIWVTFhapch5S0Y+s73yNir0dsarV2Ef47SkAf6Qjw67gMuDOAbdl28T8bTt1tr0xGkO92WocMylP8SGTHYPaEiAbBTwgYfst1O+QlqwUzn\/59OuRHoNLQLCcclEBPCxOIH1HEYQmRma7TjUEd8B2otXvO0PQbc6HnfiPLL\/ODO1fhFBGAJymcthonAsyi\/D5Q7dC3wiw99O8qHMymqH4475V\/AXMDVmUaU313voV0CfOHDJ2tStq+ATRGEOYWWpMWkiiQ5KZeFIF\/pPEF4xlQpUEq2M5PlREE3NgAcIPwcjjBQ2Sz6fdh253ExX+v7R4RxomArsDkE3WbUxzLXUzcxgP4I8HGJMvUCWzzvNQw+pr8jYD1MytZCv4MeWpCkEPnHG87g\/FSSnoI9zeFjslpbUVYjDKYDTTofCUjJt41WfG9FTJC1Bw2TJtwc4kCrVifwt0QVRd5PF6Ks\/0ntPSjYq0RZoiBfzkYdncUizjoGZhkARgV1MCnb06hQNwoW5qX8\/IJUkoQQFOBJATN8aB8AXgnJdykwzdQgkXeNTSbWpoQgO3hdrsDfnHthAedodTY+gckwRVx7DzqyLwY+IliRdgH3Ul4wYIRJ2cY7TxSMsYEu50gTZufRhfHc80EQH5mX0m\/VRgGXRxjHi63AvhL7DgcEKVIauKxI\/9GY9aJsmKLRkYJyk9Am\/AMsBrJDwHukIIoxiASTBh9G+QFRIqguBnYI+jKiKHgioC1uCeEnZAY4WIS3RMnZSL\/vJSk9uToSkEUFTzb++7sLc0qobJiUYjHQFpHPUUsI6q0YUkqA5cCbmK3PNxH4LgHGmvgIxOZDuTy90mjgvgduCcE\/jrrqWu681wOLgC8pPUc2nLEDmEew5c4xBP4amJXtIMWtwiBcWZViUkXS3fwwOaIwMIbpAhAC9ufypkgUwlk2F9u092bUFVKXgXakoxuVrvlPYFK2lKEuEA1WnOdbxtCcSHCsUAB1R3cpZsu2BmU5FqDuHk1YAWwHngAu0flIELaUayankpuq4zFODs616RFaEPRUQYHoSdiRglpUgBDFJ80CeyntaG0CJqCs5W+nJeqYM7qa1upKjhdOyXMNAxONXmxBKdss5zFhPUrZ5gFTTAQC2hJiSHRiKAKP4YLJqJubKHP8GXVrEtXS1wFXoXxiAdSXrWyj43FuratBAoX+KazDX9nchOIJn3bov07xm+ABIcTXh3J5esw3CP\/DDAulBFHQRGlZi0aUO+PeH\/fGGHzZndR7BWFGTRVT05X6UfY+ynqZ4EaYQVGf+xFUmRoFrAY6t2WybpyuH\/2BmWwfeVzU4H+M6vIY5TNAn6tXvhgqt+VFlD3Q3QCvTKfjhsMvI1BM7owjy3bUMVxnoe5CGz1Eh6JI0pJIkBDQM9BR70b95WUVynR74VqrTmC\/D1v3CmYf6j9tLnLAu5Ux8cKebI4Nx04Zxz2oy3cX3t\/F8LdG\/yv+yeR2jbbdh05HB4PlcxesF\/VhjvG0R9mDHcBZnvddnt\/7PeOW+gdQv\/UoJncn6k+5SWfsjn8BAWvc2Bx3aKUAAAAASUVORK5CYIIA alt=\\\"Fortinet\\\"><\/span><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<\/tr>\\r\\n<tr style=\\\"height:.75pt\\\">\\r\\n<td width=\\\"300\\\" style=\\\"width:225.0pt;border:none;border-bottom:solid #768692 1.0pt;padding:0cm 0cm 0cm 0cm;height:.75pt\\\">\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:1.0pt;font-family:&quot;Times New Roman&quot;,serif;color:black\\\">&nbsp;<\/span><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<\/tr>\\r\\n<tr>\\r\\n<td style=\\\"padding:11.25pt 0cm 11.25pt 0cm\\\">\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:10.0pt;font-family:&quot;Arial&quot;,sans-serif;color:#7E7E7E\\\">E:&nbsp;<a href=\\\"mailto:tonys@outlook.com\\\"><span style=\\\"color:#954F72\\\">tonys@outlook.com<\/span><\/a><br>\\r\\nM: +91 8087546962<br>\\r\\n801 Amar Neptune | Pune, MH 411045 (India)<\/span><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<\/tr>\\r\\n<tr style=\\\"height:.75pt\\\">\\r\\n<td width=\\\"300\\\" style=\\\"width:225.0pt;border:none;border-bottom:solid #768692 1.0pt;padding:0cm 0cm 0cm 0cm;height:.75pt\\\">\\r\\n<p class=\\\"MsoNormal\\\"><span style=\\\"font-size:1.0pt;font-family:&quot;Times New Roman&quot;,serif;color:black\\\">&nbsp;<\/span><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<\/tr>\\r\\n<tr>\\r\\n<td style=\\\"padding:11.25pt 0cm 0cm 0cm\\\">\\r\\n<table class=\\\"MsoNormalTable\\\" border=\\\"0\\\" cellspacing=\\\"0\\\" cellpadding=\\\"0\\\" width=\\\"100%\\\" style=\\\"width:100.0%;border-collapse:collapse\\\">\\r\\n<tbody>\\r\\n<tr>\\r\\n<td width=\\\"110\\\" style=\\\"width:82.5pt;padding:0cm 0cm 0cm 0cm\\\">\\r\\n<p class=\\\"MsoNormal\\\"><a href=\\\"http:\/\/www.fortinet.com\/\\\" title=\\\"http:\/\/www.fortinet.com\/\\nCtrl+Click or tap to follow the link\\\"><span style=\\\"font-size:10.0pt;font-family:&quot;Arial&quot;,sans-serif;color:#DC291E\\\">www.fortinet.com<\/span><\/a><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<td width=\\\"25\\\" style=\\\"width:18.75pt;padding:0cm 0cm 0cm 0cm\\\">\\r\\n<p class=\\\"MsoNormal\\\"><a href=\\\"http:\/\/www.twitter.com\/fortinet\\\"><span style=\\\"font-family:&quot;Arial&quot;,sans-serif;color:#DC291E;text-decoration:none\\\"><img border=\\\"0\\\" width=\\\"17\\\" height=\\\"17\\\" style=\\\"width:.177in;height:.177in\\\" id=\\\"Picture_x0020_5\\\" src=data:image\/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8\/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw\/eHBhY2tldCBiZWdpbj0i77u\/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo5ODZiODMxMC03Mjc2LTRiNDQtYmZlNC1kOWZjYWI4Mjc1N2UiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RTQ1RThBQjlBNzMyMTFFNjhGMThGODEzRkRDMjQyN0IiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RTQ1RThBQjhBNzMyMTFFNjhGMThGODEzRkRDMjQyN0IiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKE1hY2ludG9zaCkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5NTk2MjdiMC04MTg0LTRlZjEtYTBjZi02MzExMmE4NDljNzUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6OTg2YjgzMTAtNzI3Ni00YjQ0LWJmZTQtZDlmY2FiODI3NTdlIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8++IoucQAAAQ9JREFUeNpi\/P\/\/PwMlgImBQkCxASx3teSZgbQCEN\/FoYYPiPuBOBKkHoi3A3EpEGsD8XeQC2yA+CAQq+MwYCkQJwExJxCzArEfEN8E4lYgZgMZIAbE0kB8CoiT0bwlD8Q+OAwGufoXSPFxIP4LdeocIL4GdaIRECvh8X4ZEO8A+YkLiBdCnckA9UoXEeH3EhYLMkiaSQG3YQYcgHqDFPAWiC\/BDPgHxEHQ6CEWzIfqg4f4RyA2IFLzVyDuQ0+J34HYH4hvEGFAHhA\/x5aUTwOxGxAfxqO5GojnoSRlqP9NgdgQiJ2gqQ1blGUD8VqMvADEm6AuUQXiV0AsBcSM0JA+C8QbgHgxEH\/B5iSAAAMAP9Ixa7t8cf8AAAAASUVORK5CYIIA alt=\\\"Twitter\\\"><\/span><\/a><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<td width=\\\"25\\\" style=\\\"width:18.75pt;padding:0cm 0cm 0cm 0cm\\\">\\r\\n<p class=\\\"MsoNormal\\\"><a href=\\\"http:\/\/www.linkedin.com\/company\/fortinet\\\"><span style=\\\"font-family:&quot;Arial&quot;,sans-serif;color:#DC291E;text-decoration:none\\\"><img border=\\\"0\\\" width=\\\"17\\\" height=\\\"17\\\" style=\\\"width:.177in;height:.177in\\\" id=\\\"Picture_x0020_4\\\" src=data:image\/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8\/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw\/eHBhY2tldCBiZWdpbj0i77u\/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo5ODZiODMxMC03Mjc2LTRiNDQtYmZlNC1kOWZjYWI4Mjc1N2UiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6REVDNDdEODRBNzMwMTFFNjhGMThGODEzRkRDMjQyN0IiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6REVDNDdEODNBNzMwMTFFNjhGMThGODEzRkRDMjQyN0IiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKE1hY2ludG9zaCkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpiMjc2ZGFiNC0zNTYyLTQ0ZTktYjJiZS00MTJkZWVlYTA0OGYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6OTg2YjgzMTAtNzI3Ni00YjQ0LWJmZTQtZDlmY2FiODI3NTdlIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+HGi0hQAAALxJREFUeNpivKMpF8vAwDAViL8AcTQQ72cgATACDfgEpHmh\/NNAbEaKAUxQm2HgKwOJAGRADBCfBeKDQJxFqgEgLzBQAkAuaAHiDVCcBxV3QhKbBcQKQLwKiF8D8WcgPgbEASCFLEBsA8T2UI0foDTIWf5Q9lsg9gJiaSSLLYF4PRB7sBDhSmE8ckVMRHp1JRCLQF12FUnclFgD6qFeeQzEC5HEBYk14D4S+zV6LBADfuGLRorTwRA3ACDAAPJZIZ3N5PDtAAAAAElFTkSuQmCCAA== alt=\\\"LinkedIn\\\"><\/span><\/a><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<td width=\\\"25\\\" style=\\\"width:18.75pt;padding:0cm 0cm 0cm 0cm\\\">\\r\\n<p class=\\\"MsoNormal\\\"><a href=\\\"http:\/\/www.facebook.com\/fortinet\\\"><span style=\\\"font-family:&quot;Arial&quot;,sans-serif;color:#DC291E;text-decoration:none\\\"><img border=\\\"0\\\" width=\\\"17\\\" height=\\\"17\\\" style=\\\"width:.177in;height:.177in\\\" id=\\\"Picture_x0020_3\\\" src=data:image\/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8\/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw\/eHBhY2tldCBiZWdpbj0i77u\/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo5ODZiODMxMC03Mjc2LTRiNDQtYmZlNC1kOWZjYWI4Mjc1N2UiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6REVDNDdEODBBNzMwMTFFNjhGMThGODEzRkRDMjQyN0IiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6REVDNDdEN0ZBNzMwMTFFNjhGMThGODEzRkRDMjQyN0IiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKE1hY2ludG9zaCkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpiMjc2ZGFiNC0zNTYyLTQ0ZTktYjJiZS00MTJkZWVlYTA0OGYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6OTg2YjgzMTAtNzI3Ni00YjQ0LWJmZTQtZDlmY2FiODI3NTdlIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+ZHEddAAAAKpJREFUeNpi\/P\/\/PwM2cFdL3hpI9QKxGRAzAvFn5WsP+dDVseDQrASkdgExF5IwLza1WA0AggQkzZ+A+CgQ\/yLFAFUkdjLQ6WtwqGNgwiHOicR+w4AHsKD53QDK5EcSVgGKfwDSf4EuuUzIC+exWDIbZj7IMGK9gA08ICYQD0JpHSAWhrIvAjHIC3uwGcCILSEB\/bwBSPlDuY5Avx8gNRaIBqMGUMEAgAADAAX6J221pBujAAAAAElFTkSuQmCCAA== alt=\\\"Facebook\\\"><\/span><\/a><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<td width=\\\"25\\\" style=\\\"width:18.75pt;padding:0cm 0cm 0cm 0cm\\\">\\r\\n<p class=\\\"MsoNormal\\\"><a href=\\\"http:\/\/www.instagram.com\/behindthefirewall\/\\\"><span style=\\\"font-family:&quot;Arial&quot;,sans-serif;color:#DC291E;text-decoration:none\\\"><img border=\\\"0\\\" width=\\\"17\\\" height=\\\"17\\\" style=\\\"width:.177in;height:.177in\\\" id=\\\"Picture_x0020_2\\\" src=data:image\/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8\/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw\/eHBhY2tldCBiZWdpbj0i77u\/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo5ODZiODMxMC03Mjc2LTRiNDQtYmZlNC1kOWZjYWI4Mjc1N2UiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6N0NBN0ExNDlBNzFBMTFFNjhGMThGODEzRkRDMjQyN0IiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6N0NBN0ExNDhBNzFBMTFFNjhGMThGODEzRkRDMjQyN0IiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKE1hY2ludG9zaCkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpiMjc2ZGFiNC0zNTYyLTQ0ZTktYjJiZS00MTJkZWVlYTA0OGYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6OTg2YjgzMTAtNzI3Ni00YjQ0LWJmZTQtZDlmY2FiODI3NTdlIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+bDiqxwAAAStJREFUeNqk0zFLAzEYxvFcuKFI7Xqbg0O1YweddRTdCnVx9gMUv4C7dBXq7GClm3Cjne1Qt9YiznatIoeT\/8DTEkKuKL7wg+O9PGmSXpLXxpahNnCBFuqomHgVmGGAK3ylCj9iH0NcY1EyQQ1NXOIYh6l+2YVP0TfraxPb2MGdy1ote1gSzmRZbnXPeFGmZbXncRA8wgTvMlHvHrd4U6ZudWCLIPyg544Y9b5xhg9lKmlk2V2d9B4+1bvBSO9yf7CN7HkXPS9s9NzTu2zdBH+ucII5pjhH1etX1ZtqzKpiZ9DRgY20bKOw+7dOYiso9IUtK\/cGdsWolwdfZZHqxJvBxLlk3tbCcpmZ1cU4QDsyaF4SbiszSLiN4WUa\/+IyufCTu0zJf6\/zjwADADFiTS60mP7XAAAAAElFTkSuQmCCAA== alt=\\\"YouTube\\\"><\/span><\/a><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<td width=\\\"25\\\" style=\\\"width:18.75pt;padding:0cm 0cm 0cm 0cm\\\">\\r\\n<p class=\\\"MsoNormal\\\"><a href=\\\"https:\/\/blog.fortinet.com\/\\\"><span style=\\\"font-family:&quot;Arial&quot;,sans-serif;color:#DC291E;text-decoration:none\\\"><img border=\\\"0\\\" width=\\\"17\\\" height=\\\"17\\\" style=\\\"width:.177in;height:.177in\\\" id=\\\"Picture_x0020_1\\\" src=data:image\/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8\/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw\/eHBhY2tldCBiZWdpbj0i77u\/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo5ODZiODMxMC03Mjc2LTRiNDQtYmZlNC1kOWZjYWI4Mjc1N2UiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6N0NBN0ExNDVBNzFBMTFFNjhGMThGODEzRkRDMjQyN0IiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6N0NBN0ExNDRBNzFBMTFFNjhGMThGODEzRkRDMjQyN0IiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKE1hY2ludG9zaCkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpiMjc2ZGFiNC0zNTYyLTQ0ZTktYjJiZS00MTJkZWVlYTA0OGYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6OTg2YjgzMTAtNzI3Ni00YjQ0LWJmZTQtZDlmY2FiODI3NTdlIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+FHIq7wAAAXdJREFUeNqM080rRFEYx\/E7JuQ9aUgjRVIshGLDlFISoay9pJRslIW\/AAtbS0USe8pOLETChhEpLxlZYCVC8vp96nfrNBl56tM999xzn3POc+4NnFcUP3iel4oYjrCJFVx7\/4iAEuTE9X9jDVPY+CtBUqLEaME6VlH0V4I8FKIZ4ziLG9OOKFoTbeG32bswiUqn\/wt9WIpfgc1ci0xn\/8uoVg3csQvoTFTEd2xjXrN8aEyP+oK6f0QNLuOLmIwmDT7UCiwWMeiMy8aMfxMcCeWkcL1VpdPUH0I\/9jTTAfJRp+el2LeCu0W0FQxjAlnqe0E9jpGBE\/gvbCHibsFqMI0GrcgiHXM6mWcl96MR5X6CMMrUts+5G5+6txW0qW2n8OAk6bAEY7jRBzSrBztO26JX1zf9J35ErAZPzjdgUYIrVOk0LO5RoPaAtmVxkaRCuT\/Rq9pRvejpBHLVPnXGhy3BEO5gKxlV249d\/eYxnYKn537f3Y8AAwA521jbXl3NMwAAAABJRU5ErkJgggA= alt=\\\"Google+\\\"><\/span><\/a><o:p><\/o:p><\/p>\\r\\n<\/td>\\r\\n<\/tr>\\r\\n<\/tbody>\\r\\n<\/table>\\r\\n<\/td>\\r\\n<\/tr>\\r\\n<\/tbody>\\r\\n<\/table>\\r\\n<p class=\\\"MsoNormal\\\"><o:p>&nbsp;<\/o:p><\/p>\\r\\n<\/div>\\r\\n<div><br><\/div>\\n<font bgcolor=\\\"#ffffff\\\" color=\\\"#000000\\\"><b><br><hr>\\n***  Please note that this message and any attachments may contain confidential \\nand proprietary material and information and are intended only for the use of \\nthe intended recipient(s). If you are not the intended recipient, you are hereby \\nnotified that any review, use, disclosure, dissemination, distribution or copying \\nof this message and any attachments is strictly prohibited. If you have received \\nthis email in error, please immediately notify the sender and destroy this e-mail \\nand any attachments and all copies, whether electronic or printed.\\nPlease also note that any views, opinions, conclusions or commitments expressed \\nin this message are those of the individual sender and do not necessarily reflect \\nthe views of Fortinet, Inc., its affiliates, and emails are not binding on \\nFortinet and only a writing manually signed by Fortinet's General Counsel can be \\na binding commitment of Fortinet to Fortinet's customers or partners. Thank you. ***\\n<br><hr><\/b><\/font>\\n<\/body>\\r\\n<\/html>\\r\\n\",\n        \"json\": null,\n        \"text\": \"Hello Team\\r\\n\\r\\nLost device, below are the details:\\r\\n\\r\\nDevice Owner : Tony Stark\\r\\nDevice serial number : BQP-854-D33246-GH\\r\\nDevice Type : Laptop\\r\\n\\r\\n\\r\\nThanks,\\r\\n\\r\\nTony Stark\\r\\n\\r\\nSystem Engineer\\r\\n\\r\\n[Fortinet]\\r\\n\\r\\n\\r\\n\\r\\nE: tonys@outlook.com<mailto:tonys@outlook.com>\\r\\nM: +91 8087546962\\r\\n801 Amar Neptune | Pune, MH 411045 (India)\\r\\n\\r\\n\\r\\n\\r\\nwww.fortinet.com<http:\/\/www.fortinet.com\/>\\r\\n\\r\\n[Twitter]<http:\/\/www.twitter.com\/fortinet>\\r\\n\\r\\n[LinkedIn]<http:\/\/www.linkedin.com\/company\/fortinet>\\r\\n\\r\\n[Facebook]<http:\/\/www.facebook.com\/fortinet>\\r\\n\\r\\n[YouTube]<http:\/\/www.instagram.com\/behindthefirewall\/>\\r\\n\\r\\n[Google+]<https:\/\/blog.fortinet.com\/>\\r\\n\\r\\n\\r\\n\\r\\n\\n\\n***  Please note that this message and any attachments may contain confidential and proprietary material and information and are intended only for the use of the intended recipient(s). If you are not the intended recipient, you are hereby notified that any review, use, disclosure, dissemination, distribution or copying of this message and any attachments is strictly prohibited. If you have received this email in error, please immediately notify the sender and destroy this e-mail and any attachments and all copies, whether electronic or printed. Please also note that any views, opinions, conclusions or commitments expressed in this message are those of the individual sender and do not necessarily reflect the views of Fortinet, Inc., its affiliates, and emails are not binding on Fortinet and only a writing manually signed by Fortinet's General Counsel can be a binding commitment of Fortinet to Fortinet's customers or partners. Thank you. *** \\n\\n\"\n      },\n      \"headers\": {\n        \"to\": \"\\\"tonys@outlook.com\\\" <tonyscyops@outlook.com>\",\n        \"date\": \"Wed, 14 Oct 2020 05:50:52 +0000\",\n        \"from\": \"Tony Stark <tonys@outlook.com>\",\n        \"subject\": \"Device Lost\",\n        \"received\": \"from FGT-EXCH-MBX134.fortinet-us.com ([fe80::78f8:7694:9c11:d954]) by FGT-EXCH-MBX134.fortinet-us.com ([fe80::78f8:7694:9c11:d954%9]) with mapi id 15.01.2044.004; Tue, 13 Oct 2020 22:50:52 -0700\",\n        \"x-sid-pra\": \"TONYS@OUTLOOK.COM\",\n        \"message-id\": \"<5D3370A9-3BD2-4009-A0C0-FAF0A2032B4F@fortinet.com>\",\n        \"return-path\": \"tonys@outlook.com\",\n        \"x-sender-ip\": \"208.91.113.81\",\n        \"content-type\": \"multipart\/related; boundary=\\\"_009_5D3370A93BD24009A0C0FAF0A2032B4Ffortinetcom_\\\"; type=\\\"multipart\/alternative\\\"\",\n        \"mime-version\": \"1.0\",\n        \"received-spf\": \"Pass (protection.outlook.com: domain of fortinet.com designates 208.91.113.81 as permitted sender) receiver=protection.outlook.com; client-ip=208.91.113.81; helo=smtp.fortinet.com;\",\n        \"thread-index\": \"AQHWoe35wutsSiSGn0aF2IPT6BIESQ==\",\n        \"thread-topic\": \"Device Lost\",\n        \"x-sid-result\": \"PASS\",\n        \"dkim-signature\": \"v=1; a=rsa-sha256; q=dns\/txt; d=fortinet.com; s=dkim; c=relaxed\/relaxed; h=from:to:subject:date:message-id:content-type:mime-version; bh=Vl5LMUw+6bF4y0B0BKL58qjUJzsj4xLdfPYDkDC10ao=; b=CtHt570vzEmBlFM6x7Vpdw5V\/UqF07LtM36KEK79f748I2Z4izYVE\/SwrHuxmLq+PYf1Y3UVZz2h\\t44Eo26V15twlpEX6E\/04yI88QQdgbtsqMyOEgFprncFc\/DySzzNcWEKLKneA2E7\/cHSo1czkFlw0\\tHxlANFYf1rd5cWrhaLz6Z3uyYWTx9y1ynb3UAFaCmVuOTsjO8lXwwjEfXOJqVAl4d0kiARAqUuBq\\t1WWPENqlPrP2bmlaV1B9bNYWVxhJTnFugbQ7mrNeHidoHwaU0ev2rz0GTZOe5FPeaodVE36wroAn\\tyYDEs4UhcojJXWLJQXO9CPx1+lN+klNJxyUpkg==\",\n        \"x-message-info\": \"\\t5vMbyqxGkdeH2V1oJuS48qHfdM2qWcR161H0bGKcbpnOzy51VU4w4IE2yFsBgkR37hjAjBbZImKSpoQnx5gjeGJT\/kp1jmD7jGO7YBiQzMrLZ6eeHhVjWWvaD2DA+4g+5qi01peyERLi8uQI+vbWvaf53isthEpbYe+4T\/nKEj817fzddm6gQEAJEKDqJZuJd+geUW1gJVeLwW0f9V16zQ==\",\n        \"accept-language\": \"en-GB, en-US\",\n        \"x-ms-has-attach\": \"yes\",\n        \"x-originatororg\": \"outlook.com\",\n        \"content-language\": \"en-US\",\n        \"x-originating-ip\": \"[49.248.160.50]\",\n        \"x-message-delivery\": \"Vj0xLjE7dXM9MDtsPTE7YT0xO0Q9MTtHRD0xO1NDTD0z\",\n        \"x-microsoft-antispam\": \"BCL:1;\",\n        \"x-ms-tnef-correlator\": \"\",\n        \"x-incomingheadercount\": \"20\",\n        \"authentication-results\": \"spf=pass (sender IP is 208.91.113.81) smtp.mailfrom=fortinet.com; outlook.com; dkim=pass (signature was verified) header.d=fortinet.com;outlook.com; dmarc=pass action=none header.from=fortinet.com;compauth=pass reason=100\",\n        \"x-eopattributedmessage\": \"0\",\n        \"x-ms-publictraffictype\": \"Email\",\n        \"x-ms-userlastlogontime\": \"10\/14\/2020 5:41:19 AM\",\n        \"x-ms-exchange-eopdirect\": \"true\",\n        \"x-incomingtopheadermarker\": \" OriginalChecksum:872573AE126AAB085B3515A42911522E8E285C2B0EDBDED1519A32EB30905FA9;UpperCasedChecksum:77C477267B4618E9287C051BEC83559349F6C9B81F7B4C5D273FE9C6DFAAEE5A;SizeAsReceived:2083;Count:20\",\n        \"x-ms-traffictypediagnostic\": \"DM3NAM05HT019:\",\n        \"x-eoptenantattributedmessage\": \"84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa:0\",\n        \"x-ms-exchange-crosstenant-id\": \"84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa\",\n        \"x-ms-exchange-organization-pcl\": \"2\",\n        \"x-ms-exchange-organization-scl\": \"0\",\n        \"x-fe-policy-id-smtp.fortinet.com\": \"392:1:4:SYSTEM\",\n        \"x-ms-exchange-crosstenant-authas\": \"Anonymous\",\n        \"x-microsoft-antispam-message-info\": \"\\tc6klv8ZTi8UfAnv8CRaI\/fBrZZvy3IvrOS\/HDp+1DpWKFKpKXwgwoY3okQCGr24TFuLrlYV6n2eE1bfaXK0jkUcIh8Tmu\/SqrEUX\/yRBp6MKF0N3GPooEZ1zZqfWb5QCdMenGyuC2O3IhZsf+2LmSbLXpM+n2GwsY+kZwqa3+WMH\/sZtutIlkxV6dWGM+7tmdDwUjkv2QlZTcXKa56pTiCHqRXBBPabh54JGhsdM4RRaYMZ4rgRUApkUSdcxnZJNklQdGtmtTqOSXmhURA0kdb2f\/8077T146BHhRu1VTBoFfr3rARplhbsLZ9fSkdUnxf4b6MKA+KztGJP\/EV5l3L1ftbd3+NL8+rsMHBzBD2+tPVqUfENU6tu\/rWoofIaDmFaNda8f3TFxv51MACllECwhDHiyVb5e2I8BbESf5HHXld5Nx+D0E0qNmbiynBAxOfDLUWgzVN8Kfo\/TCopB1XTTFnBuA+d5Frvhs6ZAow6oU+efr5oU2UMr2IksALXBYG\/KoI3Z\/PNT4\/BRGwreuA9fjInktbWOVEFoNHSPdkAIH1ts+YddNIrKkWTUgpqVSW3CWJBKQtdmyFy1g2tw2ixn8LBeixsR6e56xP\/VcEdXz0UbzAW+0kUkErKJmnyniGDJkthhiXAyRLC+hc1ahVM2qiFnRqir7TzSRe3F\/+CrGHY5dOoVMD52SCriYLK9Du96rWAjWRIbETQC+QUJ0PyDC7cBT6Kg1g+JuFfknWE04YA\/0YYuO2XQosNLU2TisbLkByy9FdCwEYVZvVWmWQe1yMsE2onEPKplWI32K\/aBlGdUXBXY2fvJ8CnCvlSL43n7GQxXQ89Mc\/gIpyXU5UE82kDm5V0fjM6aLPVfgAcwefQWvunMVbSTkNFnxo7THtusUfoYyeshjAbKY1A4lSh6o7+hThjJST8NeGOatMR9R8FJfxs7lVnE05vKo7rmU+75V\/+8PQMelDEwJ6d22k2i5PwcMD+nEjWu21Yud5ajA5OGC\/QbB6uI8JElY3Mg\",\n        \"x-ms-exchange-organization-authas\": \"Anonymous\",\n        \"x-ms-exchange-crosstenant-authsource\": \" DM3NAM05FT054.eop-nam05.prod.protection.outlook.com\",\n        \"x-microsoft-antispam-mailbox-delivery\": \"\\tabwl:0;wl:0;pcwl:0;kl:0;iwl:0;ijl:0;dwl:0;dkl:0;rwl:0;ucf:0;jmr:0;ex:0;auth:1;dest:I;ENG:(5062000282)(90000117)(90010023)(91010020)(91040095)(9000001)(9050020)(9100082)(5061607266)(5061608174)(4900115)(98391011)(4920090)(6515079)(4950131)(4990090);\",\n        \"x-ms-exchange-organization-authsource\": \" DM3NAM05FT054.eop-nam05.prod.protection.outlook.com\",\n        \"x-fe-attachment-name-smtp.fortinet.com\": \"image001.png, image002.png, image003.png, image004.png, image005.png, image006.png\",\n        \"x-ms-exchange-processed-by-bccfoldering\": \"15.20.3455.030\",\n        \"x-ms-exchange-transport-endtoendlatency\": \"00:00:01.3955336\",\n        \"x-ms-office365-filtering-correlation-id\": \"91d819a4-59a3-4a18-1d00-08d870051e0a\",\n        \"x-ms-exchange-crosstenant-fromentityheader\": \"Internet\",\n        \"x-ms-exchange-crosstenant-network-message-id\": \"91d819a4-59a3-4a18-1d00-08d870051e0a\",\n        \"x-ms-exchange-crosstenant-originalarrivaltime\": \"14 Oct 2020 05:50:55.2992 (UTC)\",\n        \"x-ms-exchange-organization-expirationinterval\": \"1:00:00:00.0000000\",\n        \"x-ms-exchange-organization-network-message-id\": \" 91d819a4-59a3-4a18-1d00-08d870051e0a\",\n        \"x-ms-exchange-organization-expirationstarttime\": \"14 Oct 2020 05:50:55.4051 (UTC)\",\n        \"x-ms-exchange-organization-messagedirectionality\": \"Incoming\",\n        \"x-ms-exchange-transport-crosstenantheadersstamped\": \"DM3NAM05HT019\",\n        \"x-ms-exchange-crosstenant-rms-persistedconsumerorg\": \" 00000000-0000-0000-0000-000000000000\",\n        \"x-ms-exchange-organization-expirationintervalreason\": \"OriginalSubmit\",\n        \"x-ms-exchange-organization-expirationstarttimereason\": \"OriginalSubmit\"\n      },\n      \"item_id\": \"AQMkADAwATM3ZmYAZS0yYjJmLWViZjItMDACLTAwCgBGAAADm1QGbNFdC0+M0BsjVy+ebgcAkVuL4NG5M02mF\/jgIeGFPgAAAgEMAAAAkVuL4NG5M02mF\/jgIeGFPgAAAIi7RpkAAAA=\",\n      \"epilogue\": \"\",\n      \"preamble\": \"\",\n      \"attachments\": [],\n      \"folder_path\": \"\/root\/Top of Information Store\/Inbox\",\n      \"attachment_files\": [],\n      \"extract_attach_data\": true,\n      \"parsed_attachment_data\": []\n    }"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "ea02c41b-2e94-459b-8978-3a187867f8bd"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Alert Device Lost or Stolen",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "Device was reported as lost or stolen",
+                    "type": {
+                        "id": 118,
+                        "@id": "\/api\/3\/picklists\/2b8024fd-096a-426f-bf7f-63fb149ff9ee",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Lost \/ Stolen",
+                        "listName": "\/api\/3\/picklist_names\/a7087b9c-5660-495f-a8ac-c3b198ddb8c2",
+                        "itemValue": "Lost \/ Stolen",
+                        "orderIndex": 5
+                    },
+                    "state": {
+                        "id": 220,
+                        "@id": "\/api\/3\/picklists\/a1bac09b-1441-45aa-ad1b-c88744e48e72",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "New",
+                        "listName": "\/api\/3\/picklist_names\/2f9ed741-25fe-475a-9f12-64336288eebf",
+                        "itemValue": "New",
+                        "orderIndex": 0
+                    },
+                    "source": "Email Server",
+                    "status": {
+                        "id": 54,
+                        "@id": "\/api\/3\/picklists\/7de816ff-7140-4ee5-bd05-93ce22002146",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Open",
+                        "listName": "\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a",
+                        "itemValue": "Open",
+                        "orderIndex": 1
+                    },
+                    "emailTo": "tonys@outlook.com",
+                    "severity": {
+                        "id": 89,
+                        "@id": "\/api\/3\/picklists\/58d0753f-f7e4-403b-953c-b0f521eab759",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#28B35C",
+                        "display": "Low",
+                        "listName": "\/api\/3\/picklist_names\/4e80cba3-032f-48b4-ac03-17e3ec247aac",
+                        "itemValue": "Low",
+                        "orderIndex": 1
+                    },
+                    "sourceId": "1223",
+                    "__replace": "true",
+                    "emailBody": "Hello Team\n\nLost device, below are the details:\n \n\nDevice Owner : Tony Stark\nDevice Type : Laptop\nDevice serial number : BQP-854-D33246-GH\n \n \nThanks,\n \nTony Stark\nSystem Engineer",
+                    "emailFrom": "tonys@outlook.com",
+                    "assignedTo": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+                    "returnPath": "tonys@outlook.com",
+                    "sourcedata": "{{vars.data | toJSON}}",
+                    "description": "<p>User reported device Lost \/ Stolen&nbsp;<\/p>",
+                    "ackSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "emailSubject": "Device Lost",
+                    "closureReason": {
+                        "id": 251,
+                        "@id": "\/api\/3\/picklists\/8590c81e-3307-4645-97f5-c3e1bec4e05a",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Tasks Completed",
+                        "listName": "\/api\/3\/picklist_names\/4ebacea1-88cd-4ea8-9dcc-385bea42cc59",
+                        "itemValue": "Tasks Completed",
+                        "orderIndex": 0
+                    },
+                    "respSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "priorityWeight": 1,
+                    "escalatedtoincident": {
+                        "id": 6808,
+                        "@id": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "No",
+                        "listName": "\/api\/3\/picklist_names\/e131cc54-9ae4-43c9-b830-af6e331fe024",
+                        "itemValue": "No",
+                        "orderIndex": 1
+                    }
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/upsert\/alerts",
+                "tagsOperation": "OverwriteTags",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "uuid": "a02332c0-47a1-4950-b022-5d3f2c7390d0"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Alert Device Lost or Stolen",
+            "targetStep": "\/api\/3\/workflow_steps\/a02332c0-47a1-4950-b022-5d3f2c7390d0",
+            "sourceStep": "\/api\/3\/workflow_steps\/ea02c41b-2e94-459b-8978-3a187867f8bd",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4960233e-0eb1-4eb7-b4e8-1bfe1fa04fbb"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/ea02c41b-2e94-459b-8978-3a187867f8bd",
+            "sourceStep": "\/api\/3\/workflow_steps\/a3d8aa53-465a-455b-a28d-7378a114d20b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "9d33c56f-3e46-4c6d-a67c-4965af081d29"
+        }
+    ],
+    "priority": null,
+    "uuid": "82fa2f60-5a15-4c38-a5f9-02ebceb409b4",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": []
+}

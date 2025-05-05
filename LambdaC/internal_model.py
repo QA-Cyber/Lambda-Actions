@@ -24,3 +24,4 @@ class LambdaPlaybook(BaseModel):
     name: str
     description: Optional[str] = None
     steps: List[Step]
+    metadata: Optional[Dict] = None

@@ -1,0 +1,105 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "05 - Quarantine Infected Assets",
+    "aliasName": null,
+    "tag": null,
+    "description": "Block Infected Assets on FortiGate",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/6dadec2b-3024-4b1b-832c-c612f0bca071",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/1873d42a-7891-4c31-82bc-4a7a0d8d4fcc",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Quarantine Infected Machine",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "asset_data": "{{vars.input.records[0]}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/a9f0a401-82b0-48fd-9fc2-2bec639d7ca0"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "25246508-c2d6-4932-9832-ee7693a4e1a7"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "33f2dbaf-41da-4a42-b2f9-2a340c5d64f0",
+                "resources": [
+                    "assets"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    },
+                    "useMockOutput": "{{globalVars.Demo_mode}}"
+                },
+                "displayConditions": {
+                    "assets": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "primitive",
+                                "field": "ip",
+                                "value": "false",
+                                "operator": "isnull",
+                                "_operator": "isnull"
+                            }
+                        ]
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "singleRecordExecution": true
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "1873d42a-7891-4c31-82bc-4a7a0d8d4fcc"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Quarantine Infected Machine",
+            "targetStep": "\/api\/3\/workflow_steps\/25246508-c2d6-4932-9832-ee7693a4e1a7",
+            "sourceStep": "\/api\/3\/workflow_steps\/1873d42a-7891-4c31-82bc-4a7a0d8d4fcc",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "dfc6abab-c3cc-413a-86f4-3592df645ad8"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "9ba2a194-f5ad-44b5-8320-22405c7b465b",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "ManualTrigger",
+        "Assets",
+        "IncidentResponse"
+    ]
+}

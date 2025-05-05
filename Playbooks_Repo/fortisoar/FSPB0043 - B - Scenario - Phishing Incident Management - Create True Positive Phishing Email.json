@@ -1,0 +1,408 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "B - Scenario - Phishing Incident Management - Create True Positive Phishing Email",
+    "aliasName": null,
+    "tag": null,
+    "description": "Create scenario alert from a JSON alert record",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/6dadec2b-3024-4b1b-832c-c612f0bca071",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/1fdc0e1c-4197-45ca-954d-667d30955b2f",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "mydomain": "fortielab.com"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "71c60415-d341-4b51-95fe-c20eb160f6d4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Data Output",
+            "description": null,
+            "arguments": {
+                "recordIRI": "{{vars.steps.True_Positive_Create_Alert.data}}"
+            },
+            "status": null,
+            "top": "1380",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "c8374ed4-49a3-41a5-be51-70ee2539d7d8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Attachment",
+            "description": null,
+            "arguments": {
+                "name": "FortiSOAR SOC Simulator",
+                "config": "b423463f-1312-4339-8ee2-f40194445e72",
+                "params": {
+                    "file_name": "Password_Update_Guide_{{range(1111,9999)|random}}.docx",
+                    "malicious_url": "{{vars.malicious_url}}",
+                    "attachment_also": "",
+                    "malicious_email": "cto_office@fortielab.com",
+                    "custom_parameters": "{\"indicatorStatus\": \"{{\"IndicatorStatus\" | picklist(\"Excluded\", \"@id\")}}\"}"
+                },
+                "version": "1.0.8",
+                "connector": "fortisoar-soc-simulator",
+                "operation": "malicious_file_indicator",
+                "operationTitle": "Create Malicious File Indicator",
+                "pickFromTenant": false,
+                "step_variables": {
+                    "create_malicious_file_result": "{{vars.result.data}}"
+                }
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "9498387c-5113-4d0c-9d6f-debe3e34aaad"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Malicious URL",
+            "description": null,
+            "arguments": {
+                "name": "FortiSOAR SOC Simulator",
+                "config": "b423463f-1312-4339-8ee2-f40194445e72",
+                "params": {
+                    "random": true
+                },
+                "version": "2.0.0",
+                "connector": "fortisoar-soc-simulator",
+                "operation": "bad_url",
+                "operationTitle": "Fetch Malicious URL",
+                "pickFromTenant": false,
+                "step_variables": {
+                    "malicious_url": "{%if 'https:\/\/' in vars.result.data or 'http:\/\/' in vars.result.data%}{{vars.result.data}}{%else%}https:\/\/{{vars.result.data}}{%endif%}"
+                }
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "d79560ff-4763-44f6-b58f-def2c6886167"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Link Attachment File",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "__link": {
+                        "indicators": "{{vars.create_malicious_file_result.indicator['@id']}}",
+                        "recordTags": [
+                            "\/api\/3\/tags\/Scenario: Phishing Incident Management"
+                        ]
+                    },
+                    "fileHash": "{{vars.steps.Get_Attachment.data.file.metadata.sha256}}"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.alert_data['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": {
+                    "email_recipients": "{{vars.source_data.headers.to|regex_findall(\"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+\")|union(vars.source_data.headers.cc|regex_findall(\"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+\"))}}"
+                }
+            },
+            "status": null,
+            "top": "1110",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "b05a00cd-2de0-44bd-804c-2070f28c98b4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Malicious Email Data",
+            "description": null,
+            "arguments": {
+                "malicious_email_alert_json": "{\n    \"@context\": \"\/api\/3\/contexts\/Alert\",\n    \"@id\": \"\/api\/3\/alerts\/fd420999-01ed-44cb-ba98-178b95fcc070\",\n    \"@type\": \"Alert\",\n    \"vulnerabilitySeverity\": null,\n    \"ackSLApausedon\": null,\n    \"alertRemainingRespSLA\": null,\n    \"alertRemainingAckSLA\": null,\n    \"deviceSerialNo\": null,\n    \"deviceOwner\": null,\n    \"priorityWeight\": 1,\n    \"bucketName\": null,\n    \"alertDetectionDate\": 1640865003,\n    \"destinationID\": null,\n    \"respSLApausedon\": null,\n    \"mitreattackid\": null,\n    \"mitreTechnique\": null,\n    \"respDate\": null,\n    \"ackDate\": null,\n    \"assigneddate\": 1640865005,\n    \"resolveddate\": null,\n    \"closureNotes\": null,\n    \"escalationReason\": null,\n    \"sourceType\": null,\n    \"name\": \"Fw: Vulnerability Patching Instructions\",\n    \"attachmentNames\": null,\n    \"bytesTransferred\": null,\n    \"commandLine\": null,\n    \"computerName\": null,\n    \"decodedCommandLine\": null,\n    \"description\": null,\n    \"destinationIp\": null,\n    \"destinationPort\": null,\n    \"deviceUID\": null,\n    \"domain\": null,\n    \"dueBy\": null,\n    \"fileEmail\": null,\n    \"emailBody\": \"<p><html><head>\\n<meta http-equiv=\\\"Content-Type\\\" content=\\\"text\/html; charset=utf-8\\\"><\/head><body><div style=\\\"font-family: Verdana;font-size: 12.0px;\\\"><div>\\n<div>All,<\/div>\\n\\n<div>A Critical vulnerability has been found in our internal HR application,&nbsp;we have reasons to think it has been exploited by cybercriminals to slteel the identity of our employees.<\/div>\\n\\n<div><strong><span style=\\\"background-color:#ff0000;\\\">All Employees <\/span><\/strong>are required to change their passwords immediately. You can use <a href=\\\"{{vars.malicious_url}}\\\">&lt;&lt;This Link&gt;&gt;<\/a>&nbsp;or the attached guide to update your credentials<\/div><br><br><br><br><div>Regards,<br>Office of the CTO<\/div>\\n\\n<div>&nbsp;<\/div>\\n\\n<div>&nbsp;<\/div>\\n\\n<div>_______________________________________<\/div>\\n\\n<div><span style=\\\"font-size:8px;\\\">Please note that this message and any attachments may contain confidential and proprietary material and information and are intended only for the use of the intended recipient(s). If you are not the intended recipient, you are hereby notified that any review, use, disclosure, dissemination, distribution or copying of this message and any attachments is strictly prohibited. If you have received this email in error, please immediately notify the sender and destroy this e-mail and any attachments and all copies, whether electronic or printed. Please also note that any views, opinions, conclusions or commitments expressed in this message are those of the individual sender and do not necessarily reflect the views of fortielab, Inc., its affiliates, and emails are not binding on fortielab and only a writing manually signed by fortielab's General Counsel can be a binding commitment of fortielab to fortielab's customers or partners. Thank you.<\/span><\/div>\\n<\/div><\/div><\/body><\/html><\/p>\",\n    \"emailFrom\": \"cto_office@{{vars.mydomain}}\",\n    \"emailHeaders\": \"{\\\"to\\\": \\\"asmith@{{vars.mydomain}}\\\", \\\"date\\\": \\\"<<TR_FORMATTED_TIME>>\\\", \\\"from\\\": \\\"cto_office@{{vars.mydomain}}\\\", \\\"subject\\\": \\\"Fw: Vulnerability Patching Instructions\\\", \\\"received\\\": [\\\"from Exch19.{{vars.mydomain}} (10.200.3.2.67) by Exch19.{{vars.mydomain}} (10.200.3.2.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5 via Mailbox Transport; Thu, 30 Dec 2021 12:28:52 +0100\\\", \\\"from Exch19.{{vars.mydomain}} (10.200.3.2.67) by Exch19.{{vars.mydomain}} (10.200.3.2.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5; Thu, 30 Dec 2021 12:28:45 +0100\\\", \\\"from FortiMail.{{vars.mydomain}} (10.200.3.2.64) by Exch19.{{vars.mydomain}} (10.200.3.2.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5 via Frontend Transport; Thu, 30 Dec 2021 12:28:45 +0100\\\", \\\"from mout.<<TR_MALICIOUS_DOMAIN>> (mout.<<TR_MALICIOUS_DOMAIN>> [212.227.15.19])\\\\tby FortiMail.{{vars.mydomain}}  with ESMTP id 1BUBSim7011052-1BUBSim9011052\\\\t(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)\\\\tfor <asmith@{{vars.mydomain}}>; Thu, 30 Dec 2021 12:28:44 +0100\\\", \\\"from [<<TR_MALICIOUS_IP>>] ([<<TR_MALICIOUS_IP>>]) by web-mail.<<TR_MALICIOUS_DOMAIN>> (3c-app-mailcom-bs09.server.lan [172.19.170.177]) (via HTTP); Thu, 30 Dec 2021 12:28:44 +0100\\\"], \\\"message-id\\\": \\\" <trinity-b0a59a02-90e3-492b-9a53-b3cb5b731dba-1640863<<TR_RANDOM_INTEGER,100000,999999>>@3c-app-mailcom-bs09>\\\", \\\"return-path\\\": \\\"cto_office@<<TR_MALICIOUS_DOMAIN>>\\\", \\\"sensitivity\\\": \\\"Normal\\\", \\\"x-spam-flag\\\": \\\"NO\\\", \\\"content-type\\\": \\\"multipart\/mixed; boundary=\\\\\\\"abmob-61f3bba5-7345-4f26-b3b5-dd1f2f756898\\\\\\\"\\\", \\\"mime-version\\\": \\\"1.0\\\", \\\"x-provags-id\\\": \\\" V03:K1:fzttCS\/6NwfGL8txFlNhtT+4ih7HuMPUmyhGd5BjhaRiaeaPF5ErpcQKXq4oxHU1zLl35 sTK8yUCaLWb4fXaLgV\/HrfO8t\/MWyStur\/AVJDHnRaL5qYB3VtryogihQYZMIb3PE3Gvz9UqLYbc GhBuMLpeA9nuFF9nSus6yTBc7SZMjlwGKlBCyClkLO\/yEe1Cw\/eb5zF2Rrns5kmDjUG5vdWIgVNe 4geYwFHE8y+W4XyPO+JhnU5856rPehUcBlpmxqo1H8if2n2bS+uEfldmYXwDmsg34dflu2jYUTTd Q8=\\\", \\\"dkim-signature\\\": \\\"v=1; a=rsa-sha256; c=relaxed\/simple; d=<<TR_MALICIOUS_DOMAIN>>;\\\\ts=badeba3b8450; t=1640863724;\\\\tbh=yw27rBIzkEOvfXFitD89pJWu6ehM8hzj4ioTfQoKFBo=;\\\\th=X-UI-Sender-Class:From:To:Subject:Date;\\\\tb=bIUv5JkOtaSGjQk1iX4\/OYLeGUzIrioNE3toFNeJi4AhH2MmTWmqc1bj7Co2pEz7o\\\\t aiYPy4nOEXddqMaQU+Bs\/sjeU5K4bHjQvszj0CuEnLMIgpvpeKaAz+h6sf6o4ohb20\\\\t n6EptPc0VeYbz3ycunovmcYGzkLj+ZaiPpcSK7nk=\\\", \\\"x-fe-policy-id\\\": \\\"0:1:1:SYSTEM\\\", \\\"x-ui-sender-class\\\": \\\"01bb95c1-4bf8-414a-932a-4f6e2808ef9c\\\", \\\"x-ui-out-filterresults\\\": \\\"notjunk:1;V03:K0:uiAuZ\/zk7hs=:G2MLnE2\/MFkNLI7bnlVxjG tYTaisrcaE3NwSsYOrmxp41OA0MGV6Zuin7IuSiVI6oj1kMCD\/kTu42n0boXprRnWcfipzcEk OUyI\/v+1A7eTbsendRSJr2AvO3X9FvbSSXg24Wir3O6f0w2SiiaGbAQwaq9k+ZlApFqkODUfE 0vp2RAC8lxFxHNixoxHHvpNk4rkpegxVFgrcfF1fjgyEhpwVM1YBvDNwWQ4XVK34LB4bLTteE wi6vFsSi\/kHM0UDekDZUfM5qQ1mWxRes2copfjQ3uL+Z8ZcNgKRBlOeBkt2W71w\/WrnTmqbt1 z+HKtLhBkxzcSwm124u9RsyNiIkY5tGkR7D1oGqZQ0npVBECim\/QWs2fQ8r4jp4EgTqOrbJt+ RO\/KO6HhF2lDcxn27K9Th\/yfjtF4QdWE5FZ6mQV26Sd6Ae2HyG4XwxXW+wUJQIVn73VYregJ9 tq7XQ\/GimMkBO+G7LRPzOKcbw6QiucfPjT1FxLnLWj1l6dJlGgHSKVtR7Ooo3xRpIWm+fPt3+ nzlQd2ou+52xVR0H7e2HY1YtW3OlYpShTOMOdiW\/9UEZOnPo3RJOQs8keHXyvUUqWwVvrkfMs ukoxwCOVk2Uvk6Y62AeuCgdz6UfF1vg81n\/jyzxnZ\/Vn7yiG8KO28rhuPFzgG3q5IEmHgeKIi 1VC8uygXZL80QjTKr\/1agP3ok9aRLfsHR2eJGpwOCILHcYoXp4ijuP6A6DEUl9pwu3W\/ILMLj Igki0du3JCCCeKfKmd3oHLFqoOu6F90uVwtTYil4u7Dj8OA5dpg7B8LCU\/78thRrNkMH4Zqxz cRVSDJU\\\", \\\"x-ms-exchange-organization-authas\\\": \\\"Anonymous\\\", \\\"x-ms-exchange-organization-authsource\\\": \\\"Exch19.{{vars.mydomain}}\\\", \\\"x-ms-exchange-processed-by-bccfoldering\\\": \\\"15.02.0529.005\\\", \\\"x-ms-exchange-transport-endtoendlatency\\\": \\\"00:00:07.2446325\\\", \\\"x-ms-exchange-organization-network-message-id\\\": \\\" <<TR_RANDOM_INTEGER,100000,999999>>9b-87d4-46c7-a229-08d9cb878a5c\\\"}\",\n    \"emailTo\": \"asmith@{{vars.mydomain}}\",\n    \"emailSubject\": \"Fw: Vulnerability Patching Instructions\",\n    \"epochTime\": null,\n    \"eventTime\": null,\n    \"fileHash\": \"\",\n    \"fileName\": null,\n    \"fileNames\": \"\",\n    \"filePath\": null,\n    \"latestLogin\": null,\n    \"metrics\": null,\n    \"parentProcessCmdLine\": null,\n    \"parentProcessPid\": null,\n    \"parentProcessName\": null,\n    \"processGuid\": null,\n    \"processId\": null,\n    \"processName\": null,\n    \"processTree\": null,\n    \"respDueDate\": null,\n    \"sourcedata\": \"{\\\"body\\\": {\\\"html\\\": \\\"<html><head>\\\\n<meta http-equiv=\\\\\\\"Content-Type\\\\\\\" content=\\\\\\\"text\/html; charset=utf-8\\\\\\\"><\/head><body><div style=\\\\\\\"font-family: Verdana;font-size: 12.0px;\\\\\\\"><div>\\\\n<div>All,<\/div>\\\\n\\\\n<div>A Critical vulnerability has been found in our internal HR application,&nbsp;we have reasons to think it has been exploited by cybercriminals to slteel the identity of our employees.<\/div>\\\\n\\\\n<div><strong><span style=\\\\\\\"background-color:#ff0000;\\\\\\\">All Employees <\/span><\/strong>are required to change their passwords immediately. You can use <a href=\\\\\\\"http:\/\/badurlk.com\\\\\\\">&lt;&lt;This Link&gt;&gt;<\/a>&nbsp;or the attached guide to update your credentials<\/div>\\\\n\\\\n<div>Office of the CTO<\/div>\\\\n\\\\n<div>&nbsp;<\/div>\\\\n\\\\n<div>&nbsp;<\/div>\\\\n\\\\n<div>_______________________________________<\/div>\\\\n\\\\n<div><span style=\\\\\\\"font-size:8px;\\\\\\\">Please note that this message and any attachments may contain confidential and proprietary material and information and are intended only for the use of the intended recipient(s). If you are not the intended recipient, you are hereby notified that any review, use, disclosure, dissemination, distribution or copying of this message and any attachments is strictly prohibited. If you have received this email in error, please immediately notify the sender and destroy this e-mail and any attachments and all copies, whether electronic or printed. Please also note that any views, opinions, conclusions or commitments expressed in this message are those of the individual sender and do not necessarily reflect the views of fortielab, Inc., its affiliates, and emails are not binding on fortielab and only a writing manually signed by fortielab's General Counsel can be a binding commitment of fortielab to fortielab's customers or partners. Thank you.<\/span><\/div>\\\\n<\/div><\/div><\/body><\/html>\\\", \\\"json\\\": null, \\\"text\\\": \\\"\\\"}, \\\"file\\\": \\\"d6d8463ec02942af83fc25d90c7ddfae\\\", \\\"headers\\\": {\\\"to\\\": \\\"adam smith <asmith@{{vars.mydomain}}>, masha <masha@{{vars.mydomain}}>\\\", \\\"date\\\": \\\"Thu, 30 Dec 2021 12:28:44 +0100\\\", \\\"from\\\": \\\"cto_office@{{vars.mydomain}}\\\",\\\"cc\\\":\\\"\\\\\\\"dricardo@{{vars.mydomain}}\\\\\\\" <dricardo@{{vars.mydomain}}>, \\\\\\\"auditor@{{vars.mydomain}}\\\\\\\" <auditor@{{vars.mydomain}}>\\\", \\\"subject\\\": \\\"Fw: Vulnerability Patching Instructions\\\", \\\"received\\\": [\\\"from Exch19.{{vars.mydomain}} (10.200.3.2.67) by Exch19.{{vars.mydomain}} (10.200.3.2.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5 via Mailbox Transport; Thu, 30 Dec 2021 12:28:52 +0100\\\", \\\"from Exch19.{{vars.mydomain}} (10.200.3.2.67) by Exch19.{{vars.mydomain}} (10.200.3.2.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5; Thu, 30 Dec 2021 12:28:45 +0100\\\", \\\"from FortiMail.{{vars.mydomain}} (10.200.3.2.64) by Exch19.{{vars.mydomain}} (10.200.3.2.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5 via Frontend Transport; Thu, 30 Dec 2021 12:28:45 +0100\\\", \\\"from mout.<<TR_MALICIOUS_DOMAIN>> (mout.<<TR_MALICIOUS_DOMAIN>> [212.227.15.19])\\\\tby FortiMail.{{vars.mydomain}}  with ESMTP id 1BUBSim7011052-1BUBSim9011052\\\\t(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)\\\\tfor <asmith@{{vars.mydomain}}>; Thu, 30 Dec 2021 12:28:44 +0100\\\", \\\"from [<<TR_MALICIOUS_IP>>] ([<<TR_MALICIOUS_IP>>]) by web-mail.<<TR_MALICIOUS_DOMAIN>> (3c-app-mailcom-bs09.server.lan [172.19.170.177]) (via HTTP); Thu, 30 Dec 2021 12:28:44 +0100\\\"], \\\"message-id\\\": \\\" <trinity-b0a59a02-90e3-492b-9a53-b3cb5b731dba-1640863<<TR_RANDOM_INTEGER,100000,999999>>@3c-app-mailcom-bs09>\\\", \\\"return-path\\\": \\\"cto_office@<<TR_MALICIOUS_DOMAIN>>\\\", \\\"sensitivity\\\": \\\"Normal\\\", \\\"x-spam-flag\\\": \\\"NO\\\", \\\"content-type\\\": \\\"multipart\/mixed; boundary=\\\\\\\"abmob-61f3bba5-7345-4f26-b3b5-dd1f2f756898\\\\\\\"\\\", \\\"mime-version\\\": \\\"1.0\\\", \\\"x-provags-id\\\": \\\" V03:K1:fzttCS\/6NwfGL8txFlNhtT+4ih7HuMPUmyhGd5BjhaRiaeaPF5ErpcQKXq4oxHU1zLl35 sTK8yUCaLWb4fXaLgV\/HrfO8t\/MWyStur\/AVJDHnRaL5qYB3VtryogihQYZMIb3PE3Gvz9UqLYbc GhBuMLpeA9nuFF9nSus6yTBc7SZMjlwGKlBCyClkLO\/yEe1Cw\/eb5zF2Rrns5kmDjUG5vdWIgVNe 4geYwFHE8y+W4XyPO+JhnU5856rPehUcBlpmxqo1H8if2n2bS+uEfldmYXwDmsg34dflu2jYUTTd Q8=\\\", \\\"dkim-signature\\\": \\\"v=1; a=rsa-sha256; c=relaxed\/simple; d=<<TR_MALICIOUS_DOMAIN>>;\\\\ts=badeba3b8450; t=1640863724;\\\\tbh=yw27rBIzkEOvfXFitD89pJWu6ehM8hzj4ioTfQoKFBo=;\\\\th=X-UI-Sender-Class:From:To:Subject:Date;\\\\tb=bIUv5JkOtaSGjQk1iX4\/OYLeGUzIrioNE3toFNeJi4AhH2MmTWmqc1bj7Co2pEz7o\\\\t aiYPy4nOEXddqMaQU+Bs\/sjeU5K4bHjQvszj0CuEnLMIgpvpeKaAz+h6sf6o4ohb20\\\\t n6EptPc0VeYbz3ycunovmcYGzkLj+ZaiPpcSK7nk=\\\", \\\"x-fe-policy-id\\\": \\\"0:1:1:SYSTEM\\\", \\\"x-ui-sender-class\\\": \\\"01bb95c1-4bf8-414a-932a-4f6e2808ef9c\\\", \\\"x-ui-out-filterresults\\\": \\\"notjunk:1;V03:K0:uiAuZ\/zk7hs=:G2MLnE2\/MFkNLI7bnlVxjG tYTaisrcaE3NwSsYOrmxp41OA0MGV6Zuin7IuSiVI6oj1kMCD\/kTu42n0boXprRnWcfipzcEk OUyI\/v+1A7eTbsendRSJr2AvO3X9FvbSSXg24Wir3O6f0w2SiiaGbAQwaq9k+ZlApFqkODUfE 0vp2RAC8lxFxHNixoxHHvpNk4rkpegxVFgrcfF1fjgyEhpwVM1YBvDNwWQ4XVK34LB4bLTteE wi6vFsSi\/kHM0UDekDZUfM5qQ1mWxRes2copfjQ3uL+Z8ZcNgKRBlOeBkt2W71w\/WrnTmqbt1 z+HKtLhBkxzcSwm124u9RsyNiIkY5tGkR7D1oGqZQ0npVBECim\/QWs2fQ8r4jp4EgTqOrbJt+ RO\/KO6HhF2lDcxn27K9Th\/yfjtF4QdWE5FZ6mQV26Sd6Ae2HyG4XwxXW+wUJQIVn73VYregJ9 tq7XQ\/GimMkBO+G7LRPzOKcbw6QiucfPjT1FxLnLWj1l6dJlGgHSKVtR7Ooo3xRpIWm+fPt3+ nzlQd2ou+52xVR0H7e2HY1YtW3OlYpShTOMOdiW\/9UEZOnPo3RJOQs8keHXyvUUqWwVvrkfMs ukoxwCOVk2Uvk6Y62AeuCgdz6UfF1vg81n\/jyzxnZ\/Vn7yiG8KO28rhuPFzgG3q5IEmHgeKIi 1VC8uygXZL80QjTKr\/1agP3ok9aRLfsHR2eJGpwOCILHcYoXp4ijuP6A6DEUl9pwu3W\/ILMLj Igki0du3JCCCeKfKmd3oHLFqoOu6F90uVwtTYil4u7Dj8OA5dpg7B8LCU\/78thRrNkMH4Zqxz cRVSDJU\\\", \\\"x-ms-exchange-organization-authas\\\": \\\"Anonymous\\\", \\\"x-ms-exchange-organization-authsource\\\": \\\"Exch19.{{vars.mydomain}}\\\", \\\"x-ms-exchange-processed-by-bccfoldering\\\": \\\"15.02.0529.005\\\", \\\"x-ms-exchange-transport-endtoendlatency\\\": \\\"00:00:07.2446325\\\", \\\"x-ms-exchange-organization-network-message-id\\\": \\\" eabb569b-87d4-46c7-a229-08d9cb<<TR_RANDOM_INTEGER,100000,999999>>\\\"}, \\\"epilogue\\\": \\\"\\\", \\\"preamble\\\": \\\"\\\", \\\"attachments\\\": [{\\\"file\\\": \\\"{{vars.create_malicious_file_result.indicator.file.filename}}\\\", \\\"metadata\\\": {\\\"md5\\\": \\\"\\\", \\\"sha1\\\": \\\"c4266da991ef610c647da69b1eda1840f8a8b450\\\", \\\"sha256\\\": \\\"a1ab039d63756a39d47225198866ee8757284b79f6aa35dddd19ca92856d8015\\\", \\\"filename\\\": \\\"{{vars.create_malicious_file_result.indicator.file.filename}}\\\", \\\"content_type\\\": \\\"application\/x-compressed\\\", \\\"content_length\\\": 5888}, \\\"file_type\\\": \\\"tgz\\\"}], \\\"{{vars.create_malicious_file_result.indicator.file.filename}}s\\\": [\\\"{{vars.create_malicious_file_result.indicator.file.filename}}\\\"], \\\"reporterEmailBody\\\": {\\\"html\\\": \\\"<html>\\\\r\\\\n<head>\\\\r\\\\n<meta http-equiv=\\\\\\\"Content-Type\\\\\\\" content=\\\\\\\"text\/html; charset=iso-8859-1\\\\\\\">\\\\r\\\\n<style type=\\\\\\\"text\/css\\\\\\\" style=\\\\\\\"display:none;\\\\\\\"><!-- P {margin-top:0;margin-bottom:0;} --><\/style>\\\\r\\\\n<\/head>\\\\r\\\\n<body dir=\\\\\\\"ltr\\\\\\\">\\\\r\\\\n<div id=\\\\\\\"divtagdefaultwrapper\\\\\\\" style=\\\\\\\"font-size:12pt;color:#000000;font-family:Calibri,Helvetica,sans-serif;\\\\\\\" dir=\\\\\\\"ltr\\\\\\\">\\\\r\\\\n<p>Team,<\/p>\\\\r\\\\n<p>This message seems suspicious, could you please investigate.<\/p>\\\\r\\\\n<p>Regards,<\/p>\\\\r\\\\n<p>Adam<br>\\\\r\\\\n<\/p>\\\\r\\\\n<\/div>\\\\r\\\\n<\/body>\\\\r\\\\n<\/html>\\\\r\\\\n\\\", \\\"json\\\": null, \\\"text\\\": \\\"Team,\\\\r\\\\n\\\\r\\\\nThis message seems suspicious, could you please investigate.\\\\r\\\\n\\\\r\\\\nRegards,\\\\r\\\\n\\\\r\\\\nAdam\\\\r\\\\n\\\"}, \\\"reporterEmailAddress\\\": \\\"adam smith <asmith@{{vars.mydomain}}>\\\", \\\"parsed_attachment_data\\\": []}\",\n    \"recipientEmailAddress\": \"asmith@{{vars.mydomain}}\",\n    \"registryKey\": null,\n    \"registryKeyValue\": null,\n    \"reporter\": \"adam smith <asmith@{{vars.mydomain}}>\",\n    \"reporterEmailBody\": \"<p><html>\\r\\n<head>\\r\\n<meta http-equiv=\\\"Content-Type\\\" content=\\\"text\/html; charset=iso-8859-1\\\">\\r\\n<style type=\\\"text\/css\\\" style=\\\"display:none;\\\"><!-- P {margin-top:0;margin-bottom:0;} --><\/style>\\r\\n<\/head>\\r\\n<body dir=\\\"ltr\\\">\\r\\n<div id=\\\"divtagdefaultwrapper\\\" style=\\\"font-size:12pt;color:#000000;font-family:Calibri,Helvetica,sans-serif;\\\" dir=\\\"ltr\\\">\\r\\n<p>Team,<\/p>\\r\\n<p>This message seems suspicious, could you please investigate.<\/p>\\r\\n<p>Regards,<\/p>\\r\\n<p>Adam<br>\\r\\n<\/p>\\r\\n<\/div>\\r\\n<\/body>\\r\\n<\/html>\\r\\n<\/p>\",\n    \"returnPath\": \"cto_office@<<TR_MALICIOUS_DOMAIN>>\",\n    \"scheduledTask\": null,\n    \"senderDomain\": \"{{vars.mydomain}}\",\n    \"senderEmailAddress\": \"adrian aln <cto_office@{{vars.mydomain}}>\",\n    \"services\": null,\n    \"source\": \"User Reported\",\n    \"sourceId\": \"  <trinity-b0a59a02-90e3-492b-9a53-b3cb5b731dba-1640863724273@3c-app-mailcom-bs09> \",\n    \"sourceIp\": null,\n    \"sourcePort\": null,\n    \"sourceProcess\": null,\n    \"sourceTool\": null,\n    \"targetAsset\": null,\n    \"targetProcess\": null,\n    \"url\": null,\n    \"userName\": null,\n    \"userDetails\": null,\n    \"mitretactics\": null,\n    \"mitregroups\": null,\n    \"deviceType\": null,\n    \"assignedTo\": {\n        \"@id\": \"\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n        \"@type\": \"Person\",\n        \"phoneHome\": null,\n        \"firstname\": \"CS\",\n        \"lastname\": \"Admin\",\n        \"title\": \"Admin\",\n        \"department\": null,\n        \"email\": \"admin@example.com\",\n        \"description\": null,\n        \"phoneFax\": null,\n        \"phoneMobile\": null,\n        \"phoneWork\": \"+16462759691\",\n        \"csActive\": true,\n        \"accessType\": \"Named\",\n        \"companyId\": null,\n        \"type\": null,\n        \"userType\": null,\n        \"avatar\": null,\n        \"uuid\": \"3451141c-bac6-467c-8d72-85e0fab569ce\",\n        \"createUser\": \"\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n        \"createDate\": 1633035299,\n        \"modifyUser\": \"\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n        \"modifyDate\": 1633035299,\n        \"id\": 3,\n        \"userId\": \"f6cea8d1-1910-4b3f-8802-a907d7688493\",\n        \"@settings\": \"\/api\/3\/user_settings\/3451141c-bac6-467c-8d72-85e0fab569ce\"\n    },\n    \"ackSlaStatus\": null,\n    \"respSlaStatus\": null,\n    \"closureReason\": null,\n    \"escalatedtoincident\": null,\n    \"killChainPhase\": null,\n    \"severity\": {\n        \"@id\": \"\/api\/3\/picklists\/b3c20a3a-ecfd-4adc-a225-0205968e6793\",\n        \"@type\": \"Picklist\",\n        \"itemValue\": \"Medium\",\n        \"orderIndex\": 2,\n        \"color\": \"#D2AC1A\",\n        \"icon\": null,\n        \"listName\": \"\/api\/3\/picklist_names\/4e80cba3-032f-48b4-ac03-17e3ec247aac\",\n        \"uuid\": \"b3c20a3a-ecfd-4adc-a225-0205968e6793\",\n        \"id\": 176\n    },\n    \"status\": {\n        \"@id\": \"\/api\/3\/picklists\/7de816ff-7140-4ee5-bd05-93ce22002146\",\n        \"@type\": \"Picklist\",\n        \"itemValue\": \"Open\",\n        \"orderIndex\": 1,\n        \"color\": null,\n        \"icon\": null,\n        \"listName\": \"\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a\",\n        \"uuid\": \"7de816ff-7140-4ee5-bd05-93ce22002146\",\n        \"id\": 118\n    },\n    \"systemAssignedQueue\": null,\n    \"type\": {\n        \"@id\": \"\/api\/3\/picklists\/c145394b-069a-449b-a05e-67980d0f4b82\",\n        \"@type\": \"Picklist\",\n        \"itemValue\": \"Suspicious Email\",\n        \"orderIndex\": 15,\n        \"color\": null,\n        \"icon\": null,\n        \"listName\": \"\/api\/3\/picklist_names\/a7087b9c-5660-495f-a8ac-c3b198ddb8c2\",\n        \"uuid\": \"c145394b-069a-449b-a05e-67980d0f4b82\",\n        \"id\": 195\n    },\n    \"uuid\": \"fd420999-01ed-44cb-ba98-178b95fcc070\",\n    \"createUser\": {\n        \"@id\": \"\/api\/3\/appliances\/57545210-2adc-472b-a24f-2df6ee8dfe63\",\n        \"@type\": \"Appliance\",\n        \"name\": \"Playbook\",\n        \"userType\": null,\n        \"avatar\": null,\n        \"uuid\": \"57545210-2adc-472b-a24f-2df6ee8dfe63\",\n        \"createUser\": null,\n        \"createDate\": 1633035299,\n        \"modifyUser\": null,\n        \"modifyDate\": 1633035299,\n        \"id\": 1,\n        \"userId\": \"6f3626c1-0da7-4b44-8d5e-43750f780a47\"\n    },\n    \"createDate\": 1640865003,\n    \"modifyUser\": {\n        \"@id\": \"\/api\/3\/appliances\/57545210-2adc-472b-a24f-2df6ee8dfe63\",\n        \"@type\": \"Appliance\",\n        \"name\": \"Playbook\",\n        \"userType\": null,\n        \"avatar\": null,\n        \"uuid\": \"57545210-2adc-472b-a24f-2df6ee8dfe63\",\n        \"createUser\": null,\n        \"createDate\": 1633035299,\n        \"modifyUser\": null,\n        \"modifyDate\": 1633035299,\n        \"id\": 1,\n        \"userId\": \"6f3626c1-0da7-4b44-8d5e-43750f780a47\"\n    },\n    \"modifyDate\": 1640865077,\n    \"tenant\": {\n        \"@id\": \"\/api\/3\/tenants\/b3a700f7-00be-4ef9-90c6-3c8fe6e1be63\",\n        \"@type\": \"Tenant\",\n        \"name\": \"Self\",\n        \"isDedicated\": true,\n        \"tenantId\": \"d5b9ada9427ad718b7f432cab7210bc8\",\n        \"role\": \"self\",\n        \"description\": \"sample\",\n        \"allowRemoteMMDModification\": true,\n        \"license\": null,\n        \"region\": null,\n        \"industry\": null,\n        \"uuid\": \"b3a700f7-00be-4ef9-90c6-3c8fe6e1be63\",\n        \"createUser\": null,\n        \"createDate\": null,\n        \"modifyUser\": null,\n        \"modifyDate\": null,\n        \"id\": 1\n    },\n    \"conflict\": false,\n    \"tenantRecordId\": 101,\n    \"id\": 101,\n    \"recordTags\": [      \"SIM\",\n      \"APM\"  ],\n    \"assignee\": \"\"\n  }"
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "6b9ba772-589f-4b6a-84a7-bbdaccec8cd6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Notify Sender",
+            "description": null,
+            "arguments": {
+                "config": "88c3d39c-2fa9-4731-b00d-29815008f17c",
+                "params": {
+                    "cc": "",
+                    "to": "{{vars.email_recipients|join(',')}}",
+                    "bcc": "",
+                    "from": "{{vars.source_data.headers['return-path']}}",
+                    "type": "Manual Input",
+                    "content": "<p>{{vars.alert_data.emailBody}}<\/p>",
+                    "subject": "{{vars.alert_data.name}}",
+                    "iri_list": "{{vars.steps.Get_Attachment.data.file['@id']}}",
+                    "body_type": "Rich Text",
+                    "file_name": "",
+                    "file_path": ""
+                },
+                "version": "2.4.2",
+                "from_str": "admin@example.com",
+                "connector": "smtp",
+                "operation": "send_email_new",
+                "ignore_errors": true,
+                "operationTitle": "Send Email",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "1245",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/4c0019b2-055c-44d0-968c-678a0c2d762e",
+            "group": null,
+            "uuid": "e76a0f78-2e89-4239-8960-fd64542e5d77"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "82e64f13-0a7d-49b9-90dd-c92289f3115e",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": true,
+                "singleRecordExecution": false
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "1fdc0e1c-4197-45ca-954d-667d30955b2f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "True Positive Create Alert",
+            "description": null,
+            "arguments": {
+                "name": "FortiSOAR SOC Simulator",
+                "config": "49e31d78-46c3-4d6a-be56-b0758bbf579c",
+                "params": {
+                    "alert_json": "{{vars.malicious_email_alert_json}}"
+                },
+                "version": "1.0.8",
+                "connector": "fortisoar-soc-simulator",
+                "operation": "create_simulated_alert",
+                "operationTitle": "Create Simulated Alert",
+                "pickFromTenant": false,
+                "step_variables": {
+                    "alert_data": "{{vars.result.data}}",
+                    "source_data": "{{vars.result.data.sourcedata|toDict}}"
+                }
+            },
+            "status": null,
+            "top": "840",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "301b7be4-cf6e-42d2-aecf-cfc13257578a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Alert Tag Scenario",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "__link": {
+                        "recordTags": [
+                            "\/api\/3\/tags\/Scenario: Phishing Incident Management"
+                        ]
+                    }
+                },
+                "_showJson": true,
+                "operation": "Append",
+                "collection": "{{vars.steps.True_Positive_Create_Alert.data['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "975",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "b1f010c5-77a4-4554-8a20-6d94e5f54c32"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Tag Scenario",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "__link": {
+                        "recordTags": [
+                            "\/api\/3\/tags\/Scenario: Phishing Incident Management"
+                        ]
+                    }
+                },
+                "_showJson": true,
+                "operation": "Append",
+                "collection": "{{vars.steps.Get_Attachment.data.indicator['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/indicators",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "e04507dc-b26f-415f-bc37-6661ed01d116"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Get Malicious URL",
+            "targetStep": "\/api\/3\/workflow_steps\/d79560ff-4763-44f6-b58f-def2c6886167",
+            "sourceStep": "\/api\/3\/workflow_steps\/71c60415-d341-4b51-95fe-c20eb160f6d4",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "abc5dd9d-ecb9-43e1-9ba8-2e31633df761"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Attachment -> Update Tag Scenario",
+            "targetStep": "\/api\/3\/workflow_steps\/e04507dc-b26f-415f-bc37-6661ed01d116",
+            "sourceStep": "\/api\/3\/workflow_steps\/9498387c-5113-4d0c-9d6f-debe3e34aaad",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "b2fcd259-dfe6-470e-a8a6-9f03eb89fafb"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Malicious URL -> Get Attachment",
+            "targetStep": "\/api\/3\/workflow_steps\/9498387c-5113-4d0c-9d6f-debe3e34aaad",
+            "sourceStep": "\/api\/3\/workflow_steps\/d79560ff-4763-44f6-b58f-def2c6886167",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "9cc3c472-b853-499e-a465-721e81e627c0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Link Attachment File -> Notify Sender",
+            "targetStep": "\/api\/3\/workflow_steps\/e76a0f78-2e89-4239-8960-fd64542e5d77",
+            "sourceStep": "\/api\/3\/workflow_steps\/b05a00cd-2de0-44bd-804c-2070f28c98b4",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "06dcf4dd-ff98-449d-b52f-23db018148c6"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Malicious Email Data -> True Positive Create Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/301b7be4-cf6e-42d2-aecf-cfc13257578a",
+            "sourceStep": "\/api\/3\/workflow_steps\/6b9ba772-589f-4b6a-84a7-bbdaccec8cd6",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "2142c50d-2901-485f-8b3d-aef42ff023bc"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Notify Sender -> Data Output",
+            "targetStep": "\/api\/3\/workflow_steps\/c8374ed4-49a3-41a5-be51-70ee2539d7d8",
+            "sourceStep": "\/api\/3\/workflow_steps\/e76a0f78-2e89-4239-8960-fd64542e5d77",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "115ba6c1-ee06-440a-b64e-d6f04af640df"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/71c60415-d341-4b51-95fe-c20eb160f6d4",
+            "sourceStep": "\/api\/3\/workflow_steps\/1fdc0e1c-4197-45ca-954d-667d30955b2f",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "8434d76d-09c2-42b7-b921-a566bddc1d88"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "True Positive Create Alert -> Update Alert Tag Scenario",
+            "targetStep": "\/api\/3\/workflow_steps\/b1f010c5-77a4-4554-8a20-6d94e5f54c32",
+            "sourceStep": "\/api\/3\/workflow_steps\/301b7be4-cf6e-42d2-aecf-cfc13257578a",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "26d7e778-38a9-48a6-9450-7ad450f3d9da"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Alert Tag Scenario -> Link Attachment File",
+            "targetStep": "\/api\/3\/workflow_steps\/b05a00cd-2de0-44bd-804c-2070f28c98b4",
+            "sourceStep": "\/api\/3\/workflow_steps\/b1f010c5-77a4-4554-8a20-6d94e5f54c32",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "26e87a1f-ce2e-4e0b-835e-22351ff87631"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Tag Scenario -> Malicious Email Data",
+            "targetStep": "\/api\/3\/workflow_steps\/6b9ba772-589f-4b6a-84a7-bbdaccec8cd6",
+            "sourceStep": "\/api\/3\/workflow_steps\/e04507dc-b26f-415f-bc37-6661ed01d116",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "421db760-6d67-4eac-823c-e08df416b25b"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "4324e12a-93a1-43aa-8116-63800e67f2ad",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Use-Case",
+        "FortiSOAR SOC Simulator"
+    ]
+}

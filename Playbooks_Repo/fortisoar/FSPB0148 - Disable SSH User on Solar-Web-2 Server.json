@@ -1,0 +1,124 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": ">> Disable SSH User on Solar-Web-2 Server",
+    "aliasName": null,
+    "tag": null,
+    "description": "Deprovision user access on Elab server",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "parameters"
+    ],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/160d414b-d1d2-44a6-ab10-0df6b1f694fd",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/df9a10d1-34fc-42af-814d-b4b621addbb6",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Data Output",
+            "description": null,
+            "arguments": {
+                "data": "{\"Server FQDN\":\"Solar-Web-2.fortielab.com\",\"Access Protocol\":\"SSH\",\"Username\": \"{{vars.input.params.parameters.username}}\"}"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "67e50e71-4ade-48eb-bc0f-e064dffa54ff"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "useMockOutput": "{{globalVars.Demo_mode}}"
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "df9a10d1-34fc-42af-814d-b4b621addbb6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": [],
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "eed57b2d-31d7-42cf-ac33-82740ea7153c"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Disable User",
+            "description": null,
+            "arguments": {
+                "name": "SSH",
+                "config": "be384f39-0ac1-41dc-b30f-497f9b5a09ed",
+                "params": {
+                    "cmd": "chage -E0 {{vars.input.params.parameters.username}};chage -l {{vars.input.params.parameters.username}}",
+                    "allowed_exit": "-1,0",
+                    "is_super_user": false
+                },
+                "version": "2.1.1",
+                "connector": "ssh",
+                "operation": "run_remote_command",
+                "mock_result": "{\n  \"data\": \"Last password change\\t\\t\\t\\t\\t: Mar 17, 2022\\r\\nPassword expires\\t\\t\\t\\t\\t: never\\r\\nPassword inactive\\t\\t\\t\\t\\t: never\\r\\nAccount expires\\t\\t\\t\\t\\t\\t: Jan 01, 1970\\r\\nMinimum number of days between password change\\t\\t: 0\\r\\nMaximum number of days between password change\\t\\t: 99999\\r\\nNumber of days of warning before password expires\\t: 7\",\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null\n}",
+                "operationTitle": "Execute remote command",
+                "pickFromTenant": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "f6eacf17-b1d3-4320-a1f1-dea6d1a5206e"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Disable User -> Data Output",
+            "targetStep": "\/api\/3\/workflow_steps\/67e50e71-4ade-48eb-bc0f-e064dffa54ff",
+            "sourceStep": "\/api\/3\/workflow_steps\/f6eacf17-b1d3-4320-a1f1-dea6d1a5206e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "435e1fa3-0579-4825-9543-296ccc0b71af"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/eed57b2d-31d7-42cf-ac33-82740ea7153c",
+            "sourceStep": "\/api\/3\/workflow_steps\/df9a10d1-34fc-42af-814d-b4b621addbb6",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "aba9fbbf-2a49-41bb-af8c-6d33ec31297e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Disable User",
+            "targetStep": "\/api\/3\/workflow_steps\/f6eacf17-b1d3-4320-a1f1-dea6d1a5206e",
+            "sourceStep": "\/api\/3\/workflow_steps\/eed57b2d-31d7-42cf-ac33-82740ea7153c",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f7661097-3519-44b2-92f1-30ac41309c3e"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "ad3cb98b-231e-4123-b17a-4cc144ed5adf",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": []
+}

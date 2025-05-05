@@ -10,7 +10,7 @@ Lambda-Actions is an open standard to define **portable, platform agnostic, unif
 
 ## Why Lambda-Actions Exists
 Lambda-Actions aims to eliminate vendor lock-in and fragmentation across automation platforms like:
-- SOAR Platforms (e.g. XSOAR, FortiSOAR, Phantom, Resilient)
+- SOAR Platforms (e.g. XSOAR, FortiSOAR, Sentinel Logic Apps, Phantom, Resilient)
 - Automation Platforms (e.g. Logic Apps, Zapier)
 - Custom-built orchestrators
 

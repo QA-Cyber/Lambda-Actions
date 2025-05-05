@@ -1,0 +1,753 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Investigate Brute Force Attempt (FortiSIEM)",
+    "aliasName": null,
+    "tag": "#ManualAction",
+    "description": "Investigates login failures from FortiSIEM and also identifies other impacted assets that have been victims of the brute force attempts from a particular source of attack.",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/e9cc2d67-b69f-45d8-ad30-a9998c1d5874",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/4c154bd6-a5d6-454b-b162-c0351511249b",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Note Not Blocking IP",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "[\"{{vars.input.records[0]['@id']}}\"]",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<span style=\"font-size: 15px; color: #DE7A13;\" class=\"fa fa-exclamation-triangle\"><\/span>&nbsp;Approval to block IP Address  {{vars.input.records[0].sourceIp}} was <span style=\"background:#f5b505; color: red\" class=\"badge badge-square badge-danger\">denied.<\/span> ",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "680",
+            "left": "2020",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "0fd6d6c3-9a6e-47c4-bb9e-dbd674c5f9b6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Note for Safe IP",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "[\"{{vars.input.records[0]['@id']}}\"]",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<p>Source IP:  <span style=\"background:#28B35C; color: #fff;\" class=\"badge badge-success\">{{vars.source_ip}}<\/span> is found to be safe.<\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "440",
+            "left": "1020",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "181ac2a1-7a7b-4710-a221-65c55ef2dbc9"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "alert_id": "{{vars.input.records[0]['@id']}}",
+                "host_list": "[]",
+                "host_name": "{{vars.input.records[0].computerName}}",
+                "source_ip": "{{vars.input.records[0].sourceIp}}",
+                "splunk_source": "{{vars.alert_metadata.sourcetype}}",
+                "useMockOutput": "{{globalVars.Demo_mode}}",
+                "destination_ip": "{{vars.input.records[0].destinationIp}}",
+                "internal_cidr_ranges": "193.200.225.0\/24",
+                "reputation_threshold": "4"
+            },
+            "status": null,
+            "top": "127",
+            "left": "20",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "cf330ff4-eab7-4ea0-94ca-b03a8d69a241"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Block External IP",
+            "description": null,
+            "arguments": {
+                "type": "DecisionBased",
+                "input": {
+                    "schema": {
+                        "title": "Proceed With Blocking Of IP",
+                        "description": "Block action recommend for - {{vars.input.records[0].sourceIp}}. Please confirm to initiate action.",
+                        "inputVariables": []
+                    }
+                },
+                "record": "{{ vars.input.records[0][\"@id\"] }}",
+                "owner_detail": {
+                    "isAssigned": false
+                },
+                "step_variables": [],
+                "response_mapping": {
+                    "options": [
+                        {
+                            "option": "Yes",
+                            "primary": true,
+                            "step_iri": "\/api\/3\/workflow_steps\/9e93b1b9-fa5b-4700-b0b7-a70f0f4ea898"
+                        },
+                        {
+                            "option": "No",
+                            "step_iri": "\/api\/3\/workflow_steps\/0fd6d6c3-9a6e-47c4-bb9e-dbd674c5f9b6"
+                        }
+                    ],
+                    "duplicateOption": false
+                }
+            },
+            "status": null,
+            "top": "620",
+            "left": "1660",
+            "stepType": "\/api\/3\/workflow_step_types\/fc04082a-d7dc-4299-96fb-6837b1baa0fe",
+            "group": null,
+            "uuid": "c0abf4a5-3b69-4b5f-a656-cd909e4face6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Source IP Reputation",
+            "description": null,
+            "arguments": {
+                "name": "VirusTotal",
+                "config": "1ba6a7ef-304a-4f78-855d-70b09bcd0b0a",
+                "params": {
+                    "ip": "{{vars.source_ip}}",
+                    "relationships": ""
+                },
+                "version": "3.0.2",
+                "connector": "virustotal",
+                "operation": "query_ip",
+                "mock_result": "{\n  \"data\": {\n    \"id\": \"103.224.182.251\",\n    \"type\": \"ip_address\",\n    \"links\": {\n      \"self\": \"https:\/\/www.virustotal.com\/gui\/ip-address\/103.224.182.251\"\n    },\n    \"attributes\": {\n      \"asn\": 133618,\n      \"jarm\": \"2ad2ad16d2ad2ad22c2ad2ad2ad2ad681cc8d109d81f5b5398d42aaaeb8ac4\",\n      \"tags\": [],\n      \"whois\": {\n        \"raw\": [],\n        \"data\": \" Domain Name: ABOVE.COM\\r\\n Registry Domain ID: 2122865_DOMAIN_COM-VRSN\\r\\n Registrar WHOIS Server: whois.above.com\\r\\n Registrar URL: http:\/\/www.above.com\\r\\n Updated Date: 2021-05-15T02:01:07Z\\r\\n Creation Date: 1997-05-20T04:00:00Z\\r\\n Registry Expiry Date: 2022-05-21T04:00:00Z\\r\\n Registrar: Above.com Pty Ltd.\\r\\n Registrar IANA ID: 940\\r\\n Registrar Abuse Contact Email: abuse@above.com\\r\\n Registrar Abuse Contact Phone: +61 3 9589 7946\\r\\n Domain Status: clientDeleteProhibited https:\/\/icann.org\/epp#clientDeleteProhibited\\r\\n Domain Status: clientTransferProhibited https:\/\/icann.org\/epp#clientTransferProhibited\\r\\n Domain Status: clientUpdateProhibited https:\/\/icann.org\/epp#clientUpdateProhibited\\r\\n Name Server: NS1.TRELLIAN.COM\\r\\n Name Server: NS2.TRELLIAN.COM\\r\\n DNSSEC: unsigned\\r\\n URL of the ICANN Whois Inaccuracy Complaint Form: https:\/\/www.icann.org\/wicf\/\\r\\n>>> Last update of whois database: 2021-08-26T04:02:07Z <<<\\r\\n\\r\\nFor more information on Whois status codes, please visit https:\/\/icann.org\/epp\\r\\n\\r\\nNOTICE: The expiration date displayed in this record is the date the\\r\\nregistrar's sponsorship of the domain name registration in the registry is\\r\\ncurrently set to expire. This date does not necessarily reflect the expiration\\r\\ndate of the domain name registrant's agreement with the sponsoring\\r\\nregistrar. Users may consult the sponsoring registrar's Whois database to\\r\\nview the registrar's reported date of expiration for this registration.\\r\\n\\r\\nTERMS OF USE: You are not authorized to access or query our Whois\\r\\ndatabase through the use of electronic processes that are high-volume and\\r\\nautomated except as reasonably necessary to register domain names or\\r\\nmodify existing registrations; the Data in VeriSign Global Registry\\r\\nServices' (\\\"VeriSign\\\") Whois database is provided by VeriSign for\\r\\ninformation purposes only, and to assist persons in obtaining information\\r\\nabout or related to a domain name registration record. VeriSign does not\\r\\nguarantee its accuracy. By submitting a Whois query, you agree to abide\\r\\nby the following terms of use: You agree that you may use this Data only\\r\\nfor lawful purposes and that under no circumstances will you use this Data\\r\\nto: (1) allow, enable, or otherwise support the transmission of mass\\r\\nunsolicited, commercial advertising or solicitations via e-mail, telephone,\\r\\nor facsimile; or (2) enable high volume, automated, electronic processes\\r\\nthat apply to VeriSign (or its computer systems). The compilation,\\r\\nrepackaging, dissemination or other use of this Data is expressly\\r\\nprohibited without the prior written consent of VeriSign. You agree not to\\r\\nuse electronic processes that are automated and high-volume to access or\\r\\nquery the Whois database except as reasonably necessary to register\\r\\ndomain names or modify existing registrations. VeriSign reserves the right\\r\\nto restrict your access to the Whois database in its sole discretion to ensure\\r\\noperational stability. VeriSign may restrict or terminate your access to the\\r\\nWhois database for failure to abide by these terms of use. VeriSign\\r\\nreserves the right to modify these terms at any time.\\r\\n\\r\\nThe Registry database contains ONLY .COM, .NET, .EDU domains and\\r\\nRegistrars.\\r\\n\"\n      },\n      \"country\": \"AU\",\n      \"network\": \"103.224.182.0\/23\",\n      \"as_owner\": \"Trellian Pty. Limited\",\n      \"continent\": \"OC\",\n      \"reputation\": -12,\n      \"whois_date\": 1629950551,\n      \"total_votes\": {\n        \"harmless\": 0,\n        \"malicious\": 4\n      },\n      \"last_analysis_date\": 1667625558,\n      \"last_analysis_stats\": {\n        \"timeout\": 0,\n        \"harmless\": 74,\n        \"malicious\": 7,\n        \"suspicious\": 0,\n        \"undetected\": 14\n      },\n      \"last_analysis_results\": {\n        \"Bkav\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Bkav\"\n        },\n        \"CRDF\": {\n          \"method\": \"blacklist\",\n          \"result\": \"malicious\",\n          \"category\": \"malicious\",\n          \"engine_name\": \"CRDF\"\n        },\n        \"Cyan\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Cyan\"\n        },\n        \"DNS8\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"DNS8\"\n        },\n        \"ESET\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ESET\"\n        },\n        \"Lumu\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Lumu\"\n        },\n        \"Armis\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Armis\"\n        },\n        \"Avira\": {\n          \"method\": \"blacklist\",\n          \"result\": \"malware\",\n          \"category\": \"malicious\",\n          \"engine_name\": \"Avira\"\n        },\n        \"Cyble\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Cyble\"\n        },\n        \"IPsum\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"IPsum\"\n        },\n        \"zvelo\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"zvelo\"\n        },\n        \"Abusix\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Abusix\"\n        },\n        \"Dr.Web\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Dr.Web\"\n        },\n        \"G-Data\": {\n          \"method\": \"blacklist\",\n          \"result\": \"malware\",\n          \"category\": \"malicious\",\n          \"engine_name\": \"G-Data\"\n        },\n        \"Lionic\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Lionic\"\n        },\n        \"Sophos\": {\n          \"method\": \"blacklist\",\n          \"result\": \"malware\",\n          \"category\": \"malicious\",\n          \"engine_name\": \"Sophos\"\n        },\n        \"Acronis\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Acronis\"\n        },\n        \"Blueliv\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Blueliv\"\n        },\n        \"Certego\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Certego\"\n        },\n        \"CyRadar\": {\n          \"method\": \"blacklist\",\n          \"result\": \"malicious\",\n          \"category\": \"malicious\",\n          \"engine_name\": \"CyRadar\"\n        },\n        \"MalSilo\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalSilo\"\n        },\n        \"Nucleon\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Nucleon\"\n        },\n        \"Quttera\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Quttera\"\n        },\n        \"Segasec\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Segasec\"\n        },\n        \"Spam404\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Spam404\"\n        },\n        \"Tencent\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Tencent\"\n        },\n        \"URLhaus\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"URLhaus\"\n        },\n        \"Webroot\": {\n          \"method\": \"blacklist\",\n          \"result\": \"malicious\",\n          \"category\": \"malicious\",\n          \"engine_name\": \"Webroot\"\n        },\n        \"AutoShun\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"AutoShun\"\n        },\n        \"Emsisoft\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Emsisoft\"\n        },\n        \"EonScope\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"EonScope\"\n        },\n        \"Fortinet\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Fortinet\"\n        },\n        \"Malwared\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Malwared\"\n        },\n        \"Netcraft\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Netcraft\"\n        },\n        \"PREBYTES\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"PREBYTES\"\n        },\n        \"URLQuery\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"URLQuery\"\n        },\n        \"VX Vault\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"VX Vault\"\n        },\n        \"ViriBack\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ViriBack\"\n        },\n        \"ZeroCERT\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ZeroCERT\"\n        },\n        \"0xSI_f33d\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"0xSI_f33d\"\n        },\n        \"Antiy-AVL\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Antiy-AVL\"\n        },\n        \"CINS Army\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"CINS Army\"\n        },\n        \"GreenSnow\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"GreenSnow\"\n        },\n        \"Kaspersky\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Kaspersky\"\n        },\n        \"MalBeacon\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalBeacon\"\n        },\n        \"NotMining\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"NotMining\"\n        },\n        \"OpenPhish\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"OpenPhish\"\n        },\n        \"PhishLabs\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"PhishLabs\"\n        },\n        \"Phishtank\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Phishtank\"\n        },\n        \"Scantitan\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Scantitan\"\n        },\n        \"Seclookup\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Seclookup\"\n        },\n        \"Trustwave\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Trustwave\"\n        },\n        \"benkow.cc\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"benkow.cc\"\n        },\n        \"AlienVault\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"AlienVault\"\n        },\n        \"CyberCrime\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"CyberCrime\"\n        },\n        \"Quick Heal\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Quick Heal\"\n        },\n        \"SafeToOpen\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"SafeToOpen\"\n        },\n        \"ThreatHive\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ThreatHive\"\n        },\n        \"ADMINUSLabs\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ADMINUSLabs\"\n        },\n        \"BitDefender\": {\n          \"method\": \"blacklist\",\n          \"result\": \"malware\",\n          \"category\": \"malicious\",\n          \"engine_name\": \"BitDefender\"\n        },\n        \"ESTsecurity\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ESTsecurity\"\n        },\n        \"K7AntiVirus\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"K7AntiVirus\"\n        },\n        \"SecureBrain\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"SecureBrain\"\n        },\n        \"StopBadware\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"StopBadware\"\n        },\n        \"BADWARE.INFO\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"BADWARE.INFO\"\n        },\n        \"PrecisionSec\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"PrecisionSec\"\n        },\n        \"SCUMWARE.org\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"SCUMWARE.org\"\n        },\n        \"securolytics\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"securolytics\"\n        },\n        \"Chong Lua Dao\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Chong Lua Dao\"\n        },\n        \"MalwarePatrol\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalwarePatrol\"\n        },\n        \"StopForumSpam\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"StopForumSpam\"\n        },\n        \"Threatsourcing\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Threatsourcing\"\n        },\n        \"EmergingThreats\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"EmergingThreats\"\n        },\n        \"desenmascara.me\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"desenmascara.me\"\n        },\n        \"Heimdal Security\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Heimdal Security\"\n        },\n        \"Juniper Networks\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Juniper Networks\"\n        },\n        \"Sucuri SiteCheck\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Sucuri SiteCheck\"\n        },\n        \"alphaMountain.ai\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"alphaMountain.ai\"\n        },\n        \"AICC (MONITORAPP)\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"AICC (MONITORAPP)\"\n        },\n        \"Bfore.Ai PreCrime\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Bfore.Ai PreCrime\"\n        },\n        \"MalwareDomainList\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalwareDomainList\"\n        },\n        \"Phishing Database\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Phishing Database\"\n        },\n        \"Hoplite Industries\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Hoplite Industries\"\n        },\n        \"Web Security Guard\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Web Security Guard\"\n        },\n        \"Baidu-International\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Baidu-International\"\n        },\n        \"Google Safebrowsing\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Google Safebrowsing\"\n        },\n        \"Yandex Safebrowsing\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Yandex Safebrowsing\"\n        },\n        \"Snort IP sample list\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Snort IP sample list\"\n        },\n        \"CMC Threat Intelligence\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"CMC Threat Intelligence\"\n        },\n        \"Comodo Valkyrie Verdict\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Comodo Valkyrie Verdict\"\n        },\n        \"Forcepoint ThreatSeeker\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Forcepoint ThreatSeeker\"\n        },\n        \"malwares.com URL checker\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"malwares.com URL checker\"\n        },\n        \"Viettel Threat Intelligence\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Viettel Threat Intelligence\"\n        },\n        \"Virusdie External Site Scan\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Virusdie External Site Scan\"\n        }\n      },\n      \"last_https_certificate\": {\n        \"size\": 3446,\n        \"tags\": [],\n        \"issuer\": {\n          \"C\": \"US\",\n          \"O\": \"Let's Encrypt\",\n          \"CN\": \"R3\"\n        },\n        \"subject\": {\n          \"CN\": \"ehrlick.com\"\n        },\n        \"version\": \"V3\",\n        \"validity\": {\n          \"not_after\": \"2022-12-07 05:43:47\",\n          \"not_before\": \"2022-09-08 05:43:48\"\n        },\n        \"extensions\": {\n          \"CA\": true,\n          \"tags\": [],\n          \"key_usage\": [\n            \"ff\"\n          ],\n          \"extended_key_usage\": [\n            \"serverAuth\",\n            \"clientAuth\"\n          ],\n          \"certificate_policies\": [\n            \"2.23.140.1.2.1\",\n            \"1.3.6.1.4.1.44947.1.1.1\"\n          ],\n          \"ca_information_access\": {\n            \"OCSP\": \"http:\/\/r3.o.lencr.org\",\n            \"CA Issuers\": \"http:\/\/r3.i.lencr.org\/\"\n          },\n          \"subject_key_identifier\": \"802d65fe6192f1be936ba5fa046ebcea7eec5e26\",\n          \"1.3.6.1.4.1.11129.2.4.2\": \"0481f300f1007700dfa55eab68824f1f6cadeeb85f4e3e5aeacda212a46a5e8e\",\n          \"authority_key_identifier\": {\n            \"keyid\": \"142eb317b75856cbae500940e61faf9d8b14c2c6\"\n          },\n          \"subject_alternative_name\": [\n            \"*.achiame.com\",\n            \"*.air-reserch-kyushu.com\",\n            \"*.artstudiobydesign722.com\",\n            \"*.babiebug.com\",\n            \"*.baltoken.com\",\n            \"*.bigphone24.com\",\n            \"*.bootbag.me\",\n            \"*.centroclinicoreservas.com\",\n            \"*.chinyy.com\",\n            \"*.cmps-pflege.de\",\n            \"*.coagulo.de\",\n            \"*.com-top.net\",\n            \"*.crucialknowledge.info\",\n            \"*.dagodhomie.com\",\n            \"*.daouniverse.co\",\n            \"*.defiexpert.io\",\n            \"*.denvervacationhouserental.com\",\n            \"*.ehrlick.com\",\n            \"*.emcproductions.org\",\n            \"*.emeline-site.net\",\n            \"*.ensho-ji.com\",\n            \"*.framainternational.net\",\n            \"*.fusionkitchenhwl.co.uk\",\n            \"*.geedisonaward.com\",\n            \"*.gnjixiao.com\",\n            \"*.horseback-2-the-sea.com\",\n            \"*.hyiptemplate.xyz\",\n            \"*.jonkhoff.com\",\n            \"*.jxonestop.com\",\n            \"*.kdfstore.online\",\n            \"*.kinoraft.net\",\n            \"*.latintravelvip.com\",\n            \"*.magnifull.com\",\n            \"*.man8tladenburg.de\",\n            \"*.ophtalmologiste-athismons.com\",\n            \"*.oriondivers.net\",\n            \"*.pitapan-nishikawa.com\",\n            \"*.rentomenter.com\",\n            \"*.rollmon.com\",\n            \"*.ruggedpowerltd.com\",\n            \"*.tercersectorconsulting.com\",\n            \"*.tiendadeviajesonline.com\",\n            \"*.tomatovpn.net\",\n            \"*.ukcoffeecapsules.com\",\n            \"*.vasthra.com\",\n            \"*.willchengusa.com\",\n            \"*.yokohama-jazz.com\",\n            \"*.yousaf.com\",\n            \"*.yuanyunjun.com\",\n            \"achiame.com\",\n            \"air-reserch-kyushu.com\",\n            \"artstudiobydesign722.com\",\n            \"babiebug.com\",\n            \"baltoken.com\",\n            \"bigphone24.com\",\n            \"bootbag.me\",\n            \"centroclinicoreservas.com\",\n            \"chinyy.com\",\n            \"cmps-pflege.de\",\n            \"coagulo.de\",\n            \"com-top.net\",\n            \"crucialknowledge.info\",\n            \"dagodhomie.com\",\n            \"daouniverse.co\",\n            \"defiexpert.io\",\n            \"denvervacationhouserental.com\",\n            \"ehrlick.com\",\n            \"emcproductions.org\",\n            \"emeline-site.net\",\n            \"ensho-ji.com\",\n            \"framainternational.net\",\n            \"fusionkitchenhwl.co.uk\",\n            \"geedisonaward.com\",\n            \"gnjixiao.com\",\n            \"horseback-2-the-sea.com\",\n            \"hyiptemplate.xyz\",\n            \"jonkhoff.com\",\n            \"jxonestop.com\",\n            \"kdfstore.online\",\n            \"kinoraft.net\",\n            \"latintravelvip.com\",\n            \"magnifull.com\",\n            \"man8tladenburg.de\",\n            \"ophtalmologiste-athismons.com\",\n            \"oriondivers.net\",\n            \"pitapan-nishikawa.com\",\n            \"rentomenter.com\",\n            \"rollmon.com\",\n            \"ruggedpowerltd.com\",\n            \"tercersectorconsulting.com\",\n            \"tiendadeviajesonline.com\",\n            \"tomatovpn.net\",\n            \"ukcoffeecapsules.com\",\n            \"vasthra.com\",\n            \"willchengusa.com\",\n            \"yokohama-jazz.com\",\n            \"yousaf.com\",\n            \"yuanyunjun.com\"\n          ]\n        },\n        \"public_key\": {\n          \"rsa\": {\n            \"modulus\": \"00f898737e47a3375edeab026043abacaebd085aa035df08214abd8a14e8b3fe73eb152bd54e7f9fe8bb8c36c36d031311cdcda1496f29aae3b173568e50c7d388c6fca3e779fd9f6554ce01cea26a1ba274686d46532cebf0af63e18e66251ea54ce43b4bf9442db8c24c0162c48fb0d9476aa6fc3dd63c0b7ad2f4d79ad450a1d4c04a04ccfa400cbbeea5a89026e528320d689c61269f62fe5119ff032d586d18f30b47cb21c7c718c22b46151b8ca880620f8859b821771879f47ecf4d4dd13f056c5ead141a1695b32992667af19a2c6c517f9fea6ac95d4f1c01ff9b28b5cac74a1ab5e6412fc9309f9a2830130365645e3aa17a18e81dcab59dabdc26f608ef2b7b4f2010c3be3711428bc3c34ca458482e671a1300371c98cd4c0ff1474caa990bda96e529c0a40adb7eb481351e2a0c84a9c08c4dfe4a1556daf558112a658d1e48997c2a6ddbabb0f30c9725c862e31466175ead117a15e13f850218a21fd8006005ea7b9337b517358aaa0f87c5e708185a70efbcdcb33c42051c1b0583cc379f990f12642ea09497a8e78e8f36fa6a353b7cf56c0ab3b7ad4c95053a13f8760e5d1a7508143aadb9a120113e71e3d78159e4519960ba425b6abdddb9bee2363686454ee740fc808eb43e71c90fe32ac180db083a2fe0047285c15b6948fcbc0e35cfd0c5b6eac7a4d2de618695b2e347b68c70d74d02a70ace0ebd\",\n            \"exponent\": \"010001\",\n            \"key_size\": 4096\n          },\n          \"algorithm\": \"RSA\"\n        },\n        \"thumbprint\": \"5e8e939fca5619171ae7f8d6d3c13892559ac266\",\n        \"serial_number\": \"0419767dee5a4b30362eef39630fe0552ba4\",\n        \"cert_signature\": {\n          \"signature\": \"b6ceb89a26e33bf2b64aeec360c388eb62971db17a502067c3e51a9e210210150f9a72fd89719f762bd6299a1c8f90e6274907fa8fa99826b1fac0b60eeb03ddf9c49004b0af56c638773b5791e43a490391f18284fb1e3370469e01a321bf657cea81a51fd72d095933a4afcd5d2509755cc3bbf6790f628100586016ab77b865c6dae93c57652d1fe5a21659dc3e18dd2abd18fff32ac2b7b4814d4a896d92beedc912e98f979afa4486f2f7942d7e88eff32e21111f5387a4020ca53176556e23fff4f5e783b34b274dba18663777ea39138b4dec88056ebc4ed962e8fb16393f3f37322f288727bf8f7f9205c3d1652baacfda4ef3057a259969023c3c5f\",\n          \"signature_algorithm\": \"sha256RSA\"\n        },\n        \"thumbprint_sha256\": \"4ee3d1368bbe3963b08c07f623ed2f38578c305bf537d658544574ec719bb2c0\",\n        \"signature_algorithm\": \"sha256RSA\"\n      },\n      \"last_modification_date\": 1667641407,\n      \"regional_internet_registry\": \"APNIC\",\n      \"last_https_certificate_date\": 1667625860\n    }\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null\n}",
+                "operationTitle": "Get IP Reputation",
+                "step_variables": [],
+                "operationOutput": {
+                    "asn": "",
+                    "country": "",
+                    "as_owner": "",
+                    "aggregate": "",
+                    "detected_urls": "",
+                    "detected_referrer_samples": "",
+                    "detected_downloaded_samples": ""
+                }
+            },
+            "status": null,
+            "top": "440",
+            "left": "640",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "fcaa74aa-85d4-4557-bc5c-3efb882c921f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Severity to Critical",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "severity": {
+                        "id": 82,
+                        "@id": "\/api\/3\/picklists\/7efa2220-39bb-44e4-961f-ac368776e3b0",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#e31b1d",
+                        "display": "Critical",
+                        "listName": "\/api\/3\/picklist_names\/4e80cba3-032f-48b4-ac03-17e3ec247aac",
+                        "itemValue": "Critical",
+                        "orderIndex": 4
+                    }
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "tagsOperation": "OverwriteTags",
+                "collectionType": "\/api\/3\/alerts",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "620",
+            "left": "1340",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "30b1bbfe-2afa-4719-a420-5908c6ad2766"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Note for Malicious IP",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "[\"{{vars.input.records[0]['@id']}}\"]",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<p><span style=\"font-size: 15px; color: #DE7A13;\" class=\"fa fa-exclamation-triangle\"><\/span>&nbsp;VirusTotal Reports <strong>{{vars.source_ip}}&nbsp;<\/strong> as  <span style=\"background:#e31b1d; color: #fff;\" class=\"badge badge-pill badge-danger\">  Malicious  <\/span><br><br><\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "620",
+            "left": "1020",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "e56563ef-9ec8-4c6a-8abe-9f1b9ccaffc8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "1f292ab1-722b-4e76-aa10-c3922c590c72",
+                "title": "Investigate Brute Force (FortiSIEM)",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "records": "{{vars.input.records}}"
+                    },
+                    "alert_metadata": "{{vars.input.records[0].sourcedata | toDict}}"
+                },
+                "_promptexpanded": true,
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "object",
+                                "field": "type",
+                                "value": "\/api\/3\/picklists\/382183df-212d-4ce1-adae-088647cc72c3",
+                                "_value": {
+                                    "@id": "\/api\/3\/picklists\/382183df-212d-4ce1-adae-088647cc72c3",
+                                    "itemValue": "Brute Force Attempts"
+                                },
+                                "operator": "eq"
+                            },
+                            {
+                                "type": "primitive",
+                                "field": "source",
+                                "value": "FortiSIEM",
+                                "operator": "eq",
+                                "_operator": "eq"
+                            }
+                        ]
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "singleRecordExecution": false
+            },
+            "status": null,
+            "top": "13",
+            "left": "20",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "4c154bd6-a5d6-454b-b162-c0351511249b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start Investigation",
+            "description": null,
+            "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "Investigating Potential {{vars.input.records[0].type.itemValue}}, with following fields of interest:\n{% if vars.input.records[0].domain %}Domain: {{vars.input.records[0].domain -}}{% endif %}\n{% if vars.input.records[0].sourceIp %}SourceIP: {{ vars.input.records[0].sourceIp -}}{% endif %}\n{% if vars.input.records[0].destinationIp %}DestinationIP: {{vars.input.records[0].destinationIp -}}{% endif %}\n{% if vars.input.records[0].fileHash %}File Hash: {{vars.input.records[0].fileHash -}}{% endif %}\n{% if vars.input.records[0].computerName %}ComputerName: {{vars.input.records[0].computerName -}}{% endif %}\n{% if vars.input.records[0].processName %}Process: {{vars.input.records[0].processName -}}{% endif %}\n{% if vars.input.records[0].sourceProcess %}SourceProcess: {{vars.input.records[0].sourceProcess -}}{% endif %}",
+                    "records": ""
+                },
+                "resource": {
+                    "status": {
+                        "id": 113,
+                        "@id": "\/api\/3\/picklists\/758925e7-629c-46d8-89db-fb36f5fbe88a",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Investigating",
+                        "listName": "\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a",
+                        "itemValue": "Investigating",
+                        "orderIndex": 2
+                    }
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "234",
+            "left": "20",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "35f322c2-90e4-41af-aae4-5a4f96984121"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Is Source IP internal",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Internal",
+                        "step_iri": "\/api\/3\/workflow_steps\/fa6de058-d928-413b-ab43-3ef62fd66946",
+                        "condition": "{{ vars.steps.Match_Source_IP_in_Internal_CIDR.data['matched_cidr_ip']  |  length > 0 }}"
+                    },
+                    {
+                        "option": "External",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/dea58455-70e5-4047-ae2f-c743fd6250dc"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "260",
+            "left": "320",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "group": null,
+            "uuid": "c52631a7-c32d-4d95-96ea-c8d483f02d16"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Block Indicator",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.steps.Get_Indicator_Detail}}",
+                "arguments": {
+                    "inputActionReasons": "Blocking Initiated as part of BFA remediation process. Please refer Alert# {{vars.input.records[0].id}}",
+                    "inputIndicatorValue": "{{vars.steps.Get_Indicator_Detail[0].value}}",
+                    "inputIndicatorRecordIRI": "{{vars.steps.Get_Indicator_Detail[0]['@id']}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_parent_env": false,
+                "pass_input_record": true,
+                "workflowReference": "\/api\/3\/workflows\/79ebfed2-86ee-404d-b69c-02a448e1144d"
+            },
+            "status": null,
+            "top": "560",
+            "left": "2320",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "c4a0a984-6434-4c7f-8ab9-564afb7e68a8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Note for Internal IP",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "[\"{{vars.input.records[0]['@id']}}\"]",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<p>Source IP: <strong>{{vars.source_ip}}<\/strong> is&nbsp;<span style=\"color: #00ff00;\"><strong>Internal and therfore benign<\/strong><\/span><\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "180",
+            "left": "640",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "fa6de058-d928-413b-ab43-3ef62fd66946"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Note for External IP",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "[\"{{vars.input.records[0]['@id']}}\"]",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<p><span style=\"font-size: 15px; color: #DE7A13;\" class=\"fa fa-exclamation-triangle\"><\/span>&nbsp;Source IP<strong> {{vars.source_ip}}<\/strong>&nbsp;is&nbsp;<span style=\"background:#e31b1d; color: #fff;\" class=\"badge badge-pill badge-danger\">External<\/span><\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "331",
+            "left": "640",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "dea58455-70e5-4047-ae2f-c743fd6250dc"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Match Source IP in Internal CIDR",
+            "description": null,
+            "arguments": {
+                "name": "CyOps Utilities",
+                "params": {
+                    "cidr": "{{vars.internal_cidr_ranges}}",
+                    "ip_address": "{{vars.source_ip}}"
+                },
+                "version": "2.1.0",
+                "connector": "cyops_utilities",
+                "operation": "ip_cidr_check",
+                "operationTitle": "Utils: Is IP in CIDR",
+                "step_variables": [],
+                "operationOutput": {
+                    "matched_ips": [],
+                    "unmatched_ips": []
+                }
+            },
+            "status": null,
+            "top": "140",
+            "left": "320",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "1bc6e2f3-cf04-48a4-add8-97b7e86033a4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Is Malicious IP",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Malicious",
+                        "step_iri": "\/api\/3\/workflow_steps\/e56563ef-9ec8-4c6a-8abe-9f1b9ccaffc8",
+                        "condition": "{{ vars.steps.Get_Source_IP_Reputation.data.attributes['last_analysis_stats'].malicious > 0 }}",
+                        "step_name": "Create Note for Malicious IP"
+                    },
+                    {
+                        "option": "Safe",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/181ac2a1-7a7b-4710-a221-65c55ef2dbc9",
+                        "step_name": "Create Note for Safe IP"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "560",
+            "left": "640",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "group": null,
+            "uuid": "7de3276d-f620-48f2-aec2-e074c629104e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Indicator Detail",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "alerts.id",
+                            "value": "{{vars.input.records[0].id}}",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        },
+                        {
+                            "type": "object",
+                            "field": "reputation",
+                            "value": "\/api\/3\/picklists\/7074e547-7785-4979-be32-c6d0c863e4bd",
+                            "_value": {
+                                "@id": "\/api\/3\/picklists\/7074e547-7785-4979-be32-c6d0c863e4bd",
+                                "display": "Malicious",
+                                "itemValue": "Malicious"
+                            },
+                            "operator": "eq"
+                        }
+                    ],
+                    "__selectFields": [
+                        "typeofindicator",
+                        "value"
+                    ]
+                },
+                "module": "indicators?$limit=30",
+                "checkboxFields": true,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "560",
+            "left": "2020",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "9e93b1b9-fa5b-4700-b0b7-a70f0f4ea898"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Source IP internal -> Copy  of Create Note for Internal IP",
+            "targetStep": "\/api\/3\/workflow_steps\/dea58455-70e5-4047-ae2f-c743fd6250dc",
+            "sourceStep": "\/api\/3\/workflow_steps\/c52631a7-c32d-4d95-96ea-c8d483f02d16",
+            "label": "External",
+            "isExecuted": false,
+            "uuid": "8d123a09-bbf5-4e00-b128-e42183dc688a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Severity to Critical -> Block External IP",
+            "targetStep": "\/api\/3\/workflow_steps\/c0abf4a5-3b69-4b5f-a656-cd909e4face6",
+            "sourceStep": "\/api\/3\/workflow_steps\/30b1bbfe-2afa-4719-a420-5908c6ad2766",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "dc4e1bf5-edf7-4ef4-8ee3-dc0f5651d257"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Source IP internal -> Copy 1 of Create Note for Safe IP",
+            "targetStep": "\/api\/3\/workflow_steps\/fa6de058-d928-413b-ab43-3ef62fd66946",
+            "sourceStep": "\/api\/3\/workflow_steps\/c52631a7-c32d-4d95-96ea-c8d483f02d16",
+            "label": "Internal",
+            "isExecuted": false,
+            "uuid": "dc824717-ef00-48e3-a072-8c14196dee6e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Note for Malicious IP -> Update Severity to High",
+            "targetStep": "\/api\/3\/workflow_steps\/30b1bbfe-2afa-4719-a420-5908c6ad2766",
+            "sourceStep": "\/api\/3\/workflow_steps\/e56563ef-9ec8-4c6a-8abe-9f1b9ccaffc8",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "52b7c101-df3a-4668-b0c5-146058ecea93"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Block External IP -> Create Note Not Blocking IP",
+            "targetStep": "\/api\/3\/workflow_steps\/0fd6d6c3-9a6e-47c4-bb9e-dbd674c5f9b6",
+            "sourceStep": "\/api\/3\/workflow_steps\/c0abf4a5-3b69-4b5f-a656-cd909e4face6",
+            "label": "No",
+            "isExecuted": false,
+            "uuid": "a12c7639-3fa3-4bc9-95e9-1e478f144d49"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Start Investigation",
+            "targetStep": "\/api\/3\/workflow_steps\/35f322c2-90e4-41af-aae4-5a4f96984121",
+            "sourceStep": "\/api\/3\/workflow_steps\/cf330ff4-eab7-4ea0-94ca-b03a8d69a241",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "cedf046e-11ac-4592-bfd1-2f6cea0b3e0f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Attacker Metadata",
+            "targetStep": "\/api\/3\/workflow_steps\/cf330ff4-eab7-4ea0-94ca-b03a8d69a241",
+            "sourceStep": "\/api\/3\/workflow_steps\/4c154bd6-a5d6-454b-b162-c0351511249b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "306636dc-c35e-4fb7-b85d-360db06d0eff"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Match Source IP in Internal CIDR -> Is Source IP internal",
+            "targetStep": "\/api\/3\/workflow_steps\/c52631a7-c32d-4d95-96ea-c8d483f02d16",
+            "sourceStep": "\/api\/3\/workflow_steps\/1bc6e2f3-cf04-48a4-add8-97b7e86033a4",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a186236b-d89b-49b0-b6c0-e4d816bed8b8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Block External IP -> Get Indicator Detail",
+            "targetStep": "\/api\/3\/workflow_steps\/9e93b1b9-fa5b-4700-b0b7-a70f0f4ea898",
+            "sourceStep": "\/api\/3\/workflow_steps\/c0abf4a5-3b69-4b5f-a656-cd909e4face6",
+            "label": "Yes",
+            "isExecuted": false,
+            "uuid": "557b8145-e1d6-4772-92f3-51ebfc9a12fd"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start Investigation -> Match Source IP in Internal CIDR",
+            "targetStep": "\/api\/3\/workflow_steps\/1bc6e2f3-cf04-48a4-add8-97b7e86033a4",
+            "sourceStep": "\/api\/3\/workflow_steps\/35f322c2-90e4-41af-aae4-5a4f96984121",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "7eb6f109-4c69-4321-90cb-4ce12b75e580"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Indicator Detail -> Block Indicator",
+            "targetStep": "\/api\/3\/workflow_steps\/c4a0a984-6434-4c7f-8ab9-564afb7e68a8",
+            "sourceStep": "\/api\/3\/workflow_steps\/9e93b1b9-fa5b-4700-b0b7-a70f0f4ea898",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "1f21a756-bee4-4f30-8539-8c7fc790aac2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Malicious IP -> Create Note for Safe IP",
+            "targetStep": "\/api\/3\/workflow_steps\/181ac2a1-7a7b-4710-a221-65c55ef2dbc9",
+            "sourceStep": "\/api\/3\/workflow_steps\/7de3276d-f620-48f2-aec2-e074c629104e",
+            "label": "Safe",
+            "isExecuted": false,
+            "uuid": "1fdb8ec0-1e9b-4f93-9ae3-559a447a6061"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Note for External IP -> Get Source IP Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/fcaa74aa-85d4-4557-bc5c-3efb882c921f",
+            "sourceStep": "\/api\/3\/workflow_steps\/dea58455-70e5-4047-ae2f-c743fd6250dc",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "0633ccc9-90ee-4a10-ba18-6dea6da6d0a0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Malicious IP -> Create Note for Malicious IP",
+            "targetStep": "\/api\/3\/workflow_steps\/e56563ef-9ec8-4c6a-8abe-9f1b9ccaffc8",
+            "sourceStep": "\/api\/3\/workflow_steps\/7de3276d-f620-48f2-aec2-e074c629104e",
+            "label": "Malicious",
+            "isExecuted": false,
+            "uuid": "067b6370-fcde-4cbc-a258-8ec91c3c143c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Source IP Reputation -> Is Malicious IP",
+            "targetStep": "\/api\/3\/workflow_steps\/7de3276d-f620-48f2-aec2-e074c629104e",
+            "sourceStep": "\/api\/3\/workflow_steps\/fcaa74aa-85d4-4557-bc5c-3efb882c921f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e693df4b-9557-4056-8fb7-01f7751772e4"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "f2f7448a-e5df-47ab-94b8-b46bd5a1462a",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "ManualAction"
+    ]
+}

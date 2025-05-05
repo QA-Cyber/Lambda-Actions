@@ -1,0 +1,195 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "IP Address - Fortinet FortiGate - Block",
+    "aliasName": null,
+    "tag": null,
+    "description": "Blocks indicators of type 'IP Address' on the Fortinet FortiGate and marks the indicators as \"Blocked\" based on their block status.",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "indicatorIRI",
+        "indicatorValue",
+        "ipBlockPolicyName",
+        "addressGroupName"
+    ],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/fded9da7-922f-48e8-aa71-f2d8e577f55b",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/571d5633-6062-4f32-9d78-8c9def947bb8",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Block Malicious IPs",
+            "description": null,
+            "arguments": {
+                "name": "Fortinet FortiGate",
+                "config": "fee29da2-6131-4160-b716-7c9e631f1c4f",
+                "params": {
+                    "ip": "{{vars.indicator_value}}",
+                    "vdom": "",
+                    "method": "Policy Based",
+                    "ip_type": "IPv4",
+                    "ngfw_mode": "Profile Based",
+                    "ip_group_name": "{{vars.input.params.addressGroupName}}",
+                    "ip_block_policy": "{{vars.input.params.ipBlockPolicyName}}"
+                },
+                "version": "5.2.3",
+                "connector": "fortigate-firewall",
+                "operation": "block_ip",
+                "mock_result": "{\n  \"data\":\n   {\n       \"newly_blocked\": [\"{{vars.indicator_value}}\"],\n       \"vdom_not_exist\": [],\n       \"already_blocked\": [],\n       \"error_with_block\": []\n   }\n}",
+                "ignore_errors": false,
+                "operationTitle": "Block IP Address",
+                "pickFromTenant": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "475",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "8a4daf6a-0ca3-4a7b-a31a-1a4aa53b4736"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "indicator_iri": "{{vars.input.params.indicatorIRI}}",
+                "indicator_value": "{{vars.input.params.indicatorValue}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "475",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "1e72ab3b-fc9e-47b6-9e64-8f6bb7693933"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Mark as Blocked",
+            "description": null,
+            "arguments": {
+                "when": "{{(vars.steps.Block_Malicious_IPs.data['newly_blocked'] | length > 0) or (vars.steps.Block_Malicious_IPs.data['already_blocked'] | length > 0)}}",
+                "resource": {
+                    "indicatorStatus": "\/api\/3\/picklists\/fa29fe48-f01e-476f-bb33-c910f5795b57"
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "{{vars.indicator_iri}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/indicators",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "475",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "d1ca2139-9187-4bdb-a453-55c920fb16b6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Mark as TBD",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.steps.Block_Malicious_IPs.data['error_with_block'] | length > 0}}",
+                "resource": {
+                    "indicatorStatus": "\/api\/3\/picklists\/2f5cff61-fbff-4bb3-96be-302b78a9fb47"
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "{{vars.indicatorIRI}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/indicators",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "570",
+            "left": "475",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "9a3dc679-cf0e-4331-8090-ff63ccd161da"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "__triggerLimit": true,
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    }
+                },
+                "triggerOnSource": true,
+                "triggerOnReplicate": false
+            },
+            "status": null,
+            "top": "30",
+            "left": "475",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "group": null,
+            "uuid": "571d5633-6062-4f32-9d78-8c9def947bb8"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Block Malicious IPs -> Mark as Blocked",
+            "targetStep": "\/api\/3\/workflow_steps\/d1ca2139-9187-4bdb-a453-55c920fb16b6",
+            "sourceStep": "\/api\/3\/workflow_steps\/8a4daf6a-0ca3-4a7b-a31a-1a4aa53b4736",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "2a15a00b-b595-44bd-88ca-ad967e8bc3b3"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Block Malicious IPs",
+            "targetStep": "\/api\/3\/workflow_steps\/8a4daf6a-0ca3-4a7b-a31a-1a4aa53b4736",
+            "sourceStep": "\/api\/3\/workflow_steps\/1e72ab3b-fc9e-47b6-9e64-8f6bb7693933",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "715a6f47-bd72-4ad6-9ccb-3a34acc0457e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Mark as Blocked -> Mark as TBD",
+            "targetStep": "\/api\/3\/workflow_steps\/9a3dc679-cf0e-4331-8090-ff63ccd161da",
+            "sourceStep": "\/api\/3\/workflow_steps\/d1ca2139-9187-4bdb-a453-55c920fb16b6",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "8da3fa9c-7d9f-4b46-b455-a1f0b0d6cbea"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/1e72ab3b-fc9e-47b6-9e64-8f6bb7693933",
+            "sourceStep": "\/api\/3\/workflow_steps\/571d5633-6062-4f32-9d78-8c9def947bb8",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "43eaaa95-ab1a-4a41-9c69-830a24dd862b"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "5b9f90d9-0ae3-4540-ba7f-2b372197677e",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Referenced"
+    ]
+}

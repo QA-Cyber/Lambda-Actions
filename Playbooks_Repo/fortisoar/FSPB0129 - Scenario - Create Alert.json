@@ -1,0 +1,97 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Scenario - Create Alert",
+    "aliasName": null,
+    "tag": null,
+    "description": "Playbook creates sample alert for JIRA Use Case",
+    "isActive": false,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/fa4eec60-7f32-4f47-a1b7-11ee16f78ed1",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/bd45d89a-cfed-4731-81c1-7e0b83f94cf8",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Alert",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "Unable to log into VPN",
+                    "status": "\/api\/3\/picklists\/7de816ff-7140-4ee5-bd05-93ce22002146",
+                    "severity": "\/api\/3\/picklists\/b3c20a3a-ecfd-4adc-a225-0205968e6793",
+                    "__replace": "",
+                    "recordTags": [
+                        "\/api\/3\/tags\/sample"
+                    ],
+                    "description": "Reporting issue where our team is unable to log into India VPN.",
+                    "ackSlaStatus": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "closureReason": "\/api\/3\/picklists\/8590c81e-3307-4645-97f5-c3e1bec4e05a",
+                    "respSlaStatus": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                    "priorityWeight": 1,
+                    "escalatedtoincident": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5",
+                    "resolvedAutomatedly": false,
+                    "alertRemainingAckSLA": 0
+                },
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/alerts",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "15114693-ad69-4d3b-a963-137d9cc27308"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    }
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "group": null,
+            "uuid": "bd45d89a-cfed-4731-81c1-7e0b83f94cf8"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Create Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/15114693-ad69-4d3b-a963-137d9cc27308",
+            "sourceStep": "\/api\/3\/workflow_steps\/bd45d89a-cfed-4731-81c1-7e0b83f94cf8",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "5ba8fda3-bb53-4eb4-b336-fe6e72054f63"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "54766700-cc2a-467a-b468-1e2d8f28a629",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Alert",
+        "Scenario",
+        "Jira"
+    ]
+}

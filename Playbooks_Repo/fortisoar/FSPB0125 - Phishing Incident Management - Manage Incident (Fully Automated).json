@@ -1,0 +1,546 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Phishing Incident Management - Manage Incident (Fully Automated)",
+    "aliasName": null,
+    "tag": null,
+    "description": "Manage incident in a fully automated manner",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/6dadec2b-3024-4b1b-832c-c612f0bca071",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/63fcb8eb-1ad5-478f-ad61-6ab310da9c34",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Close Incident",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "phase": "\/api\/3\/picklists\/10b77cd3-0ba5-4c2e-83bb-d665430a9287",
+                    "status": "\/api\/3\/picklists\/bb73fd5e-f699-11e7-8c3f-9a214cf093ae",
+                    "nextsteps": "Generate and share incident report",
+                    "resolution": "- Blocked Sender on SEG\n- Deleted malicious content from all mailboxes\n- Hunted infected recipients\n- Quarantined infected device",
+                    "incidentsummary": "Spear Phishing against 4 local users with malicious attachment"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/incidents",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "2055",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "0e20ddb3-b7e1-402e-9d3a-04f2fc2fd522"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Related Assets",
+            "description": null,
+            "arguments": {
+                "related_indicators": "{{(vars.input.records[0]['@id']+'\/assets')|fromIRI}}"
+            },
+            "status": null,
+            "top": "1245",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "12275f59-589e-4357-a4fe-167c0bd53aae"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Related Assets Data",
+            "description": null,
+            "arguments": {
+                "related_indicators_data": "{{vars.related_indicators['hydra:member']}}"
+            },
+            "status": null,
+            "top": "1380",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "1c8cf9dc-6f6f-43ca-8fd8-ab717ca75c05"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Related Indicators",
+            "description": null,
+            "arguments": {
+                "related_indicators": "{{(vars.input.records[0]['@id']+'\/indicators')|fromIRI}}"
+            },
+            "status": null,
+            "top": "840",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "af9e6423-ff1e-4059-af9c-5a2d80f36fb4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Related Indicators IRIs",
+            "description": null,
+            "arguments": {
+                "related_indicators_iri": "{{vars.related_indicators['hydra:member']}}"
+            },
+            "status": null,
+            "top": "975",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "a2d14d48-b117-4c24-b917-fdb1c6213976"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Hunt Indicators on FortiSIEM",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.related_indicators_iri | length > 0}}",
+                "for_each": {
+                    "item": "{{vars.related_indicators_iri}}",
+                    "parallel": false,
+                    "condition": ""
+                },
+                "arguments": {
+                    "indicator_data": "{{vars.item}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/1a691e17-82ac-4a1f-83e1-8b89e8fc28e2"
+            },
+            "status": null,
+            "top": "1110",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "f19d193f-15e2-4943-ba20-3a61b957a1ff"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Incident Response",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "incident_data": "{{vars.input.records[0]}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/13f6010e-093f-4b28-ab40-2d509a103b35"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "97cb7a55-c172-46ca-9000-cbf7a9f590e8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Quarantine Infected Machines",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.related_indicators_data | length > 0}}",
+                "for_each": {
+                    "item": "{{vars.related_indicators_data}}",
+                    "parallel": false,
+                    "condition": ""
+                },
+                "arguments": {
+                    "asset_data": "{{vars.item}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/a9f0a401-82b0-48fd-9fc2-2bec639d7ca0"
+            },
+            "status": null,
+            "top": "1650",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "30701707-e319-441d-9520-3230879dbae9"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "resource": "incidents",
+                "resources": [
+                    "incidents"
+                ],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": [
+                            "{{vars.input.records[0]}}"
+                        ]
+                    }
+                },
+                "fieldbasedtrigger": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "resolution",
+                            "value": "%Automated%",
+                            "operator": "like",
+                            "_operator": "like"
+                        },
+                        {
+                            "type": "array",
+                            "field": "recordTags",
+                            "value": [
+                                "\/api\/3\/tags\/Scenario: Phishing Incident Management"
+                            ],
+                            "module": "recordTags",
+                            "display": null,
+                            "operator": "in",
+                            "template": "tags",
+                            "OPERATOR_KEY": "$",
+                            "previousOperator": "in",
+                            "previousTemplate": "tags"
+                        }
+                    ]
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/ea155646-3821-4542-9702-b246da430a8d",
+            "group": null,
+            "uuid": "63fcb8eb-1ad5-478f-ad61-6ab310da9c34"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Phase to Eradication",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "phase": "\/api\/3\/picklists\/bb740a06-f699-11e7-8c3f-9a214cf093ae"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/incidents",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "1c3ba109-6d4f-4e8a-b768-6698fddabe6c"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Phase to Recovery",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "phase": "\/api\/3\/picklists\/bb740d30-f699-11e7-8c3f-9a214cf093ae"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/incidents",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "1785",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "b9d51528-f6f8-493f-b824-b86b0f305b53"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Status and Phase",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "phase": "\/api\/3\/picklists\/cbaa92d2-6fd7-4dbe-88f6-0e0d17e8b430",
+                    "status": "\/api\/3\/picklists\/bb7402d6-f699-11e7-8c3f-9a214cf093ae"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/incidents",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "138eed32-c70c-4202-b8b8-3a6c1be4ba63"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait for Hunts",
+            "description": null,
+            "arguments": {
+                "delay": {
+                    "days": 0,
+                    "hours": 0,
+                    "weeks": 0,
+                    "minutes": 0,
+                    "seconds": 3
+                }
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/6832e556-b9c7-497a-babe-feda3bd27dbf",
+            "group": null,
+            "uuid": "1d9c4a01-41e5-49c2-a67c-f7f005be4e30"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait for Quarantine",
+            "description": null,
+            "arguments": {
+                "delay": {
+                    "days": 0,
+                    "hours": 0,
+                    "weeks": 0,
+                    "minutes": 0,
+                    "seconds": 2
+                }
+            },
+            "status": null,
+            "top": "1515",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/6832e556-b9c7-497a-babe-feda3bd27dbf",
+            "group": null,
+            "uuid": "8ae38905-b39f-41ef-9725-bc01e3cf03ed"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait for SLA",
+            "description": null,
+            "arguments": {
+                "delay": {
+                    "days": 0,
+                    "hours": 0,
+                    "weeks": 0,
+                    "minutes": 0,
+                    "seconds": 10
+                }
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/6832e556-b9c7-497a-babe-feda3bd27dbf",
+            "group": null,
+            "uuid": "6f9e05a3-9dfa-4400-9de5-070d49318ea8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait SLA",
+            "description": null,
+            "arguments": {
+                "delay": {
+                    "days": 0,
+                    "hours": 0,
+                    "weeks": 0,
+                    "minutes": 0,
+                    "seconds": 5
+                }
+            },
+            "status": null,
+            "top": "1920",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/6832e556-b9c7-497a-babe-feda3bd27dbf",
+            "group": null,
+            "uuid": "89469ee0-13cf-4bc2-804e-42627f3201e0"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Copy of Update Status to In Progress -> Copy of Wait for SLA",
+            "targetStep": "\/api\/3\/workflow_steps\/1d9c4a01-41e5-49c2-a67c-f7f005be4e30",
+            "sourceStep": "\/api\/3\/workflow_steps\/1c3ba109-6d4f-4e8a-b768-6698fddabe6c",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "2c681b94-989a-4438-8fa7-ae64d07de2b4"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Copy of Wait for Hunts -> Quarantine Infected Machines",
+            "targetStep": "\/api\/3\/workflow_steps\/30701707-e319-441d-9520-3230879dbae9",
+            "sourceStep": "\/api\/3\/workflow_steps\/8ae38905-b39f-41ef-9725-bc01e3cf03ed",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "e48218a2-77a2-4c2d-aa95-453aa50383c5"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Copy of Wait for SLA -> Get Related Indicators",
+            "targetStep": "\/api\/3\/workflow_steps\/af9e6423-ff1e-4059-af9c-5a2d80f36fb4",
+            "sourceStep": "\/api\/3\/workflow_steps\/1d9c4a01-41e5-49c2-a67c-f7f005be4e30",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "4b03755a-fcfa-41e1-ac59-694d904b7d64"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Related Assets -> Copy of Get Related Indicators IRIs",
+            "targetStep": "\/api\/3\/workflow_steps\/1c8cf9dc-6f6f-43ca-8fd8-ab717ca75c05",
+            "sourceStep": "\/api\/3\/workflow_steps\/12275f59-589e-4357-a4fe-167c0bd53aae",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "2097bbb9-df70-44ad-acc5-b1e267e34dfb"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Related Assets Data -> Copy of Wait for Hunts",
+            "targetStep": "\/api\/3\/workflow_steps\/8ae38905-b39f-41ef-9725-bc01e3cf03ed",
+            "sourceStep": "\/api\/3\/workflow_steps\/1c8cf9dc-6f6f-43ca-8fd8-ab717ca75c05",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "bdde5547-312f-4724-82c2-a7222eb65211"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Related Indicators -> Copy of Get Related Indicators",
+            "targetStep": "\/api\/3\/workflow_steps\/a2d14d48-b117-4c24-b917-fdb1c6213976",
+            "sourceStep": "\/api\/3\/workflow_steps\/af9e6423-ff1e-4059-af9c-5a2d80f36fb4",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "46754f90-2b1d-4714-8a88-8e8126975e06"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Related Indicators IRIs -> Hunt Indicators on FortiSIEM",
+            "targetStep": "\/api\/3\/workflow_steps\/f19d193f-15e2-4943-ba20-3a61b957a1ff",
+            "sourceStep": "\/api\/3\/workflow_steps\/a2d14d48-b117-4c24-b917-fdb1c6213976",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "e3d52476-a058-4120-9eb6-637987945c1d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Hunt Indicators on FortiSIEM -> Get Related Assets",
+            "targetStep": "\/api\/3\/workflow_steps\/12275f59-589e-4357-a4fe-167c0bd53aae",
+            "sourceStep": "\/api\/3\/workflow_steps\/f19d193f-15e2-4943-ba20-3a61b957a1ff",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "097759e1-4d6c-4fdb-9fe3-1dea75e0880b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Incident Response -> Copy of Update Status to In Progress",
+            "targetStep": "\/api\/3\/workflow_steps\/1c3ba109-6d4f-4e8a-b768-6698fddabe6c",
+            "sourceStep": "\/api\/3\/workflow_steps\/97cb7a55-c172-46ca-9000-cbf7a9f590e8",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "bb3a92bf-d1c3-435d-bc76-1cbc5e857f4e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Quarantine Infected Machines -> Copy of Update Phase to Eradication",
+            "targetStep": "\/api\/3\/workflow_steps\/b9d51528-f6f8-493f-b824-b86b0f305b53",
+            "sourceStep": "\/api\/3\/workflow_steps\/30701707-e319-441d-9520-3230879dbae9",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "1674a7f9-835c-45f6-8d96-1609fa2d5402"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Wait for SLA",
+            "targetStep": "\/api\/3\/workflow_steps\/6f9e05a3-9dfa-4400-9de5-070d49318ea8",
+            "sourceStep": "\/api\/3\/workflow_steps\/63fcb8eb-1ad5-478f-ad61-6ab310da9c34",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "e78f57ff-37af-4066-a6fe-71ca8aa1f169"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Phase to Recovery -> Wait SLA",
+            "targetStep": "\/api\/3\/workflow_steps\/89469ee0-13cf-4bc2-804e-42627f3201e0",
+            "sourceStep": "\/api\/3\/workflow_steps\/b9d51528-f6f8-493f-b824-b86b0f305b53",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "d1b3354b-cda4-4c45-8840-694a5ddfaea0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Status and Phase -> Incident Response",
+            "targetStep": "\/api\/3\/workflow_steps\/97cb7a55-c172-46ca-9000-cbf7a9f590e8",
+            "sourceStep": "\/api\/3\/workflow_steps\/138eed32-c70c-4202-b8b8-3a6c1be4ba63",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "6f7a30dd-d0ca-4d15-8611-d26bcfde8319"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Wait for SLA -> Update Status and Phase",
+            "targetStep": "\/api\/3\/workflow_steps\/138eed32-c70c-4202-b8b8-3a6c1be4ba63",
+            "sourceStep": "\/api\/3\/workflow_steps\/6f9e05a3-9dfa-4400-9de5-070d49318ea8",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "4e5b93d5-1a30-47c1-92fe-535d6510d031"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Wait SLA -> Close Incident",
+            "targetStep": "\/api\/3\/workflow_steps\/0e20ddb3-b7e1-402e-9d3a-04f2fc2fd522",
+            "sourceStep": "\/api\/3\/workflow_steps\/89469ee0-13cf-4bc2-804e-42627f3201e0",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "9e505d33-93a7-41cb-9fdd-2c285507bd49"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "de44ebdc-9d7b-4aea-88ed-adf2bd14d046",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "incidents",
+        "PostCreate",
+        "Automation",
+        "IncidentResponse"
+    ]
+}

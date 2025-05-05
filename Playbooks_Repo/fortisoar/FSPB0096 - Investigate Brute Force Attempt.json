@@ -1,0 +1,991 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Investigate Brute Force Attempt",
+    "aliasName": null,
+    "tag": "#ManualAction",
+    "description": "Investigates login failures and also identifies other impacted assets that have been victims of the brute force attempts from a particular source of attack",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/e9cc2d67-b69f-45d8-ad30-a9998c1d5874",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/e2165b74-4559-4215-8a97-ae71465a60c0",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Query result for successful intrusion",
+            "description": null,
+            "arguments": {
+                "name": "Splunk",
+                "config": "297ea74f-c96c-4b50-b462-329e9340507d",
+                "params": {
+                    "sid": "{'value' : '{{vars.steps.Query_Splunk_of_successful_intrusion.data.sid}}' }",
+                    "additional_args": ""
+                },
+                "version": "1.4.0",
+                "connector": "splunk",
+                "operation": "get_results",
+                "mock_result": "{\n  \"message\": \"\",\n  \"status\": \"Success\",\n  \"operation\": \"get_results\",\n  \"data\": {\n    \"messages\": [],\n    \"results\": [\n      {\n        \"host\": \"LinEp71\",\n        \"count\": \"1\"\n      }\n    ],\n    \"highlighted\": {},\n    \"fields\": [\n      {\n        \"name\": \"host\",\n        \"groupby_rank\": \"0\"\n      },\n      {\n        \"name\": \"count\"\n      }\n    ],\n    \"init_offset\": 0,\n    \"preview\": false\n  }\n}",
+                "operationTitle": "Get Results for a Search",
+                "step_variables": [],
+                "operationOutput": {
+                    "fields": [],
+                    "preview": false,
+                    "results": [],
+                    "messages": [],
+                    "highlighted": [],
+                    "init_offset": 0
+                }
+            },
+            "status": null,
+            "top": "540",
+            "left": "2140",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "4a470048-7c73-48d5-9cb5-3374a6031aa1"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Is Target System Window OS",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Linux",
+                        "step_iri": "\/api\/3\/workflow_steps\/f9eabdeb-fafe-455e-9866-31f54c7e2937",
+                        "condition": "{{ vars.splunk_source == \"linux_secure\" }}"
+                    },
+                    {
+                        "option": "Windows",
+                        "step_iri": "\/api\/3\/workflow_steps\/a42b95fd-639c-452e-a3f2-899e043c81a4",
+                        "condition": "{{ vars.splunk_source == \"WinEventLog:Security\" }}"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "720",
+            "left": "1460",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "group": null,
+            "uuid": "feee135d-7e81-48a0-b645-fb71b313f45b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Match Source IP in Internal CIDR",
+            "description": null,
+            "arguments": {
+                "name": "CyOps Utilities",
+                "params": {
+                    "cidr": "{{vars.internal_cidr_ranges}}",
+                    "ip_address": "{{vars.source_ip}}"
+                },
+                "version": "2.1.0",
+                "connector": "cyops_utilities",
+                "operation": "ip_cidr_check",
+                "operationTitle": "Utils: Is IP in CIDR",
+                "step_variables": [],
+                "operationOutput": {
+                    "matched_ips": [],
+                    "unmatched_ips": []
+                }
+            },
+            "status": null,
+            "top": "140",
+            "left": "320",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "80e34a84-9237-4455-ba72-55cbe91d6f5f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Win Domain User Details",
+            "description": null,
+            "arguments": {
+                "name": "Active Directory",
+                "config": "a5a06e4a-2523-49ef-8afc-b05ba05bf65f",
+                "params": {
+                    "cn": "",
+                    "sn": "",
+                    "search_object": "User",
+                    "search_attr_value": "{{vars.alert_metadata.Account_Name.split('\\n')[-1]}}"
+                },
+                "version": "2.0.0",
+                "connector": "activedirectory",
+                "operation": "get_specific_object_details",
+                "mock_result": "{\n\"data\": {\n      \"entries\": [\n        {\n          \"attributes\": {\n            \"accountExpires\": 253402300799,\n            \"name\": \"James Bond\",\n            \"whenCreated\": 1518710700,\n            \"distinguishedName\": \"CN=James Bond,OU=QA,DC=cyops,DC=local\",\n            \"uSNCreated\": 13434,\n            \"objectCategory\": \"CN=Person,CN=Schema,CN=Configuration,DC=cyops,DC=local\",\n            \"lastLogon\": null,\n            \"whenChanged\": 1518710700,\n            \"givenName\": \"James\",\n            \"sAMAccountType\": \"SAM_NORMAL_USER_ACCOUNT\",\n            \"sAMAccountName\": \"jbond\",\n            \"badPwdCount\": 0,\n            \"instanceType\": 4,\n            \"dSCorePropagationData\": [\n              1518710700,\n              null\n            ],\n            \"lastLogoff\": null,\n            \"countryCode\": 0,\n            \"badPasswordTime\": null,\n            \"displayName\": \"James Bond\",\n            \"primaryGroupID\": 513,\n            \"objectClass\": [\n              \"top\",\n              \"person\",\n              \"organizationalPerson\",\n              \"user\"\n            ],\n            \"objectSid\": \"S-1-5-21-2775588645-2726100070-1280702769-1107\",\n            \"userAccountControl\": \"DONT_EXPIRE_PASSWORD | NORMAL_ACCOUNT\",\n            \"sn\": \"Bond\",\n            \"objectGUID\": \"f487e6e4-cab9-4033-ade9-e643f4dbca9e\",\n            \"logonCount\": 0,\n            \"userPrincipalName\": \"jbond@cyops.local\",\n            \"codePage\": 0,\n            \"uSNChanged\": 13441,\n            \"pwdLastSet\": 1518710700,\n            \"cn\": \"James Bond\"\n          },\n          \"dn\": \"CN=James Bond,OU=QA,DC=cyops,DC=local\"\n        }\n      ]\n    },\n    \"status\": \"Success\",\n    \"operation\": \"get_specific_object_details\",\n    \"message\": \"\"\n  }",
+                "operationTitle": "Get Specific Object Details",
+                "step_variables": {
+                    "ad_user": "{{vars.alert_metadata.Account_Name.split('\\n')[-1]}}"
+                }
+            },
+            "status": null,
+            "top": "940",
+            "left": "1820",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "a42b95fd-639c-452e-a3f2-899e043c81a4"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Add successful intrusion details",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "['{{vars.input.records[0]['@id']}}']",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<span class=\"fa fa-exclamation-triangle\" style=\"font-size: 15px; color: #DE7A13;\"><\/span>&nbsp; In addition, login to following systems were successful:\n<p>{% for i in vars.steps.Query_result_for_successful_intrusion.data.results %}<\/p>\n<ul style=\"list-style-type: square;\">{% set system = i['host'] %}\n<li>{{ system }}<\/li>\n<\/ul>\n<p>{% endfor %}<\/p>\n<p><strong><span class=\"badge\" style=\"background:#e31b1d; color: #fff;\">This is an Indication of Breach<\/span><\/strong>\n<\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "660",
+            "left": "2140",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "c0e4daef-30c4-4b0b-9eb8-e9208feb3aff"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Query Splunk for related events for source IP address",
+            "description": null,
+            "arguments": {
+                "name": "Splunk",
+                "config": "297ea74f-c96c-4b50-b462-329e9340507d",
+                "params": {
+                    "query": "index=\"securitylogs\" sourcetype=\"linuxlogs\" rhost=\"{{vars.source_ip}}\" authentication failure | stats count by host",
+                    "additional_search_args": "{\"exec_mode\": \"blocking\"}"
+                },
+                "version": "1.4.0",
+                "connector": "splunk",
+                "operation": "invoke_search",
+                "mock_result": "{\n  \"message\": \"\",\n  \"status\": \"Success\",\n  \"operation\": \"invoke_search\",\n  \"data\": {\n    \"sid\": \"1517475217.90862\"\n  }\n}",
+                "operationTitle": "Invoke Search",
+                "step_variables": [],
+                "operationOutput": {
+                    "sid": ""
+                }
+            },
+            "status": null,
+            "top": "440",
+            "left": "1820",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "f9eabdeb-fafe-455e-9866-31f54c7e2937"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Query Splunk of successful intrusion",
+            "description": null,
+            "arguments": {
+                "name": "Splunk",
+                "config": "297ea74f-c96c-4b50-b462-329e9340507d",
+                "params": {
+                    "query": "index=\"securitylogs\" sourcetype=\"linuxlogs\" accepted password {{vars.source_ip}} | stats count by host",
+                    "additional_search_args": "{\"exec_mode\": \"blocking\"}"
+                },
+                "version": "1.4.0",
+                "connector": "splunk",
+                "operation": "invoke_search",
+                "mock_result": "{\n  \"message\": \"\",\n  \"status\": \"Success\",\n  \"operation\": \"invoke_search\",\n  \"data\": {\n    \"sid\": \"1517475236.90864\"\n  }\n}",
+                "operationTitle": "Invoke Search",
+                "step_variables": [],
+                "operationOutput": {
+                    "sid": ""
+                }
+            },
+            "status": null,
+            "top": "440",
+            "left": "2140",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "94706b50-05a9-4dea-a984-550d29e0f871"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Is Source IP internal",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Internal",
+                        "step_iri": "\/api\/3\/workflow_steps\/07e65a94-fb9d-401b-b7d1-8e1568c51a00",
+                        "condition": "{{ vars.steps.Match_Source_IP_in_Internal_CIDR.data['matched_cidr_ip']  |  length > 0 }}"
+                    },
+                    {
+                        "option": "External",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/32a47fd1-4f01-47b7-a528-fe10a790a1af"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "260",
+            "left": "320",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "group": null,
+            "uuid": "63985894-cfdd-46a0-aa8c-ec841273be66"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Note for Safe IP",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "[\"{{vars.input.records[0]['@id']}}\"]",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<p>Source IP:  <span style=\"background:#28B35C; color: #fff;\" class=\"badge badge-success\"> {{vars.source_ip}}  <\/span> is found to be safe.<\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "460",
+            "left": "1020",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "baf6ed6c-8935-4bf3-b447-169c424327e9"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start Investigation",
+            "description": null,
+            "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "Investigating Potential {{vars.input.records[0].type.itemValue}}, with following fields of interest:\n{% if vars.input.records[0].domain %}Domain: {{vars.input.records[0].domain -}}{% endif %}\n{% if vars.input.records[0].sourceIp %}SourceIP: {{ vars.input.records[0].sourceIp -}}{% endif %}\n{% if vars.input.records[0].destinationIp %}DestinationIP: {{vars.input.records[0].destinationIp -}}{% endif %}\n{% if vars.input.records[0].fileHash %}File Hash: {{vars.input.records[0].fileHash -}}{% endif %}\n{% if vars.input.records[0].computerName %}ComputerName: {{vars.input.records[0].computerName -}}{% endif %}\n{% if vars.input.records[0].processName %}Process: {{vars.input.records[0].processName -}}{% endif %}\n{% if vars.input.records[0].sourceProcess %}SourceProcess: {{vars.input.records[0].sourceProcess -}}{% endif %}",
+                    "records": ""
+                },
+                "resource": {
+                    "status": {
+                        "id": 113,
+                        "@id": "\/api\/3\/picklists\/758925e7-629c-46d8-89db-fb36f5fbe88a",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Investigating",
+                        "listName": "\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a",
+                        "itemValue": "Investigating",
+                        "orderIndex": 2
+                    }
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "260",
+            "left": "20",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "b469926c-ac7c-44cb-84fb-c0bc9e49ff3f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Note for Internal IP",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "[\"{{vars.input.records[0]['@id']}}\"]",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<p> Source IP: <strong>{{vars.source_ip}}<\/strong> is&nbsp;<span style=\"color: #00ff00;\"><strong>Internal and therfore benign<\/strong><\/span><\/p>\n",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "180",
+            "left": "640",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "07e65a94-fb9d-401b-b7d1-8e1568c51a00"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "alert_id": "{{vars.input.records[0]['@id']}}",
+                "host_list": "[]",
+                "host_name": "{{vars.input.records[0].computerName}}",
+                "source_ip": "{{vars.input.records[0].sourceIp}}",
+                "splunk_source": "{{vars.alert_metadata.sourcetype}}",
+                "useMockOutput": "{{globalVars.Demo_mode}}",
+                "destination_ip": "{{vars.input.records[0].destinationIp}}",
+                "internal_cidr_ranges": "193.200.225.0\/24",
+                "reputation_threshold": "4"
+            },
+            "status": null,
+            "top": "140",
+            "left": "20",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "f326c375-06c6-4265-90d8-8ae924c2068e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Retrieve Splunk query results",
+            "description": null,
+            "arguments": {
+                "name": "Splunk",
+                "config": "297ea74f-c96c-4b50-b462-329e9340507d",
+                "params": {
+                    "sid": "{'value': '{{vars.steps.Query_Splunk_for_related_events_for_source_IP_address.data.sid}}'}",
+                    "additional_args": ""
+                },
+                "version": "1.4.0",
+                "connector": "splunk",
+                "operation": "get_results",
+                "mock_result": "{\n  \"message\": \"\",\n  \"status\": \"Success\",\n  \"operation\": \"get_results\",\n  \"data\": {\n    \"messages\": [],\n    \"results\": [\n        {\n        \"host\": \"LinEp31\",\n        \"count\": \"30\"\n      },\n      {\n        \"host\": \"LinEp41\",\n        \"count\": \"10\"\n      },\n      {\n        \"host\": \"LinEp51\",\n        \"count\": \"10\"\n      },\n      {\n        \"host\": \"LinEp61\",\n        \"count\": \"10\"\n      },\n      {\n        \"host\": \"LinEp71\",\n        \"count\": \"10\"\n      }\n    ],\n    \"highlighted\": {},\n    \"fields\": [\n      {\n        \"name\": \"host\",\n        \"groupby_rank\": \"0\"\n      },\n      {\n        \"name\": \"count\"\n      }\n    ],\n    \"init_offset\": 0,\n    \"preview\": false\n  }\n}",
+                "operationTitle": "Get Results for a Search",
+                "step_variables": {
+                    "h_affected_host": "{% for i in vars.result.data.results %}      {% set alert_id = vars.request.data.records[0]['@id'] %}  {{ vars.host_list.append([alert_id,i['host']]) }}     {% endfor %}"
+                },
+                "operationOutput": {
+                    "fields": [],
+                    "preview": false,
+                    "results": [],
+                    "messages": [],
+                    "highlighted": [],
+                    "init_offset": 0
+                }
+            },
+            "status": null,
+            "top": "540",
+            "left": "1820",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "7502aaa8-5dd6-4727-badb-c868d2f45ab0"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Note for Malicious IP",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "[\"{{vars.input.records[0]['@id']}}\"]",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<p><span style=\"font-size: 15px; color: #DE7A13;\" class=\"fa fa-exclamation-triangle\"><\/span>&nbsp;VirusTotal Reports <strong>{{vars.source_ip}}&nbsp;<\/strong> as  <span style=\"background:#e31b1d; color: #fff;\" class=\"badge badge-pill badge-danger\">  Malicious  <\/span><br><br><\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "620",
+            "left": "1020",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "88b09702-0d49-4ce0-8c44-d2d152acdcff"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Severity to Critical",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "severity": {
+                        "id": 82,
+                        "@id": "\/api\/3\/picklists\/7efa2220-39bb-44e4-961f-ac368776e3b0",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#e31b1d",
+                        "display": "Critical",
+                        "listName": "\/api\/3\/picklist_names\/4e80cba3-032f-48b4-ac03-17e3ec247aac",
+                        "itemValue": "Critical",
+                        "orderIndex": 4
+                    }
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "tagsOperation": "OverwriteTags",
+                "collectionType": "\/api\/3\/alerts",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "720",
+            "left": "1180",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "acbcc73c-5977-4428-883e-2be4db3256d1"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Is Malicious IP",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "Malicious",
+                        "step_iri": "\/api\/3\/workflow_steps\/88b09702-0d49-4ce0-8c44-d2d152acdcff",
+                        "condition": "{{ vars.steps.Get_Source_IP_Reputation.data.attributes['last_analysis_stats'].malicious > 0 }}",
+                        "step_name": "Create Note for Malicious IP"
+                    },
+                    {
+                        "option": "Safe",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/baf6ed6c-8935-4bf3-b447-169c424327e9",
+                        "step_name": "Create Note for Safe IP"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "560",
+            "left": "640",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "group": null,
+            "uuid": "1c08f755-648d-4061-9b99-bc88353f6ac6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "44ec50ec-0013-403a-acc4-f8c03aae38e7",
+                "title": "Investigate Brute Force",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    },
+                    "alert_metadata": "{{vars.input.records[0].sourcedata | toDict}}"
+                },
+                "_promptexpanded": true,
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "object",
+                                "field": "type",
+                                "value": "\/api\/3\/picklists\/382183df-212d-4ce1-adae-088647cc72c3",
+                                "_value": {
+                                    "@id": "\/api\/3\/picklists\/382183df-212d-4ce1-adae-088647cc72c3",
+                                    "itemValue": "Brute Force Attempts"
+                                },
+                                "operator": "eq"
+                            },
+                            {
+                                "type": "primitive",
+                                "field": "source",
+                                "value": "%FortiSIEM%",
+                                "operator": "notlike",
+                                "_operator": "notlike"
+                            }
+                        ]
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "singleRecordExecution": false
+            },
+            "status": null,
+            "top": "13",
+            "left": "20",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "e2165b74-4559-4215-8a97-ae71465a60c0"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Source IP Reputation",
+            "description": null,
+            "arguments": {
+                "name": "VirusTotal",
+                "config": "1ba6a7ef-304a-4f78-855d-70b09bcd0b0a",
+                "params": {
+                    "ip": "{{vars.source_ip}}",
+                    "relationships": ""
+                },
+                "version": "3.0.2",
+                "connector": "virustotal",
+                "operation": "query_ip",
+                "mock_result": "{\n  \"data\": {\n    \"id\": \"59.126.11.81\",\n    \"type\": \"ip_address\",\n    \"links\": {\n      \"self\": \"https:\/\/www.virustotal.com\/gui\/ip-address\/59.126.11.81\"\n    },\n    \"attributes\": {\n      \"asn\": 3462,\n      \"tags\": [],\n      \"whois\": {\n        \"raw\": [],\n        \"data\": \" Domain Name: HINET.NET\\r\\n Registry Domain ID: 2854475_DOMAIN_NET-VRSN\\r\\n Registrar WHOIS Server: whois.networksolutions.com\\r\\n Registrar URL: http:\/\/networksolutions.com\\r\\n Updated Date: 2021-02-01T00:56:44Z\\r\\n Creation Date: 1994-03-19T05:00:00Z\\r\\n Registry Expiry Date: 2022-03-20T04:00:00Z\\r\\n Registrar: Network Solutions, LLC\\r\\n Registrar IANA ID: 2\\r\\n Registrar Abuse Contact Email: abuse@web.com\\r\\n Registrar Abuse Contact Phone: +1.8003337680\\r\\n Domain Status: ok https:\/\/icann.org\/epp#ok\\r\\n Name Server: ANS1.HINET.NET\\r\\n Name Server: ANS2.HINET.NET\\r\\n Name Server: ANS3.HINET.TW\\r\\n DNSSEC: unsigned\\r\\n URL of the ICANN Whois Inaccuracy Complaint Form: https:\/\/www.icann.org\/wicf\/\\r\\n>>> Last update of whois database: 2021-03-24T15:24:26Z <<<\\r\\n\\r\\nFor more information on Whois status codes, please visit https:\/\/icann.org\/epp\\r\\n\\r\\nNOTICE: The expiration date displayed in this record is the date the\\r\\nregistrar's sponsorship of the domain name registration in the registry is\\r\\ncurrently set to expire. This date does not necessarily reflect the expiration\\r\\ndate of the domain name registrant's agreement with the sponsoring\\r\\nregistrar. Users may consult the sponsoring registrar's Whois database to\\r\\nview the registrar's reported date of expiration for this registration.\\r\\n\\r\\nTERMS OF USE: You are not authorized to access or query our Whois\\r\\ndatabase through the use of electronic processes that are high-volume and\\r\\nautomated except as reasonably necessary to register domain names or\\r\\nmodify existing registrations; the Data in VeriSign Global Registry\\r\\nServices' (\\\"VeriSign\\\") Whois database is provided by VeriSign for\\r\\ninformation purposes only, and to assist persons in obtaining information\\r\\nabout or related to a domain name registration record. VeriSign does not\\r\\nguarantee its accuracy. By submitting a Whois query, you agree to abide\\r\\nby the following terms of use: You agree that you may use this Data only\\r\\nfor lawful purposes and that under no circumstances will you use this Data\\r\\nto: (1) allow, enable, or otherwise support the transmission of mass\\r\\nunsolicited, commercial advertising or solicitations via e-mail, telephone,\\r\\nor facsimile; or (2) enable high volume, automated, electronic processes\\r\\nthat apply to VeriSign (or its computer systems). The compilation,\\r\\nrepackaging, dissemination or other use of this Data is expressly\\r\\nprohibited without the prior written consent of VeriSign. You agree not to\\r\\nuse electronic processes that are automated and high-volume to access or\\r\\nquery the Whois database except as reasonably necessary to register\\r\\ndomain names or modify existing registrations. VeriSign reserves the right\\r\\nto restrict your access to the Whois database in its sole discretion to ensure\\r\\noperational stability. VeriSign may restrict or terminate your access to the\\r\\nWhois database for failure to abide by these terms of use. VeriSign\\r\\nreserves the right to modify these terms at any time.\\r\\n\\r\\nThe Registry database contains ONLY .COM, .NET, .EDU domains and\\r\\nRegistrars.\\r\\nIP Address Has Reached Rate Limit\\n\"\n      },\n      \"country\": \"TW\",\n      \"network\": \"59.112.0.0\/12\",\n      \"as_owner\": \"Data Communication Business Group\",\n      \"continent\": \"AS\",\n      \"reputation\": 0,\n      \"whois_date\": 1616599487,\n      \"total_votes\": {\n        \"harmless\": 0,\n        \"malicious\": 0\n      },\n      \"last_analysis_date\": 1667619491,\n      \"last_analysis_stats\": {\n        \"timeout\": 0,\n        \"harmless\": 79,\n        \"malicious\": 1,\n        \"suspicious\": 0,\n        \"undetected\": 15\n      },\n      \"last_analysis_results\": {\n        \"Bkav\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Bkav\"\n        },\n        \"CRDF\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"CRDF\"\n        },\n        \"Cyan\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Cyan\"\n        },\n        \"DNS8\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"DNS8\"\n        },\n        \"ESET\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ESET\"\n        },\n        \"Lumu\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Lumu\"\n        },\n        \"Armis\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Armis\"\n        },\n        \"Avira\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Avira\"\n        },\n        \"Cyble\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Cyble\"\n        },\n        \"IPsum\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"IPsum\"\n        },\n        \"zvelo\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"zvelo\"\n        },\n        \"Abusix\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Abusix\"\n        },\n        \"Dr.Web\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Dr.Web\"\n        },\n        \"G-Data\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"G-Data\"\n        },\n        \"Lionic\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Lionic\"\n        },\n        \"Sophos\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Sophos\"\n        },\n        \"Acronis\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Acronis\"\n        },\n        \"Blueliv\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Blueliv\"\n        },\n        \"Certego\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Certego\"\n        },\n        \"CyRadar\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"CyRadar\"\n        },\n        \"MalSilo\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalSilo\"\n        },\n        \"Nucleon\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Nucleon\"\n        },\n        \"Quttera\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Quttera\"\n        },\n        \"Segasec\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Segasec\"\n        },\n        \"Spam404\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Spam404\"\n        },\n        \"Tencent\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Tencent\"\n        },\n        \"URLhaus\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"URLhaus\"\n        },\n        \"Webroot\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Webroot\"\n        },\n        \"AutoShun\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"AutoShun\"\n        },\n        \"Emsisoft\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Emsisoft\"\n        },\n        \"EonScope\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"EonScope\"\n        },\n        \"Fortinet\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Fortinet\"\n        },\n        \"Malwared\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Malwared\"\n        },\n        \"Netcraft\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Netcraft\"\n        },\n        \"PREBYTES\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"PREBYTES\"\n        },\n        \"URLQuery\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"URLQuery\"\n        },\n        \"VX Vault\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"VX Vault\"\n        },\n        \"ViriBack\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ViriBack\"\n        },\n        \"ZeroCERT\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ZeroCERT\"\n        },\n        \"0xSI_f33d\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"0xSI_f33d\"\n        },\n        \"Antiy-AVL\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Antiy-AVL\"\n        },\n        \"CINS Army\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"CINS Army\"\n        },\n        \"GreenSnow\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"GreenSnow\"\n        },\n        \"Kaspersky\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Kaspersky\"\n        },\n        \"MalBeacon\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalBeacon\"\n        },\n        \"NotMining\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"NotMining\"\n        },\n        \"OpenPhish\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"OpenPhish\"\n        },\n        \"PhishLabs\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"PhishLabs\"\n        },\n        \"Phishtank\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Phishtank\"\n        },\n        \"Scantitan\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Scantitan\"\n        },\n        \"Seclookup\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Seclookup\"\n        },\n        \"Trustwave\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Trustwave\"\n        },\n        \"benkow.cc\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"benkow.cc\"\n        },\n        \"AlienVault\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"AlienVault\"\n        },\n        \"CyberCrime\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"CyberCrime\"\n        },\n        \"Quick Heal\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Quick Heal\"\n        },\n        \"SafeToOpen\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"SafeToOpen\"\n        },\n        \"ThreatHive\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ThreatHive\"\n        },\n        \"ADMINUSLabs\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ADMINUSLabs\"\n        },\n        \"BitDefender\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"BitDefender\"\n        },\n        \"ESTsecurity\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ESTsecurity\"\n        },\n        \"K7AntiVirus\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"K7AntiVirus\"\n        },\n        \"SecureBrain\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"SecureBrain\"\n        },\n        \"StopBadware\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"StopBadware\"\n        },\n        \"BADWARE.INFO\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"BADWARE.INFO\"\n        },\n        \"PrecisionSec\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"PrecisionSec\"\n        },\n        \"SCUMWARE.org\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"SCUMWARE.org\"\n        },\n        \"securolytics\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"securolytics\"\n        },\n        \"Chong Lua Dao\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Chong Lua Dao\"\n        },\n        \"MalwarePatrol\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalwarePatrol\"\n        },\n        \"StopForumSpam\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"StopForumSpam\"\n        },\n        \"Threatsourcing\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Threatsourcing\"\n        },\n        \"EmergingThreats\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"EmergingThreats\"\n        },\n        \"desenmascara.me\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"desenmascara.me\"\n        },\n        \"Heimdal Security\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Heimdal Security\"\n        },\n        \"Juniper Networks\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Juniper Networks\"\n        },\n        \"Sucuri SiteCheck\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Sucuri SiteCheck\"\n        },\n        \"alphaMountain.ai\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"alphaMountain.ai\"\n        },\n        \"AICC (MONITORAPP)\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"AICC (MONITORAPP)\"\n        },\n        \"Bfore.Ai PreCrime\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Bfore.Ai PreCrime\"\n        },\n        \"MalwareDomainList\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalwareDomainList\"\n        },\n        \"Phishing Database\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Phishing Database\"\n        },\n        \"Hoplite Industries\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Hoplite Industries\"\n        },\n        \"Web Security Guard\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Web Security Guard\"\n        },\n        \"Baidu-International\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Baidu-International\"\n        },\n        \"Google Safebrowsing\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Google Safebrowsing\"\n        },\n        \"Yandex Safebrowsing\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Yandex Safebrowsing\"\n        },\n        \"Snort IP sample list\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Snort IP sample list\"\n        },\n        \"CMC Threat Intelligence\": {\n          \"method\": \"blacklist\",\n          \"result\": \"malware\",\n          \"category\": \"malicious\",\n          \"engine_name\": \"CMC Threat Intelligence\"\n        },\n        \"Comodo Valkyrie Verdict\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Comodo Valkyrie Verdict\"\n        },\n        \"Forcepoint ThreatSeeker\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Forcepoint ThreatSeeker\"\n        },\n        \"malwares.com URL checker\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"malwares.com URL checker\"\n        },\n        \"Viettel Threat Intelligence\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Viettel Threat Intelligence\"\n        },\n        \"Virusdie External Site Scan\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Virusdie External Site Scan\"\n        }\n      },\n      \"last_modification_date\": 1667632400,\n      \"regional_internet_registry\": \"APNIC\"\n    }\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null\n}",
+                "operationTitle": "Get IP Reputation",
+                "step_variables": [],
+                "operationOutput": {
+                    "asn": "",
+                    "country": "",
+                    "as_owner": "",
+                    "aggregate": "",
+                    "detected_urls": "",
+                    "detected_referrer_samples": "",
+                    "detected_downloaded_samples": ""
+                }
+            },
+            "status": null,
+            "top": "440",
+            "left": "640",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "b2ed5696-47ca-4902-bab6-aa9fccee05d0"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Add details of Splunk query to record",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "['{{vars.input.records[0]['@id']}}']",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<p>Queried Splunk, and found same SourceIP:&nbsp;{{vars.source_ip}} attempted to log in on following<span style=\"color: #ff0000;\">&nbsp;<\/span><strong>{{ vars.steps.Retrieve_Splunk_query_results.data.results | length }} <\/strong>systems<\/p>\n<ul style=\"list-style-type: square;\">{% for i in vars.steps.Retrieve_Splunk_query_results.data.results %} {% set system = i['host'] %}\n<li>{{ system }}<\/li>\n{% endfor %}<\/ul>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "660",
+            "left": "1820",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "d70b4a89-d343-4891-b3d6-a74570faee74"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Assets records for affected hosts",
+            "description": null,
+            "arguments": {
+                "for_each": {
+                    "item": "{{vars.steps.Retrieve_Splunk_query_results.data.results}}",
+                    "condition": ""
+                },
+                "arguments": {
+                    "host": "",
+                    "assetIP": "",
+                    "indicatorIRI": "",
+                    "assetHostname": "{{vars.item.host}}",
+                    "alertRecordIRI": "{{vars.input.records[0]['@id']}}",
+                    "incidentRecordIRI": ""
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/24f12289-5860-4857-ac0e-354e65f46e18"
+            },
+            "status": null,
+            "top": "660",
+            "left": "2460",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "3d2eda2a-df97-473a-8df1-0422e8126b18"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Note for External IP",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "[\"{{vars.input.records[0]['@id']}}\"]",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<p> <span style=\"font-size: 15px; color: #DE7A13;\" class=\"fa fa-exclamation-triangle\"><\/span>&nbsp;Source IP<strong> {{vars.source_ip}} is <\/strong><span style=\"background:#e31b1d; color: #fff;\" class=\"badge badge-pill badge-danger\">External<\/span><\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "340",
+            "left": "640",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "32a47fd1-4f01-47b7-a528-fe10a790a1af"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Add notes about user",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": {
+                        "id": 247,
+                        "@id": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "icon": null,
+                        "uuid": "ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Comment",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/0841c1eb-a0a3-4abd-b29c-9f68e4d9b14f",
+                        "itemValue": "Comment",
+                        "orderIndex": 1
+                    },
+                    "alerts": "['{{vars.input.records[0]['@id']}}']",
+                    "people": [],
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "content": "<p><span style=\"font-size: 15px; color: #DE7A13;\" class=\"fa fa-exclamation-triangle\"><\/span>&nbsp; Following are details for user <span style=\"background:#e31b1d; color: #fff;\" class=\"badge badge-pill badge-danger\">{{vars.ad_user}}<\/span> who attempted to log on  <span style=\"background:#e31b1d; color: #fff;\" class=\"badge badge-pill badge-danger\">{{vars.alert_metadata.ComputerName}}<\/span><\/p>\n&nbsp;\n<table border=\"2\" style=\"width: 408px; border-color: white;\">\n<tbody>\n<tr>\n<td style=\"width: 138px; text-align: center;\">&nbsp;LDAP Attributes<\/td>\n<td style=\"width: 269px; text-align: center;\">&nbsp;Value<\/td>\n<\/tr>\n<tr>\n<td style=\"width: 138px;\">distinguishedName<\/td>\n<td style=\"width: 269px;\">{{vars.steps.Get_Win_Domain_User_Details.data.entries[0].dn}}<\/td>\n<\/tr>\n<tr>\n<td style=\"width: 138px;\">userPrincipalName<\/td>\n<td style=\"width: 269px;\">{{vars.steps.Get_Win_Domain_User_Details.data.entries[0].attributes.userPrincipalName}}<\/td>\n<\/tr>\n<tr>\n<td style=\"width: 138px;\">displayName<\/td>\n<td style=\"width: 269px;\">{{vars.steps.Get_Win_Domain_User_Details.data.entries[0].attributes.displayName}}<\/td>\n<\/tr>\n<tr>\n<td style=\"width: 138px;\">sAMAccountName<\/td>\n<td style=\"width: 269px;\">{{vars.steps.Get_Win_Domain_User_Details.data.entries[0].attributes.sAMAccountName}}<\/td>\n<\/tr>\n<tr>\n<td style=\"width: 138px;\">lastLogon<\/td>\n<td style=\"width: 269px;\">{{vars.steps.Get_Win_Domain_User_Details.data.entries[0].attributes.lastLogon}}<\/td>\n<\/tr>\n<\/tbody>\n<\/table>\n",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "940",
+            "left": "2120",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "e86e1152-23b5-4bae-b6d6-c68aa8e28bcd"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Malicious IP -> Create Note for Malicious IP",
+            "targetStep": "\/api\/3\/workflow_steps\/88b09702-0d49-4ce0-8c44-d2d152acdcff",
+            "sourceStep": "\/api\/3\/workflow_steps\/1c08f755-648d-4061-9b99-bc88353f6ac6",
+            "label": "Malicious",
+            "isExecuted": false,
+            "uuid": "4471e6c6-ae89-4ac8-aa70-ac3a53adfbcc"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Source IP internal -> Copy  of Create Note for Internal IP",
+            "targetStep": "\/api\/3\/workflow_steps\/32a47fd1-4f01-47b7-a528-fe10a790a1af",
+            "sourceStep": "\/api\/3\/workflow_steps\/63985894-cfdd-46a0-aa8c-ec841273be66",
+            "label": "External",
+            "isExecuted": false,
+            "uuid": "c6905f53-3578-4771-bbf6-de6bbb5ca424"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Win Domain User Details -> Add notes about user",
+            "targetStep": "\/api\/3\/workflow_steps\/e86e1152-23b5-4bae-b6d6-c68aa8e28bcd",
+            "sourceStep": "\/api\/3\/workflow_steps\/a42b95fd-639c-452e-a3f2-899e043c81a4",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "28216f7e-94fd-41b5-bde3-b380af7078b3"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Add successful intrusion details -> Update Assets records for affected hosts1",
+            "targetStep": "\/api\/3\/workflow_steps\/3d2eda2a-df97-473a-8df1-0422e8126b18",
+            "sourceStep": "\/api\/3\/workflow_steps\/c0e4daef-30c4-4b0b-9eb8-e9208feb3aff",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c6c772f7-c95d-4658-8ad9-db5c17457ad5"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Severity to Critical -> Take action per system operating system",
+            "targetStep": "\/api\/3\/workflow_steps\/feee135d-7e81-48a0-b645-fb71b313f45b",
+            "sourceStep": "\/api\/3\/workflow_steps\/acbcc73c-5977-4428-883e-2be4db3256d1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "aaf19a5f-6608-4b26-a86e-03911a390452"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Add details of Splunk query to record -> Query Splunk of successful intrusion",
+            "targetStep": "\/api\/3\/workflow_steps\/94706b50-05a9-4dea-a984-550d29e0f871",
+            "sourceStep": "\/api\/3\/workflow_steps\/d70b4a89-d343-4891-b3d6-a74570faee74",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "2d02684d-8ec6-4bfe-bbf9-2ff8c3062efd"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start Investigation -> Match Source IP in Internal CIDR",
+            "targetStep": "\/api\/3\/workflow_steps\/80e34a84-9237-4455-ba72-55cbe91d6f5f",
+            "sourceStep": "\/api\/3\/workflow_steps\/b469926c-ac7c-44cb-84fb-c0bc9e49ff3f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "00a5c135-db11-4893-a355-2dbb97828358"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Start Investigation",
+            "targetStep": "\/api\/3\/workflow_steps\/b469926c-ac7c-44cb-84fb-c0bc9e49ff3f",
+            "sourceStep": "\/api\/3\/workflow_steps\/f326c375-06c6-4265-90d8-8ae924c2068e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "9c57cbd1-16e3-4b5b-bef6-ddfe88622179"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Source IP internal -> Copy 1 of Create Note for Safe IP",
+            "targetStep": "\/api\/3\/workflow_steps\/07e65a94-fb9d-401b-b7d1-8e1568c51a00",
+            "sourceStep": "\/api\/3\/workflow_steps\/63985894-cfdd-46a0-aa8c-ec841273be66",
+            "label": "Internal",
+            "isExecuted": false,
+            "uuid": "5cc579fe-373f-4ad4-a1f3-bab75b756811"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Take action per system operating system -> Get Win Domain User Details",
+            "targetStep": "\/api\/3\/workflow_steps\/a42b95fd-639c-452e-a3f2-899e043c81a4",
+            "sourceStep": "\/api\/3\/workflow_steps\/feee135d-7e81-48a0-b645-fb71b313f45b",
+            "label": "Windows",
+            "isExecuted": false,
+            "uuid": "2e98f42f-484d-4f60-bcc1-c4891676c653"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Source IP Reputation -> Is Malicious IP",
+            "targetStep": "\/api\/3\/workflow_steps\/1c08f755-648d-4061-9b99-bc88353f6ac6",
+            "sourceStep": "\/api\/3\/workflow_steps\/b2ed5696-47ca-4902-bab6-aa9fccee05d0",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "050af376-ccf5-4a41-9a0d-88badf5b8464"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Query result for successful intrusion -> Add successful intrusion details",
+            "targetStep": "\/api\/3\/workflow_steps\/c0e4daef-30c4-4b0b-9eb8-e9208feb3aff",
+            "sourceStep": "\/api\/3\/workflow_steps\/4a470048-7c73-48d5-9cb5-3374a6031aa1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5699e079-594e-4a0c-b170-0db67b354a5e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Attacker Metadata",
+            "targetStep": "\/api\/3\/workflow_steps\/f326c375-06c6-4265-90d8-8ae924c2068e",
+            "sourceStep": "\/api\/3\/workflow_steps\/e2165b74-4559-4215-8a97-ae71465a60c0",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "295597c7-c544-4f82-b8dd-eaebad516739"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Take action per system operating system -> Query Splunk for related events for source IP address",
+            "targetStep": "\/api\/3\/workflow_steps\/f9eabdeb-fafe-455e-9866-31f54c7e2937",
+            "sourceStep": "\/api\/3\/workflow_steps\/feee135d-7e81-48a0-b645-fb71b313f45b",
+            "label": "Linux",
+            "isExecuted": false,
+            "uuid": "760b7144-4ee8-4b19-8ad9-5685f8c7c799"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Malicious IP -> Create Note for Safe IP",
+            "targetStep": "\/api\/3\/workflow_steps\/baf6ed6c-8935-4bf3-b447-169c424327e9",
+            "sourceStep": "\/api\/3\/workflow_steps\/1c08f755-648d-4061-9b99-bc88353f6ac6",
+            "label": "Safe",
+            "isExecuted": false,
+            "uuid": "875f3e56-884e-4be8-b9b7-902c71020386"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Note for Malicious IP -> Update Severity to High",
+            "targetStep": "\/api\/3\/workflow_steps\/acbcc73c-5977-4428-883e-2be4db3256d1",
+            "sourceStep": "\/api\/3\/workflow_steps\/88b09702-0d49-4ce0-8c44-d2d152acdcff",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4deaa815-8959-4289-a9fd-38086f7686f9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Match Source IP in Internal CIDR -> Is Source IP internal",
+            "targetStep": "\/api\/3\/workflow_steps\/63985894-cfdd-46a0-aa8c-ec841273be66",
+            "sourceStep": "\/api\/3\/workflow_steps\/80e34a84-9237-4455-ba72-55cbe91d6f5f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ef2e420e-cede-403b-be59-ee6d899556fd"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Query Splunk of successful intrusion -> Query result for successful intrusion",
+            "targetStep": "\/api\/3\/workflow_steps\/4a470048-7c73-48d5-9cb5-3374a6031aa1",
+            "sourceStep": "\/api\/3\/workflow_steps\/94706b50-05a9-4dea-a984-550d29e0f871",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "81332540-d573-47a9-a3cb-c5213a94b1c0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Retrieve Splunk query results -> Add details of Splunk query to record",
+            "targetStep": "\/api\/3\/workflow_steps\/d70b4a89-d343-4891-b3d6-a74570faee74",
+            "sourceStep": "\/api\/3\/workflow_steps\/7502aaa8-5dd6-4727-badb-c868d2f45ab0",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3901c832-3616-4385-967e-d80f8c9ec0ad"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Note for External IP -> Get Source IP Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/b2ed5696-47ca-4902-bab6-aa9fccee05d0",
+            "sourceStep": "\/api\/3\/workflow_steps\/32a47fd1-4f01-47b7-a528-fe10a790a1af",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3c56830c-d345-4262-b9a2-af4532a28167"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Query Splunk for related events for source IP address -> Retrieve Splunk query results",
+            "targetStep": "\/api\/3\/workflow_steps\/7502aaa8-5dd6-4727-badb-c868d2f45ab0",
+            "sourceStep": "\/api\/3\/workflow_steps\/f9eabdeb-fafe-455e-9866-31f54c7e2937",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "8cabef98-3e8d-4f3c-a1fe-f51f1b5aa4ea"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "2b2e71fb-813b-4871-ba06-f7b7f4ca9dbc",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "ManualAction"
+    ]
+}

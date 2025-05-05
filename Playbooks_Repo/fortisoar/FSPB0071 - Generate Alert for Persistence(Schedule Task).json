@@ -1,0 +1,171 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Generate Alert for Persistence(Schedule Task)",
+    "aliasName": null,
+    "tag": null,
+    "description": "Generates alert from FortiSIEM incident where an attacker creates Windows scheduled task.",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1646386590,
+    "collection": "\/api\/3\/workflow_collections\/bf76719d-d2fb-4b42-93e5-0f4562f9edf4",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/88de0ff8-439f-43bb-8eb9-2a9c338f37ce",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "alert_data": "{\n  \"incident_data\": {\n    \"id\": \"0\",\n    \"nid\": \"168\",\n    \"index\": \"2\",\n    \"custId\": \"1\",\n    \"dataStr\": null,\n    \"eventType\": \"CUSTOM_Windows_Scheduled_Task_Created\",\n    \"attributes\": {\n      \"user\": \"\",\n      \"count\": \"2\",\n      \"customer\": \"Super\",\n      \"hostName\": \"DC1.fortipoc.test\",\n      \"eventName\": \"CUSTOM Windows Scheduled Task Created\",\n      \"eventType\": \"CUSTOM_Windows_Scheduled_Task_Created\",\n      \"bizService\": \"\",\n      \"incidentId\": \"168\",\n      \"phRecvTime\": \"Tue Apr 07 21:43:30 UTC 2020\",\n      \"incidentSrc\": \"\",\n      \"incidentReso\": \"1 (Open)\",\n      \"eventSeverity\": \"2\",\n      \"incidentRptIp\": \"10.0.1.11\",\n      \"incidentDetail\": \"reptDevName:DC1,\",\n      \"incidentStatus\": \"0 (Active)\",\n      \"incidentTarget\": \"hostName:DC1.fortipoc.test, user:,\",\n      \"incidentExtUser\": \"\",\n      \"phEventCategory\": \"1 (Incident)\",\n      \"eventSeverityCat\": \"LOW\",\n      \"incidentComments\": \"\",\n      \"incidentLastSeen\": \"Tue Apr 07 21:43:30 UTC 2020\",\n      \"incidentTicketId\": \"\",\n      \"incidentFirstSeen\": \"Tue Apr 07 20:33:30 UTC 2020\",\n      \"incidentViewUsers\": \"\",\n      \"phIncidentImpacts\": \"Server\",\n      \"incidentNotiStatus\": \"\",\n      \"incidentRptDevName\": \"DC1\",\n      \"incidentTicketUser\": \"\",\n      \"incidentViewStatus\": \"9\",\n      \"phIncidentCategory\": \"4\",\n      \"incidentClearedTime\": \"Thu Jan 01 00:00:00 UTC 1970\",\n      \"incidentClearedUser\": \"\",\n      \"incidentExtTicketId\": \"\",\n      \"incidentRptDevStatus\": \"1 (Pending)\",\n      \"incidentTicketStatus\": \"6 (None)\",\n      \"incidentClearedReason\": \"\",\n      \"incidentExtTicketType\": \"\",\n      \"phSubIncidentCategory\": \"PH_RULE_SECURITY_PERSISTENCE\",\n      \"incidentExtClearedTime\": \"Thu Jan 01 00:00:00 UTC 1970\",\n      \"incidentExtTicketState\": \"\",\n      \"incidentNotiRecipients\": \"\"\n    },\n    \"receiveTime\": \"2020-04-07T21:43:30Z\"\n  },\n  \"associated_events\": {\n    \"event_ids\": \"5933914721530451495\",\n    \"event_details\": [\n      [\n        {\n          \"id\": \"5933914721530451495\",\n          \"nid\": \"5933914721530451495\",\n          \"index\": \"0\",\n          \"custId\": \"1\",\n          \"dataStr\": null,\n          \"eventType\": \"Win-Security-4698\",\n          \"attributes\": {\n            \"msg\": \"A scheduled task was created.\",\n            \"type\": \"Audit Success\",\n            \"count\": \"1\",\n            \"seqNum\": \"80960\",\n            \"eventId\": \"5933914721530451495\",\n            \"latency\": \"56000.00\",\n            \"computer\": \"DC1.fortipoc.test\",\n            \"customer\": \"Super\",\n            \"destName\": \"DC1.fortipoc.test\",\n            \"hostName\": \"DC1.fortipoc.test\",\n            \"eventName\": \"A scheduled task was created\",\n            \"eventTime\": \"Tue Apr 07 21:41:56 UTC 2020\",\n            \"eventType\": \"Win-Security-4698\",\n            \"reptModel\": \"Windows\",\n            \"destIpAddr\": \"10.0.1.11\",\n            \"deviceTime\": \"Tue Apr 07 21:42:52 UTC 2020\",\n            \"parserName\": \"WinOSWmiParser\",\n            \"phRecvTime\": \"Tue Apr 07 21:42:52 UTC 2020\",\n            \"reptVendor\": \"Microsoft\",\n            \"collectorId\": \"1\",\n            \"destMACAddr\": \"02:09:0F:00:01:04\",\n            \"eventAction\": \"0 (Permit)\",\n            \"eventSource\": \"Microsoft-Windows-Security-Auditing\",\n            \"rawEventMsg\": \"Tue Apr  7 21:42:52 2020 10.0.1.11 AccelOps-WinLog-WMI [Category]=\\\"12804\\\" [CategoryString]=\\\"Other Object Access Events\\\" [ComputerName]=\\\"DC1.fortipoc.test\\\" [Data]=\\\"NULL\\\" [EventCode]=\\\"4698\\\" [EventIdentifier]=\\\"4698\\\" [EventType]=\\\"4\\\" [Logfile]=\\\"Security\\\" [RecordNumber]=\\\"80960\\\" [SourceName]=\\\"Microsoft-Windows-Security-Auditing\\\" [TimeGenerated]=\\\"20200407214156.620195-000\\\" [TimeWritten]=\\\"20200407214156.620195-000\\\" [Type]=\\\"Audit Success\\\" [User]=\\\"(null)\\\" [Message]=\\\"A scheduled task was created.\\\" [[Subject]]  [Security ID]=\\\"S-1-5-21-3916458740-994767409-1132638372-1104\\\"  [Account Name]=\\\"jack\\\"  [Account Domain]=\\\"FORTIPOC\\\"  [Logon ID]=\\\"0x2EE50A\\\" [[Task Information]]  [Task Name]=\\\" \\t\\t\\\\AdminBackup\\\"  [Task Content]=\\\" \\t\\t<?xml version=\\\"1.0\\\" encoding=\\\"UTF-16\\\"?>\\\"  [<Task version=\\\"1.2\\\" xmlns=\\\"http]=\\\"\/\/schemas.microsoft.com\/windows\/2004\/02\/mit\/task\\\">\\\"  [<Date>2020-04-07T21]=\\\"41:56.2791901<\/Date>\\\"  [<StartBoundary>2020-04-07T21]=\\\"45:06<\/StartBoundary>\\\"  [<Command>C]=\\\"\\\\Windows\\\\System32\\\\calc.exe.exe<\/Command>\\\"\",\n            \"reptDevName\": \"DC1\",\n            \"timeSkewSec\": \"0\",\n            \"eventParsedOk\": \"1\",\n            \"eventSeverity\": \"1\",\n            \"reptDevIpAddr\": \"10.0.1.11\",\n            \"relayDevIpAddr\": \"10.0.1.5\",\n            \"phEventCategory\": \"0 (External)\",\n            \"eventRuleTrigger\": \"1\",\n            \"eventSeverityCat\": \"LOW\",\n            \"extEventRecvProto\": \"WMI\"\n          },\n          \"receiveTime\": \"2020-04-07T21:42:52Z\"\n        }\n      ]\n    ]\n  }\n}"
+            },
+            "status": null,
+            "top": "120",
+            "left": "288",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "b0f50d6d-56cc-4386-9344-a987d34725c7"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": []
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "88de0ff8-439f-43bb-8eb9-2a9c338f37ce"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Alert",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "{{vars.alert_data.incident_data.attributes.eventName}}",
+                    "type": {
+                        "id": 570,
+                        "@id": "\/api\/3\/picklists\/bfdb72c0-d8ad-4d0b-b441-ea7f44e37d08",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Scheduled Task Created",
+                        "listName": "\/api\/3\/picklist_names\/a7087b9c-5660-495f-a8ac-c3b198ddb8c2",
+                        "itemValue": "Scheduled Task Created",
+                        "orderIndex": 19
+                    },
+                    "source": "FortiSIEM",
+                    "status": {
+                        "id": 21,
+                        "@id": "\/api\/3\/picklists\/7de816ff-7140-4ee5-bd05-93ce22002146",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Open",
+                        "listName": "\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a",
+                        "itemValue": "Open",
+                        "orderIndex": 1
+                    },
+                    "severity": "{% if (vars.alert_data.incident_data.attributes.eventSeverityCat == \"CRITICAL\") %}{{(\"Severity\" | picklist(\"Critical\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"HIGH\") %}{{(\"Severity\" | picklist(\"High\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"MEDIUM\") %}{{(\"Severity\" | picklist(\"Medium\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"LOW\") %}{{(\"Severity\" | picklist(\"Low\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"MINIMAL\") %}{{(\"Severity\" | picklist(\"Minimal\"))[\"@id\"]}}{% endif %}",
+                    "sourceId": "{{vars.alert_data.incident_data.nid}}",
+                    "userName": "{{ vars.alert_data.incident_data.attributes.incidentSrc | regex_search('(?<=srcUser:)([^,]+)') }}",
+                    "__replace": "false",
+                    "sourcedata": "{{vars.alert_data | toJSON}}",
+                    "description": "{{vars.alert_data.incident_data.attributes.incidentDetail}}\n{{vars.alert_data.incident_data.attributes.incidentTarget}}",
+                    "ackSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "computerName": "{{vars.alert_data.incident_data.attributes.hostName}}",
+                    "closureReason": {
+                        "id": 251,
+                        "@id": "\/api\/3\/picklists\/8590c81e-3307-4645-97f5-c3e1bec4e05a",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Tasks Completed",
+                        "listName": "\/api\/3\/picklist_names\/4ebacea1-88cd-4ea8-9dcc-385bea42cc59",
+                        "itemValue": "Tasks Completed",
+                        "orderIndex": 0
+                    },
+                    "destinationIp": "{{vars.alert_data.incident_data.attributes.incidentRptIp}}",
+                    "respSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "escalatedtoincident": {
+                        "id": 201,
+                        "@id": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "No",
+                        "listName": "\/api\/3\/picklist_names\/e131cc54-9ae4-43c9-b830-af6e331fe024",
+                        "itemValue": "No",
+                        "orderIndex": 1
+                    }
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "\/api\/3\/upsert\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "220",
+            "left": "448",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "uuid": "cb28d1eb-a7f4-4fe8-9efa-946374e66476"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/b0f50d6d-56cc-4386-9344-a987d34725c7",
+            "sourceStep": "\/api\/3\/workflow_steps\/88de0ff8-439f-43bb-8eb9-2a9c338f37ce",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "705f052c-3784-4df8-8f1d-2445005ba2c9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Create Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/cb28d1eb-a7f4-4fe8-9efa-946374e66476",
+            "sourceStep": "\/api\/3\/workflow_steps\/b0f50d6d-56cc-4386-9344-a987d34725c7",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d690bd4d-6fed-49ea-a20f-0757f3e199f3"
+        }
+    ],
+    "priority": null,
+    "uuid": "f43800ac-f9bd-457e-b064-61aa517b507c",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Referenced"
+    ]
+}

@@ -1,0 +1,109 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "02 - Phishing Incident Management - Investigation and Response",
+    "aliasName": null,
+    "tag": null,
+    "description": "Tracks affected mailboxes and neutralizes the malicious content",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "incident_data"
+    ],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/6dadec2b-3024-4b1b-832c-c612f0bca071",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/f0561fc6-7981-4743-bcc2-919b33ed6941",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Phishing Incident Response",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "incident_data": "{{vars.input.records[0]}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/13f6010e-093f-4b28-ab40-2d509a103b35"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "d6e38777-a31c-4105-a98b-53877647ff39"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "51f2f0f3-1dae-41bc-873e-7e6cd643373b",
+                "resources": [
+                    "incidents"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "displayConditions": {
+                    "incidents": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "object",
+                                "field": "category",
+                                "value": "\/api\/3\/picklists\/703222e8-f69a-11e7-8c3f-9a214cf093ae",
+                                "_value": {
+                                    "@id": "\/api\/3\/picklists\/703222e8-f69a-11e7-8c3f-9a214cf093ae",
+                                    "itemValue": "Phishing"
+                                },
+                                "operator": "eq"
+                            }
+                        ]
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "singleRecordExecution": true
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "f0561fc6-7981-4743-bcc2-919b33ed6941"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Phishing Incident Response",
+            "targetStep": "\/api\/3\/workflow_steps\/d6e38777-a31c-4105-a98b-53877647ff39",
+            "sourceStep": "\/api\/3\/workflow_steps\/f0561fc6-7981-4743-bcc2-919b33ed6941",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "ccce6d31-4c5c-462c-bed8-21424ee87c49"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "87ca44e2-6dd4-48c1-b801-6dbfbab28d23",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "ManualTrigger",
+        "Incidents",
+        "IncidentResponse"
+    ]
+}

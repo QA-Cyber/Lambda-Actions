@@ -1,0 +1,264 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "> Hunt Exfiltration Process Name",
+    "aliasName": null,
+    "tag": null,
+    "description": "Correlating exfiltration public IP with process network activity to get exfiltration process name",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "device_ip_address",
+        "parent_record_IRI",
+        "destination_ip_address"
+    ],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/389c8b50-4172-4340-8b0c-ad759d1703fa",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/a1ee9756-8ca2-4299-b0f6-51336c528452",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Hunt Process Name",
+            "description": null,
+            "arguments": {
+                "name": "Fortinet FortiSIEM",
+                "config": "f5c67e3e-14ea-4049-a9ad-eac290afbe43",
+                "params": {
+                    "cond": "eventType = \"Win-Sysmon-3-Network-Connect-IPv4\"  AND  destIpAddr = {{vars.device_ip_address}}",
+                    "start": 0,
+                    "value": 10,
+                    "groupby": "",
+                    "orderby": "phRecvTime DESC",
+                    "perPage": 1,
+                    "AttrList": "phRecvTime,reptDevIpAddr,eventType,eventName,srcIpAddr,swProcName,destIpAddr,user,rawEventMsg",
+                    "rel_time": "Hours",
+                    "time_selection": "Relative Time"
+                },
+                "version": "5.0.1",
+                "connector": "fortinet-fortisiem",
+                "operation": "run_report",
+                "mock_result": "{\n  \"data\": {\n    \"@start\": \"0\",\n    \"events\": [\n      {\n        \"id\": \"1351783589694578293\",\n        \"nid\": \"1351783589694578293\",\n        \"index\": \"0\",\n        \"custId\": \"1\",\n        \"dataStr\": null,\n        \"eventType\": \"Win-Sysmon-3-Network-Connect-IPv4\",\n        \"attributes\": {\n          \"user\": \"NETWORK SERVICE\",\n          \"eventName\": \"TCP\/UDP IPv4 connections created by a process\",\n          \"eventType\": \"Win-Sysmon-3-Network-Connect-IPv4\",\n          \"srcIpAddr\": \"{{vars.device_ip_address}}\",\n          \"destIpAddr\": \"{{vars.input.params['destination_ip_address']}}\",\n          \"phRecvTime\": \"{{arrow.now().shift(minutes=-60).format(\"MMM DD YYYY HH:mm:ss\")}}\",\n          \"swProcName\": \"C:\\\\Program Files\\\\Windows NT\\\\SystemUpdate64.exe\",\n          \"rawEventMsg\": \"<16>{{arrow.now().shift(hours=-1).format(\"YYYY-MM-DD HH:mm:ss.SSS\")}}Z felix.fortielab.org {{vars.device_ip_address}} AccelOps-WUA-WinLog-Microsoft-Windows-Sysmon\/Operational [phCustId]='1' [customer]='Super' [monitorStatus]='Success' [Locale]='en-US' [MachineGuid]='81f37bb7-edea-4aeb-8490-ca71483e8490' [timeZone]='+0000' [eventName]='Microsoft-Windows-Sysmon\/Operational' [eventSource]='Microsoft-Windows-Sysmon' [eventId]='3' [eventType]='Information' [domain]='NT AUTHORITY' [computer]='felix.fortielab.org' [user]='SYSTEM' [userSID]='S-1-5-18' [userSIDAcctType]='User' [eventTime]='{{arrow.now().shift(hours=-1).format(\"MMM DD YYYY HH:mm:ss\")}}' [deviceTime]='{{arrow.now().shift(hours=-1).format(\"MMM DD YYYY HH:mm:ss\")}}' [msg]='Network connection detected:\\nRuleName: HTTPS\\nUtcTime: {{arrow.now().shift(hours=-1).int_timestamp}}\\nProcessGuid: {81F37BB7-389E-5FAB-0F00-000000008A01}\\nProcessId: 860\\nImage: C:\\\\\\\\Program Files\\\\\\\\Windows NT\\\\\\\\SystemUpdate64.exe\\nUser: NT AUTHORITY\\\\\\\\NETWORK SERVICE\\nProtocol: tcp\\nInitiated: true\\nSourceIsIpv6: false\\nSourceIp: {{vars.device_ip_address}}\\nSourceHostname: felix.fortielab.org\\nSourcePort: 56314\\nSourcePortName: -\\nDestinationIsIpv6: false\\nDestinationIp: {{vars.input.params['destination_ip_address']}}\\nDestinationHostname: {{vars.input.params['destination_ip_address']}}\\nDestination Port: 443\\nDestinationPortName: https\",\n          \"reptDevIpAddr\": \"{{vars.device_ip_address}}\"\n        },\n        \"receiveTime\": \"2022-10-13T11:00:07+02:00\"\n      }\n    ],\n    \"@queryId\": \"5616515,1665700758764\",\n    \"@errorCode\": \"0\",\n    \"@totalCount\": \"5\"\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null\n}",
+                "operationTitle": "Run Advanced Search Query",
+                "step_variables": {
+                    "event": "{{vars.result.data.events[0]}}",
+                    "raw_event": "{{vars.result.data.events[0].attributes.rawEventMsg}}"
+                }
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "2092a93f-e976-4564-9e64-2017c02b819e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Alert Record",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "fileName": "{{vars.event.attributes.swProcName.split('\\\\')[-1]}}",
+                    "filePath": "{{vars.event.attributes.swProcName}}",
+                    "processId": "{{vars.process_id}}",
+                    "processGuid": "{{vars.process_guid}}"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.params['parent_record_IRI']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": [],
+                "step_variables": []
+            },
+            "status": null,
+            "top": "840",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "3d3fee63-f84f-4fd7-824c-36d66bcb74fb"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Process Indicator",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.event.attributes.swProcName | length > 0}}",
+                "resource": {
+                    "tlp": "\/api\/3\/picklists\/7bff95b7-6438-4b01-b23a-0fe8cb5b33d3",
+                    "value": "{{vars.event.attributes.swProcName}}",
+                    "alerts": "{{vars.input.params['parent_record_IRI']}}",
+                    "__replace": "true",
+                    "indicatorStatus": "\/api\/3\/picklists\/2f5cff61-fbff-4bb3-96be-302b78a9fb47",
+                    "typeofindicator": "\/api\/3\/picklists\/a6ab7480-a0b1-4917-a6b9-c9b16ddc7e9b",
+                    "__fieldsToUpdate": [
+                        "lastSeen"
+                    ],
+                    "enrichmentStatus": "\/api\/3\/picklists\/a6d9da29-27b1-4b8a-965d-8d91518540d5"
+                },
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/upsert\/indicators",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "9e07b563-b058-48e9-9adc-d43561f412e7"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    }
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "group": null,
+            "uuid": "a1ee9756-8ca2-4299-b0f6-51336c528452"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create and Link Event",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.event | length > 0}}",
+                "resource": {
+                    "name": "{{vars.event.eventType}}",
+                    "alerts": "{{vars.input.params['parent_record_IRI']}}",
+                    "source": "FortiSIEM",
+                    "sourceId": "{{vars.event.id}}",
+                    "__replace": "",
+                    "indicators": "{{vars.steps.Create_Process_Indicator['@id']}}",
+                    "reporterIP": "{{vars.event.attributes.reptDevIpAddr}}",
+                    "searchName": false,
+                    "rawEventLog": "{{vars.event.attributes.rawEventMsg}}",
+                    "searchReporterIP": false
+                },
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/events",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "f4ab4748-2ce4-41ea-acb9-029ca7265998"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Extract Event Attributes",
+            "description": null,
+            "arguments": {
+                "process_id": "{{(vars.raw_event|regex_search('ProcessId:\\s+\\d+')).split(':')[1].replace(' ','')}}",
+                "process_guid": "{{(vars.raw_event|regex_search('ProcessGuid:\\s+{(.*?)}')).split(':')[1]}}"
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "fc315298-22ca-4100-a02a-446a7e5c1358"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "useMockOutput": "{{globalVars.Demo_mode}}",
+                "device_ip_address": "{{vars.input.params['device_ip_address']}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "0eb0a1b0-e7e5-49dd-b3bc-1434d0ecb381"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Extract Event Attributes -> Create and Link Event",
+            "targetStep": "\/api\/3\/workflow_steps\/f4ab4748-2ce4-41ea-acb9-029ca7265998",
+            "sourceStep": "\/api\/3\/workflow_steps\/fc315298-22ca-4100-a02a-446a7e5c1358",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "426fe368-9e0e-4afe-9faa-f5f4f4a0bfa5"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/0eb0a1b0-e7e5-49dd-b3bc-1434d0ecb381",
+            "sourceStep": "\/api\/3\/workflow_steps\/a1ee9756-8ca2-4299-b0f6-51336c528452",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5a9920d4-053a-4113-a2be-d4b6aa091e70"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Hunt Process Name",
+            "targetStep": "\/api\/3\/workflow_steps\/2092a93f-e976-4564-9e64-2017c02b819e",
+            "sourceStep": "\/api\/3\/workflow_steps\/0eb0a1b0-e7e5-49dd-b3bc-1434d0ecb381",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "6848b911-e1f5-46f8-b018-fac6a10b83ef"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Device Details -> Create Process Indicator",
+            "targetStep": "\/api\/3\/workflow_steps\/9e07b563-b058-48e9-9adc-d43561f412e7",
+            "sourceStep": "\/api\/3\/workflow_steps\/2092a93f-e976-4564-9e64-2017c02b819e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c474cb70-bc1a-42f7-b4c3-9123a1ad2a8d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create and Link Event -> Update Alert Record",
+            "targetStep": "\/api\/3\/workflow_steps\/3d3fee63-f84f-4fd7-824c-36d66bcb74fb",
+            "sourceStep": "\/api\/3\/workflow_steps\/f4ab4748-2ce4-41ea-acb9-029ca7265998",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c4e896cd-674c-4c80-8a73-6e548f24f2f8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Process Indicator -> Extract Event Attributes",
+            "targetStep": "\/api\/3\/workflow_steps\/fc315298-22ca-4100-a02a-446a7e5c1358",
+            "sourceStep": "\/api\/3\/workflow_steps\/9e07b563-b058-48e9-9adc-d43561f412e7",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "cb59bfa5-89fe-43a5-9876-1150cb8097e4"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "65b08ec8-a332-49f1-a7f2-58d8f03dd957",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Process",
+        "Alert"
+    ]
+}

@@ -1,0 +1,380 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "F: Alert Triage",
+    "aliasName": null,
+    "tag": null,
+    "description": null,
+    "isActive": true,
+    "debug": true,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1646238653,
+    "collection": "\/api\/3\/workflow_collections\/5b5e50c1-2ae8-4cf7-b4fb-e6ac730eda61",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/3f01a802-84d5-479d-8cae-1a9977904b3f",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Security Execution",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "alert_data": "{{vars.alert_data}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/f20bb54c-b840-4e0c-9b94-124eabea0f17"
+            },
+            "status": null,
+            "top": "28",
+            "left": "780",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "257d1e22-1349-452f-ac4c-773b24624b06",
+            "id": 7983
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Source Data",
+            "description": null,
+            "arguments": {
+                "alert_data": "{{(vars.input.records[0]['@id'] + \"?$relationships=true\")|fromIRI}}"
+            },
+            "status": null,
+            "top": "350",
+            "left": "100",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "ebbae248-c56d-4ead-8898-dbc1473eb24f",
+            "id": 7984
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Do Nothing",
+            "description": null,
+            "arguments": {
+                "params": [],
+                "version": "3.2.0",
+                "connector": "cyops_utilities",
+                "operation": "no_op",
+                "operationTitle": "Utils: No Operation",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "530",
+            "left": "100",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "a4ecb2dc-d9a3-407f-904f-732b91e64c1c",
+            "id": 7985
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get SECURITY_INIT_ACCESS Data",
+            "description": null,
+            "arguments": {
+                "future_use": ""
+            },
+            "status": null,
+            "top": "120",
+            "left": "460",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "46999594-2524-429b-9df5-53c00c06145d",
+            "id": 7986
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "resource": "alerts",
+                "resources": [
+                    "alerts"
+                ],
+                "step_variables": {
+                    "input": {
+                        "records": [
+                            "{{vars.input.records[0]}}"
+                        ]
+                    }
+                },
+                "fieldbasedtrigger": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "object",
+                            "field": "state",
+                            "value": "\/api\/3\/picklists\/89dc3716-1818-4286-ab75-0d49714aea0f",
+                            "_value": {
+                                "@id": "\/api\/3\/picklists\/89dc3716-1818-4286-ab75-0d49714aea0f",
+                                "itemValue": "Similar Alerts Correlated"
+                            },
+                            "operator": "eq"
+                        },
+                        {
+                            "type": "object",
+                            "field": "status",
+                            "value": "\/api\/3\/picklists\/fac53e73-8d16-4189-98d5-95fbd1555232",
+                            "_value": {
+                                "@id": "\/api\/3\/picklists\/fac53e73-8d16-4189-98d5-95fbd1555232",
+                                "itemValue": "Closed"
+                            },
+                            "operator": "neq"
+                        },
+                        {
+                            "type": "primitive",
+                            "field": "source",
+                            "value": "SIM-AETR",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        }
+                    ]
+                }
+            },
+            "status": null,
+            "top": "33",
+            "left": "100",
+            "stepType": "\/api\/3\/workflow_step_types\/9300bf69-5063-486d-b3a6-47eb9da24872",
+            "uuid": "3f01a802-84d5-479d-8cae-1a9977904b3f",
+            "id": 7987
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Security Initial Access",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "alert_data": "{{vars.alert_data}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/0fa0a67f-3b17-4eaf-9cf3-d35e781a27cd"
+            },
+            "status": null,
+            "top": "120",
+            "left": "780",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "e95476d3-f2c5-4415-ade7-ce700afd3ae0",
+            "id": 7988
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get SECURITY_EXECUTION Data",
+            "description": null,
+            "arguments": {
+                "future_use": ""
+            },
+            "status": null,
+            "top": "28",
+            "left": "460",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "8dfcd8d7-4796-4e14-a53a-8a9099bd6348",
+            "id": 7989
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Debug",
+            "description": null,
+            "arguments": {
+                "All": "{{vars}}"
+            },
+            "status": null,
+            "top": "640",
+            "left": "100",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "12286ad1-f2c2-43e0-8553-9ed2b17146eb",
+            "id": 7990
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait For Indicators Reputation",
+            "description": null,
+            "arguments": {
+                "delay": {
+                    "days": 0,
+                    "hours": 0,
+                    "weeks": 0,
+                    "minutes": 0,
+                    "seconds": 30
+                }
+            },
+            "status": null,
+            "top": "250",
+            "left": "100",
+            "stepType": "\/api\/3\/workflow_step_types\/6832e556-b9c7-497a-babe-feda3bd27dbf",
+            "uuid": "66c0a20a-7357-4d58-946d-56d8aba9bc55",
+            "id": 7991
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Alert State",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "state": {
+                        "id": 125,
+                        "@id": "\/api\/3\/picklists\/8675a07f-2d0d-4e3a-89af-4822b8341df8",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Ready to Investigate",
+                        "listName": "\/api\/3\/picklist_names\/2f9ed741-25fe-475a-9f12-64336288eebf",
+                        "itemValue": "Ready to Investigate",
+                        "orderIndex": 4
+                    }
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "140",
+            "left": "100",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "uuid": "788098b1-4a61-4c41-aaff-96052fcc0653",
+            "id": 7992
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Alert Type",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/a4ecb2dc-d9a3-407f-904f-732b91e64c1c",
+                        "step_name": "Do Nothing"
+                    },
+                    {
+                        "option": "",
+                        "step_iri": "\/api\/3\/workflow_steps\/8dfcd8d7-4796-4e14-a53a-8a9099bd6348",
+                        "condition": "{{ vars.input.records[0].type.itemValue == 'SECURITY_EXECUTION' }}",
+                        "step_name": "Get SECURITY_EXECUTION Data"
+                    },
+                    {
+                        "option": "",
+                        "step_iri": "\/api\/3\/workflow_steps\/46999594-2524-429b-9df5-53c00c06145d",
+                        "condition": "{{ vars.input.records[0].type.itemValue == 'SECURITY_INIT_ACCESS' }}",
+                        "step_name": "Get SECURITY_INIT_ACCESS Data"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "440",
+            "left": "100",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "207115c6-7aed-4528-90ff-330636543e35",
+            "id": 7993
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Wait For Indicators Reputation -> Set Source Data",
+            "targetStep": "\/api\/3\/workflow_steps\/ebbae248-c56d-4ead-8898-dbc1473eb24f",
+            "sourceStep": "\/api\/3\/workflow_steps\/66c0a20a-7357-4d58-946d-56d8aba9bc55",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "93e61979-ee86-453b-b77f-4d99976bfd6e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get SECURITY_EXECUTION Data -> Security Execution",
+            "targetStep": "\/api\/3\/workflow_steps\/257d1e22-1349-452f-ac4c-773b24624b06",
+            "sourceStep": "\/api\/3\/workflow_steps\/8dfcd8d7-4796-4e14-a53a-8a9099bd6348",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "81444eb7-ea58-43ac-927d-a6b27c2d8fa0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Alert Type -> Get SECURITY_EXECUTION Data",
+            "targetStep": "\/api\/3\/workflow_steps\/8dfcd8d7-4796-4e14-a53a-8a9099bd6348",
+            "sourceStep": "\/api\/3\/workflow_steps\/207115c6-7aed-4528-90ff-330636543e35",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "7013a6aa-68ff-49f1-b649-53eb220f448b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Alert Type -> Get SECURITY_INIT_ACCESS Data",
+            "targetStep": "\/api\/3\/workflow_steps\/46999594-2524-429b-9df5-53c00c06145d",
+            "sourceStep": "\/api\/3\/workflow_steps\/207115c6-7aed-4528-90ff-330636543e35",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "4f96ca47-28b7-4e58-b02e-4427ea0cf30a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get SECURITY_INIT_ACCESS Data -> Security Initial Access",
+            "targetStep": "\/api\/3\/workflow_steps\/e95476d3-f2c5-4415-ade7-ce700afd3ae0",
+            "sourceStep": "\/api\/3\/workflow_steps\/46999594-2524-429b-9df5-53c00c06145d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f52fe3d6-6551-496e-adee-ebaef9a823bd"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Source Data -> Alert Has Indicators",
+            "targetStep": "\/api\/3\/workflow_steps\/207115c6-7aed-4528-90ff-330636543e35",
+            "sourceStep": "\/api\/3\/workflow_steps\/ebbae248-c56d-4ead-8898-dbc1473eb24f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "00468313-70c4-4d96-9bb4-a488aefbe5c9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Do Nothin -> Debug",
+            "targetStep": "\/api\/3\/workflow_steps\/12286ad1-f2c2-43e0-8553-9ed2b17146eb",
+            "sourceStep": "\/api\/3\/workflow_steps\/a4ecb2dc-d9a3-407f-904f-732b91e64c1c",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e7a915b5-825f-42bd-99d1-4d8589d152fd"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Alert Has Indicators -> Do Nothin",
+            "targetStep": "\/api\/3\/workflow_steps\/a4ecb2dc-d9a3-407f-904f-732b91e64c1c",
+            "sourceStep": "\/api\/3\/workflow_steps\/207115c6-7aed-4528-90ff-330636543e35",
+            "label": "",
+            "isExecuted": false,
+            "uuid": "c06e3218-52ae-4fcc-a25b-a065371da332"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Update Alert State",
+            "targetStep": "\/api\/3\/workflow_steps\/788098b1-4a61-4c41-aaff-96052fcc0653",
+            "sourceStep": "\/api\/3\/workflow_steps\/3f01a802-84d5-479d-8cae-1a9977904b3f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "6475ace5-5d52-4bf8-9fbb-a08d88e141b1"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Alert State -> Wait For Indicators Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/66c0a20a-7357-4d58-946d-56d8aba9bc55",
+            "sourceStep": "\/api\/3\/workflow_steps\/788098b1-4a61-4c41-aaff-96052fcc0653",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "79252e80-aed2-4066-aa01-203309521750"
+        }
+    ],
+    "priority": null,
+    "uuid": "68088053-f1a3-4fe1-a1b9-7662dfd95f70",
+    "recordTags": [],
+    "id": 1557,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1645552903,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1646238653,
+    "owners": [],
+    "isPrivate": false
+}

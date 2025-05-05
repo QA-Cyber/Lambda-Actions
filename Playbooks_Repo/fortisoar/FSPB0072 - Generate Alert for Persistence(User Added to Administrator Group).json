@@ -1,0 +1,171 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Generate Alert for Persistence(User Added to Administrator Group)",
+    "aliasName": null,
+    "tag": null,
+    "description": "Generates alert from FortiSIEM incident where the user is added to the Windows Administrator Group.",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1646386566,
+    "collection": "\/api\/3\/workflow_collections\/bf76719d-d2fb-4b42-93e5-0f4562f9edf4",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/f9688bf8-aa8c-4039-af7f-4ce82e254dd2",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "alert_data": "{\n  \"incident_data\": {\n    \"id\": \"0\",\n    \"nid\": \"188\",\n    \"index\": \"14\",\n    \"custId\": \"1\",\n    \"dataStr\": null,\n    \"eventType\": \"PH_RULE_WIN_USER_ADDED_TO_GROUP\",\n    \"attributes\": {\n      \"user\": \"cn=Administator\",\n      \"count\": \"2\",\n      \"domain\": \"FORTIPOC\",\n      \"customer\": \"Super\",\n      \"hostName\": \"DC1.fortipoc.test\",\n      \"eventName\": \"Windows User Added to Groups\",\n      \"eventType\": \"PH_RULE_WIN_USER_ADDED_TO_GROUP\",\n      \"bizService\": \"\",\n      \"incidentId\": \"188\",\n      \"phRecvTime\": \"Tue Apr 07 21:36:30 UTC 2020\",\n      \"incidentSrc\": \"srcUser:jack,\",\n      \"incidentReso\": \"1 (Open)\",\n      \"eventSeverity\": \"7\",\n      \"incidentRptIp\": \"10.0.1.11\",\n      \"incidentDetail\": \"\",\n      \"incidentStatus\": \"0 (Active)\",\n      \"incidentTarget\": \"hostName:DC1.fortipoc.test, user:cn=Administator,CN=Users,DC=fortipoc,DC=test, targetUserGrp:Administrators, domain:FORTIPOC,\",\n      \"incidentExtUser\": \"\",\n      \"phEventCategory\": \"1 (Incident)\",\n      \"eventSeverityCat\": \"MEDIUM\",\n      \"incidentComments\": \"\",\n      \"incidentLastSeen\": \"Tue Apr 07 21:36:30 UTC 2020\",\n      \"incidentTicketId\": \"\",\n      \"incidentFirstSeen\": \"Tue Apr 07 21:31:30 UTC 2020\",\n      \"incidentViewUsers\": \"\",\n      \"phIncidentImpacts\": \"Server\",\n      \"incidentNotiStatus\": \"\",\n      \"incidentRptDevName\": \"DC1.fortipoc.test\",\n      \"incidentTicketUser\": \"\",\n      \"incidentViewStatus\": \"1 (Read)\",\n      \"phIncidentCategory\": \"3\",\n      \"incidentClearedTime\": \"Thu Jan 01 00:00:00 UTC 1970\",\n      \"incidentClearedUser\": \"\",\n      \"incidentExtTicketId\": \"\",\n      \"incidentRptDevStatus\": \"1 (Pending)\",\n      \"incidentTicketStatus\": \"6 (None)\",\n      \"incidentClearedReason\": \"\",\n      \"incidentExtTicketType\": \"\",\n      \"phSubIncidentCategory\": \"PH_RULE_CHANGE_UserAccount\",\n      \"incidentExtClearedTime\": \"Thu Jan 01 00:00:00 UTC 1970\",\n      \"incidentExtTicketState\": \"\",\n      \"incidentNotiRecipients\": \"\"\n    },\n    \"receiveTime\": \"2020-04-07T21:36:30Z\"\n  },\n  \"associated_events\": {\n    \"event_ids\": \"5933914721530551430\",\n    \"event_details\": [\n      [\n        {\n          \"id\": \"5933914721530551430\",\n          \"nid\": \"5933914721530551430\",\n          \"index\": \"0\",\n          \"custId\": \"1\",\n          \"dataStr\": null,\n          \"eventType\": \"Win-Security-4732\",\n          \"attributes\": {\n            \"msg\": \"A member was added to a security-enabled local group.\",\n            \"type\": \"Audit Success\",\n            \"user\": \"jack\",\n            \"count\": \"1\",\n            \"domain\": \"FORTIPOC\",\n            \"seqNum\": \"78143\",\n            \"eventId\": \"5933914721530551430\",\n            \"latency\": \"51000.00\",\n            \"computer\": \"DC1.fortipoc.test\",\n            \"customer\": \"Super\",\n            \"destName\": \"DC1.fortipoc.test\",\n            \"fileName\": \"[Security ID]=\\\"S-1-5-21-3916458740-994767409-1132638372-1104\\\"  [Account Name]=\\\"jack\\\"  [Account Domain]=\\\"FORTIPOC\\\"  [Logon ID]=\\\"0x2EE50A\\\"\",\n            \"hostName\": \"DC1.fortipoc.test\",\n            \"eventName\": \"Windows security enabled  local group member added\",\n            \"eventTime\": \"Tue Apr 07 21:29:58 UTC 2020\",\n            \"eventType\": \"Win-Security-4732\",\n            \"reptModel\": \"Windows\",\n            \"destIpAddr\": \"10.0.1.11\",\n            \"deviceTime\": \"Tue Apr 07 21:30:49 UTC 2020\",\n            \"parserName\": \"WinOSWmiParser\",\n            \"phRecvTime\": \"Tue Apr 07 21:30:49 UTC 2020\",\n            \"reptVendor\": \"Microsoft\",\n            \"targetUser\": \"cn=Administator,CN=Users,DC=fortipoc,DC=test\",\n            \"winLogonId\": \"0x2EE50A\",\n            \"collectorId\": \"1\",\n            \"destMACAddr\": \"02:09:0F:00:01:04\",\n            \"eventAction\": \"0 (Permit)\",\n            \"eventSource\": \"Microsoft-Windows-Security-Auditing\",\n            \"rawEventMsg\": \"Tue Apr  7 21:30:49 2020 10.0.1.11 AccelOps-WinLog-WMI [Category]=\\\"13826\\\" [CategoryString]=\\\"Security Group Management\\\" [ComputerName]=\\\"DC1.fortipoc.test\\\" [Data]=\\\"NULL\\\" [EventCode]=\\\"4732\\\" [EventIdentifier]=\\\"4732\\\" [EventType]=\\\"4\\\" [Logfile]=\\\"Security\\\" [RecordNumber]=\\\"78143\\\" [SourceName]=\\\"Microsoft-Windows-Security-Auditing\\\" [TimeGenerated]=\\\"20200407212958.609044-000\\\" [TimeWritten]=\\\"20200407212958.609044-000\\\" [Type]=\\\"Audit Success\\\" [User]=\\\"(null)\\\" [Message]=\\\"A member was added to a security-enabled local group.\\\" [[Subject]]  [Security ID]=\\\"S-1-5-21-3916458740-994767409-1132638372-1104\\\"  [Account Name]=\\\"jack\\\"  [Account Domain]=\\\"FORTIPOC\\\"  [Logon ID]=\\\"0x2EE50A\\\" [[Member]]  [Security ID]=\\\"S-1-5-21-3916458740-994767409-1132638372-1110\\\"  [Account Name]=\\\"cn=Administator,CN=Users,DC=fortipoc,DC=test\\\" [[Group]]  [Security ID]=\\\"S-1-5-32-544\\\"  [Group Name]=\\\"Administrators\\\"  [Group Domain]=\\\"Builtin\\\" [[Additional Information]]  [Privileges]=\\\" \\\"\",\n            \"reptDevName\": \"DC1.fortipoc.test\",\n            \"timeSkewSec\": \"0\",\n            \"targetDomain\": \"Builtin\",\n            \"eventParsedOk\": \"1\",\n            \"eventSeverity\": \"1\",\n            \"reptDevIpAddr\": \"10.0.1.11\",\n            \"targetUserGrp\": \"Administrators\",\n            \"relayDevIpAddr\": \"10.0.1.5\",\n            \"phEventCategory\": \"0 (External)\",\n            \"eventRuleTrigger\": \"1\",\n            \"eventSeverityCat\": \"LOW\",\n            \"extEventRecvProto\": \"WMI\"\n          },\n          \"receiveTime\": \"2020-04-07T21:30:49Z\"\n        }\n      ]\n    ]\n  }\n}"
+            },
+            "status": null,
+            "top": "120",
+            "left": "288",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "85743e38-532d-4bbd-a201-264e04599d03"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": []
+            },
+            "status": null,
+            "top": "30",
+            "left": "120",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "f9688bf8-aa8c-4039-af7f-4ce82e254dd2"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Alert",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "{{vars.alert_data.incident_data.attributes.eventName}}",
+                    "type": {
+                        "id": 565,
+                        "@id": "\/api\/3\/picklists\/b888cb0e-dc6c-4d6b-8cd0-ab8bfa9449a2",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "User Group Changed",
+                        "listName": "\/api\/3\/picklist_names\/a7087b9c-5660-495f-a8ac-c3b198ddb8c2",
+                        "itemValue": "User Group Changed",
+                        "orderIndex": 21
+                    },
+                    "source": "FortiSIEM",
+                    "status": {
+                        "id": 21,
+                        "@id": "\/api\/3\/picklists\/7de816ff-7140-4ee5-bd05-93ce22002146",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Open",
+                        "listName": "\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a",
+                        "itemValue": "Open",
+                        "orderIndex": 1
+                    },
+                    "severity": "{% if (vars.alert_data.incident_data.attributes.eventSeverityCat == \"CRITICAL\") %}{{(\"Severity\" | picklist(\"Critical\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"HIGH\") %}{{(\"Severity\" | picklist(\"High\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"MEDIUM\") %}{{(\"Severity\" | picklist(\"Medium\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"LOW\") %}{{(\"Severity\" | picklist(\"Low\"))[\"@id\"]}}{% elif (vars.alert_data.incident_data.attributes.eventSeverityCat == \"MINIMAL\") %}{{(\"Severity\" | picklist(\"Minimal\"))[\"@id\"]}}{% endif %}",
+                    "sourceId": "{{vars.alert_data.incident_data.nid}}",
+                    "userName": "{{ vars.alert_data.incident_data.attributes.incidentSrc | regex_search('(?<=srcUser:)([^,]+)') }}",
+                    "__replace": "false",
+                    "sourcedata": "{{vars.alert_data | toJSON}}",
+                    "description": "{{vars.alert_data.incident_data.attributes.incidentDetail}}\n{{vars.alert_data.incident_data.attributes.incidentTarget}}",
+                    "ackSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "computerName": "{{vars.alert_data.incident_data.attributes.hostName}}",
+                    "closureReason": {
+                        "id": 251,
+                        "@id": "\/api\/3\/picklists\/8590c81e-3307-4645-97f5-c3e1bec4e05a",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Tasks Completed",
+                        "listName": "\/api\/3\/picklist_names\/4ebacea1-88cd-4ea8-9dcc-385bea42cc59",
+                        "itemValue": "Tasks Completed",
+                        "orderIndex": 0
+                    },
+                    "destinationIp": "{{vars.alert_data.incident_data.attributes.incidentRptIp}}",
+                    "respSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "escalatedtoincident": {
+                        "id": 201,
+                        "@id": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "No",
+                        "listName": "\/api\/3\/picklist_names\/e131cc54-9ae4-43c9-b830-af6e331fe024",
+                        "itemValue": "No",
+                        "orderIndex": 1
+                    }
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "\/api\/3\/upsert\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "220",
+            "left": "448",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "uuid": "68cdb889-ee17-4940-aa9e-93d84147177a"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/85743e38-532d-4bbd-a201-264e04599d03",
+            "sourceStep": "\/api\/3\/workflow_steps\/f9688bf8-aa8c-4039-af7f-4ce82e254dd2",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "85cfc37e-e744-4362-a92b-e7883f788e10"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Create Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/68cdb889-ee17-4940-aa9e-93d84147177a",
+            "sourceStep": "\/api\/3\/workflow_steps\/85743e38-532d-4bbd-a201-264e04599d03",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d0129cce-b444-4b44-92da-a4eda6ea019c"
+        }
+    ],
+    "priority": null,
+    "uuid": "8c8c5f60-d927-456e-a73c-551dfa9cf70e",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Referenced"
+    ]
+}

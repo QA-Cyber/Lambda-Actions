@@ -1,0 +1,135 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "01 - Phishing Alert-  Enrichment and Investigation",
+    "aliasName": null,
+    "tag": null,
+    "description": "Phishing alert parsing and triage",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/6dadec2b-3024-4b1b-832c-c612f0bca071",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/c59e97e3-431b-4f4a-aa42-d4bc528ae1df",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Phishing Enrichment and Investigation",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "automated": "",
+                    "alert_data": "{{vars.input.records[0]}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_parent_env": false,
+                "pass_input_record": true,
+                "workflowReference": "\/api\/3\/workflows\/bc0b884e-6b1a-47fe-9644-1edb52ac700c"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "8009b8fb-64ed-497f-9ed8-a18bfed9060b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "ecc65415-26de-40d9-9a5e-bac1fd82a067",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    },
+                    "source_data": "{{vars.input.records[0].sourcedata|toDict}}",
+                    "useMockOutput": "{{globalVars.Demo_mode}}"
+                },
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "OR",
+                        "filters": [
+                            {
+                                "type": "primitive",
+                                "field": "source",
+                                "value": "User Reported",
+                                "operator": "eq",
+                                "_operator": "eq"
+                            },
+                            {
+                                "type": "primitive",
+                                "field": "source",
+                                "value": "Email Server",
+                                "operator": "eq",
+                                "_operator": "eq"
+                            }
+                        ]
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "singleRecordExecution": true
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "c59e97e3-431b-4f4a-aa42-d4bc528ae1df"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Phishing Enrichment and Investigation",
+            "targetStep": "\/api\/3\/workflow_steps\/8009b8fb-64ed-497f-9ed8-a18bfed9060b",
+            "sourceStep": "\/api\/3\/workflow_steps\/c59e97e3-431b-4f4a-aa42-d4bc528ae1df",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "9c4d4a68-846e-4e4d-9820-b3294d4f2ec3"
+        }
+    ],
+    "groups": [
+        {
+            "@type": "WorkflowGroup",
+            "name": "Description",
+            "description": "Wrapper playbook to call the auto enrichment playbook",
+            "type": "note",
+            "isCollapsed": false,
+            "hasTriggerStep": false,
+            "hideInLogs": false,
+            "metadata": [],
+            "reusable": false,
+            "top": "140",
+            "left": "400",
+            "height": "0",
+            "width": "300",
+            "uuid": "940b47cb-7306-4a2f-932f-a10d28409436",
+            "recordTags": []
+        }
+    ],
+    "priority": null,
+    "uuid": "a492ce20-8e02-4912-9be5-1bdc257ceedd",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "ManualTrigger",
+        "Alert",
+        "Parsing",
+        "Investigation"
+    ]
+}

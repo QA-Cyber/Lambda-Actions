@@ -1,0 +1,448 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "00 - Create Exfiltration Alert",
+    "aliasName": null,
+    "tag": null,
+    "description": "Playbook will create Icon and Alert.",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/389c8b50-4172-4340-8b0c-ad759d1703fa",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/6742f84d-1d03-4b69-8904-3920a5d7659a",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute Alert Payload",
+            "description": null,
+            "arguments": {
+                "alert_payload": "{\n    \"@context\": \"\/api\/3\/contexts\/Alert\",\n    \"@id\": \"\/api\/3\/alerts\/900e0ab0-5abd-492a-852b-ec680bb3ce24\",\n    \"@type\": \"Alert\",\n    \"destinationID\": null,\n    \"vulnerabilitySeverity\": null,\n    \"ackSLApausedon\": null,\n    \"alertRemainingRespSLA\": null,\n    \"alertRemainingAckSLA\": 0,\n    \"deviceSerialNo\": null,\n    \"deviceOwner\": null,\n    \"sourceId\": \"79\",\n    \"priorityWeight\": 1,\n    \"bucketName\": null,\n    \"alertDetectionDate\": 1665519606.368138,\n    \"respSLApausedon\": null,\n    \"mitreattackid\": \"T1048.001\",\n    \"attachmentNames\": null,\n    \"mitreTechnique\": \"Exfiltration\",\n    \"ackDate\": null,\n    \"assigneddate\": null,\n    \"resolveddate\": null,\n    \"computerName\": null,\n    \"bytesTransferred\": 2450636,\n    \"closureNotes\": null,\n    \"escalationReason\": null,\n    \"sourceType\": \"SIEM\",\n    \"name\": \"Large Outbound Transfer To Outside My Country\",\n    \"commandLine\": null,\n    \"decodedCommandLine\": null,\n    \"description\": \"<div class=\\\"font-size-16 ng-binding padding-bottom-sm\\\"><h4 style=\\\"background: #404142;padding: 5px;text-align: left;color: orange;background: black;\\\">Large outbound transfer from <<TR_ASSET_IP>> to outside my country 151.101.3.5<\/h4><\/div>\\n<table style=\\\"border-color: #04080c;\\\" border=\\\"1\\\" class=\\\"font-normal\\\">\\n<tbody><tr><td>\\n\\n\\n\\n<div class=\\\"font-size-14 ng-binding\\\">Source IP<\/div><div class=\\\"card-container-body\\\" style=\\\"width: 100%;font-size:46px;\\\">\\n<div class=\\\"card-number\\\" style=\\\"font-size:20px;  border-left: 5px solid red;background:#141b23\\\"><<TR_ASSET_IP>><\/div>\\n<\/div>\\n\\n\\n<div class=\\\"font-size-14 ng-binding\\\">Destination IP<\/div><div class=\\\"card-container-body\\\" style=\\\"width: 100%;font-size:46px;\\\">\\n<div class=\\\"card-number\\\" style=\\\"font-size:20px;  border-left: 5px solid red;background:#141b23\\\">151.101.3.5<\/div>\\n<\/div>\\n\\n\\n\\n<div class=\\\"font-size-14 ng-binding\\\">Reporting Device<\/div><div class=\\\"card-container-body\\\" style=\\\"width: 100%;font-size:46px;\\\">\\n<div class=\\\"card-number\\\" style=\\\"font-size:20px;  border-left: 5px solid red;background:#141b23\\\">FortiGate-Core<\/div>\\n<\/div>\\n\\n\\n\\n<div class=\\\"font-size-14 ng-binding\\\">Incident Impacts<\/div><div class=\\\"card-container-body\\\" style=\\\"width: 100%;font-size:46px;\\\">\\n<div class=\\\"card-number\\\" style=\\\"font-size:20px;  border-left: 5px solid red;background:#141b23\\\">Network<\/div>\\n<\/div>\\n\\n\\n\\n<div class=\\\"font-size-14 ng-binding\\\">Incident Details<\/div><div class=\\\"card-container-body\\\" style=\\\"width: 100%;font-size:46px;\\\">\\n<div class=\\\"card-number\\\" style=\\\"font-size:20px;  border-left: 5px solid red;background:#141b23\\\">sentBytes64:2450636 <\/div>\\n<\/div>\\n\\n<table style=\\\"color:white;font-size:11;\\\">\\n<tbody><tr><\/tr><tr>\\n\\n\\n<\/tr><tr>\\n\\n\\n<\/tr><tr>\\n\\n\\n<\/tr><tr>\\n\\n\\n<\/tr><tr>\\n\\n\\n<\/tr><tr>\\n\\n\\n<\/tr><tr>\\n\\n\\n<\/tr><tr>\\n\\n\\n<\/tr>\\n<\/tbody><\/table><\/td><\/tr><\/tbody><\/table>\",\n    \"destinationIp\": \"151.101.3.5\",\n    \"destinationPort\": 443,\n    \"deviceUID\": null,\n    \"domain\": null,\n    \"dueBy\": 1665522006.368138,\n    \"fileEmail\": null,\n    \"parentProcessName\": null,\n    \"emailBody\": null,\n    \"sourcedata\": \"{\\\"incident_data\\\": {\\\"id\\\": \\\"0\\\", \\\"nid\\\": \\\"79\\\", \\\"index\\\": \\\"1\\\", \\\"custId\\\": \\\"1\\\", \\\"dataStr\\\": null, \\\"eventType\\\": \\\"PH_RULE_LARGE_OUTBOUND_XFER_OUTSIDE_COUNTRY\\\", \\\"attributes\\\": {\\\"count\\\": \\\"2\\\", \\\"tagName\\\": \\\"\\\", \\\"customer\\\": \\\"Super\\\", \\\"procName\\\": \\\"\\\", \\\"eventName\\\": \\\"Large Outbound Transfer To Outside My Country\\\", \\\"eventType\\\": \\\"PH_RULE_LARGE_OUTBOUND_XFER_OUTSIDE_COUNTRY\\\", \\\"srcIpAddr\\\": \\\"<<TR_ASSET_IP>>\\\", \\\"bizService\\\": \\\"\\\", \\\"destGeoOrg\\\": \\\"DIGITALOCEAN-ASN  US\\\", \\\"destIpAddr\\\": \\\"151.101.3.5\\\", \\\"incidentId\\\": \\\"79\\\", \\\"phRecvTime\\\": \\\"Tue Oct 11 20:05:00 GST 2022\\\", \\\"destGeoCity\\\": \\\"North Bergen\\\", \\\"incidentSrc\\\": \\\"srcIpAddr:<<TR_ASSET_IP>>,\\\", \\\"activityName\\\": \\\"\\\", \\\"attackTactic\\\": \\\"Exfiltration\\\", \\\"destGeoState\\\": \\\"New Jersey\\\", \\\"incidentReso\\\": \\\"1 (Open)\\\", \\\"eventSeverity\\\": \\\"8\\\", \\\"incidentRptIp\\\": \\\"10.222.249.200\\\", \\\"incidentTitle\\\": \\\"Large outbound transfer from <<TR_ASSET_IP>> to outside my country 151.101.3.5\\\", \\\"destGeoCountry\\\": \\\"United States\\\", \\\"incidentDetail\\\": \\\"sentBytes64:2450636,\\\", \\\"incidentStatus\\\": \\\"0 (Active)\\\", \\\"incidentTarget\\\": \\\"151.101.3.5\\\", \\\"destGeoLatitude\\\": \\\"40.80427\\\", \\\"incidentExtUser\\\": \\\"\\\", \\\"incidentTagName\\\": \\\"\\\", \\\"phEventCategory\\\": \\\"1 (Incident)\\\", \\\"destGeoLongitude\\\": \\\"-74.01208\\\", \\\"eventSeverityCat\\\": \\\"MEDIUM\\\", \\\"incidentComments\\\": \\\"\\\", \\\"incidentLastSeen\\\": \\\"Tue Oct 11 20:05:00 GST 2022\\\", \\\"incidentTicketId\\\": \\\"\\\", \\\"attackTechniqueId\\\": \\\"T1048.001\\\", \\\"incidentFirstSeen\\\": \\\"Tue Oct 11 19:57:00 GST 2022\\\", \\\"incidentViewUsers\\\": \\\"\\\", \\\"phIncidentImpacts\\\": \\\"Network\\\", \\\"incidentNotiStatus\\\": \\\"\\\", \\\"incidentRptDevName\\\": \\\"FortiGate-Core\\\", \\\"incidentTicketUser\\\": \\\"\\\", \\\"incidentViewStatus\\\": \\\"1 (Read)\\\", \\\"phIncidentCategory\\\": \\\"4\\\", \\\"incidentClearedTime\\\": \\\"Thu Jan 01 04:00:00 GST 1970\\\", \\\"incidentClearedUser\\\": \\\"\\\", \\\"incidentExtTicketId\\\": \\\"\\\", \\\"incidentRptDevStatus\\\": \\\"1 (Pending)\\\", \\\"incidentTicketStatus\\\": \\\"6 (None)\\\", \\\"incidentClearedReason\\\": \\\"\\\", \\\"incidentExtTicketType\\\": \\\"\\\", \\\"phSubIncidentCategory\\\": \\\"Exfiltration\\\", \\\"incidentExtClearedTime\\\": \\\"Thu Jan 01 04:00:00 GST 1970\\\", \\\"incidentExtTicketState\\\": \\\"\\\", \\\"incidentNotiRecipients\\\": \\\"\\\"}, \\\"receiveTime\\\": \\\"2022-10-11T20:05:00+04:00\\\"}, \\\"associated_events\\\": []}\",\n    \"emailFrom\": null,\n    \"emailHeaders\": null,\n    \"emailTo\": null,\n    \"emailSubject\": null,\n    \"epochTime\": \"{{arrow.utcnow().int_timestamp}}\",\n    \"eventTime\": \"{{arrow.utcnow().format(\"YYYY-MM-DDTHH:mm:ssZ\")}}\",\n    \"fileHash\": null,\n    \"respDate\": null,\n    \"fileName\": null,\n    \"fileNames\": null,\n    \"filePath\": null,\n    \"latestLogin\": null,\n    \"metrics\": null,\n    \"parentProcessCmdLine\": null,\n    \"parentProcessPid\": null,\n    \"scheduledTask\": null,\n    \"processGuid\": null,\n    \"processId\": null,\n    \"processName\": null,\n    \"processTree\": null,\n    \"respDueDate\": 1665522606.368138,\n    \"userName\": null,\n    \"recipientEmailAddress\": null,\n    \"registryKey\": null,\n    \"registryKeyValue\": null,\n    \"reporter\": null,\n    \"sourceTool\": null,\n    \"reporterEmailBody\": null,\n    \"returnPath\": null,\n    \"senderDomain\": null,\n    \"senderEmailAddress\": null,\n    \"services\": null,\n    \"sourceIp\": \"<<TR_ASSET_IP>>\",\n    \"sourcePort\": null,\n    \"sourceProcess\": null,\n    \"targetAsset\": \"<<TR_ASSET_IP>>.{{vars.mydomain}}\",\n    \"targetProcess\": null,\n    \"url\": null,\n    \"userDetails\": null,\n    \"source\": \"Fortinet FortiSIEM\",\n    \"mitretactics\": null,\n    \"mitregroups\": null,\n    \"emailClassification\": null,\n    \"deviceType\": null,\n    \"ackSlaStatus\": {\n        \"@id\": \"\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818\",\n        \"@type\": \"Picklist\",\n        \"itemValue\": \"Awaiting Action\",\n        \"orderIndex\": 2,\n        \"color\": \"#808080\",\n        \"icon\": null,\n        \"listName\": \"\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153\",\n        \"uuid\": \"72979f64-e8b9-4888-a965-957e0ec24818\",\n        \"id\": 357,\n        \"importedBy\": []\n    },\n    \"respSlaStatus\": {\n        \"@id\": \"\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818\",\n        \"@type\": \"Picklist\",\n        \"itemValue\": \"Awaiting Action\",\n        \"orderIndex\": 2,\n        \"color\": \"#808080\",\n        \"icon\": null,\n        \"listName\": \"\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153\",\n        \"uuid\": \"72979f64-e8b9-4888-a965-957e0ec24818\",\n        \"id\": 357,\n        \"importedBy\": []\n    },\n    \"closureReason\": null,\n    \"escalatedtoincident\": {\n        \"@id\": \"\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5\",\n        \"@type\": \"Picklist\",\n        \"itemValue\": \"No\",\n        \"orderIndex\": 1,\n        \"color\": \"#808080\",\n        \"icon\": null,\n        \"listName\": \"\/api\/3\/picklist_names\/e131cc54-9ae4-43c9-b830-af6e331fe024\",\n        \"uuid\": \"2128a09c-153d-4db3-985d-de6be33deae5\",\n        \"id\": 269,\n        \"importedBy\": []\n    },\n    \"killChainPhase\": null,\n    \"status\": {\n        \"@id\": \"\/api\/3\/picklists\/7de816ff-7140-4ee5-bd05-93ce22002146\",\n        \"@type\": \"Picklist\",\n        \"itemValue\": \"Open\",\n        \"orderIndex\": 1,\n        \"color\": null,\n        \"icon\": null,\n        \"listName\": \"\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a\",\n        \"uuid\": \"7de816ff-7140-4ee5-bd05-93ce22002146\",\n        \"id\": 188,\n        \"importedBy\": []\n    },\n    \"severity\": {\n        \"@id\": \"\/api\/3\/picklists\/b3c20a3a-ecfd-4adc-a225-0205968e6793\",\n        \"@type\": \"Picklist\",\n        \"itemValue\": \"Medium\",\n        \"orderIndex\": 2,\n        \"color\": \"#D2AC1A\",\n        \"icon\": null,\n        \"listName\": \"\/api\/3\/picklist_names\/4e80cba3-032f-48b4-ac03-17e3ec247aac\",\n        \"uuid\": \"b3c20a3a-ecfd-4adc-a225-0205968e6793\",\n        \"id\": 363,\n        \"importedBy\": []\n    },\n    \"type\": {\n        \"@id\": \"\/api\/3\/picklists\/a043fb35-f373-44c0-bfa9-5bce2f711141\",\n        \"@type\": \"Picklist\",\n        \"itemValue\": \"Data Exfiltration\",\n        \"orderIndex\": 5,\n        \"color\": null,\n        \"icon\": null,\n        \"listName\": \"\/api\/3\/picklist_names\/a7087b9c-5660-495f-a8ac-c3b198ddb8c2\",\n        \"uuid\": \"a043fb35-f373-44c0-bfa9-5bce2f711141\",\n        \"id\": 215,\n        \"importedBy\": []\n    },\n    \"uuid\": \"900e0ab0-5abd-492a-852b-ec680bb3ce24\",\n    \"createUser\": {\n        \"@id\": \"\/api\/3\/appliances\/57545210-2adc-472b-a24f-2df6ee8dfe63\",\n        \"@type\": \"Appliance\",\n        \"name\": \"Playbook\",\n        \"userType\": null,\n        \"avatar\": null,\n        \"uuid\": \"57545210-2adc-472b-a24f-2df6ee8dfe63\",\n        \"createUser\": null,\n        \"createDate\": 1650473587.200909,\n        \"modifyUser\": null,\n        \"modifyDate\": 1650473587.200909,\n        \"id\": 1,\n        \"userId\": \"6f3626c1-0da7-4b44-8d5e-43750f780a47\"\n    },\n    \"createDate\": {{arrow.utcnow().int_timestamp}},\n    \"modifyUser\": {\n        \"@id\": \"\/api\/3\/appliances\/57545210-2adc-472b-a24f-2df6ee8dfe63\",\n        \"@type\": \"Appliance\",\n        \"name\": \"Playbook\",\n        \"userType\": null,\n        \"avatar\": null,\n        \"uuid\": \"57545210-2adc-472b-a24f-2df6ee8dfe63\",\n        \"createUser\": null,\n        \"createDate\": 1650473587.200909,\n        \"modifyUser\": null,\n        \"modifyDate\": 1650473587.200909,\n        \"id\": 1,\n        \"userId\": \"6f3626c1-0da7-4b44-8d5e-43750f780a47\"\n    },\n    \"modifyDate\": {{arrow.utcnow().int_timestamp}},\n    \"tenant\": {\n        \"@id\": \"\/api\/3\/tenants\/b3a700f7-00be-4ef9-90c6-3c8fe6e1be63\",\n        \"@type\": \"Tenant\",\n        \"name\": \"Self\",\n        \"isDedicated\": true,\n        \"tenantId\": \"8355670b19299e1ce94d9af29604cd65\",\n        \"role\": \"self\",\n        \"description\": \"sample\",\n        \"allowRemoteMMDModification\": true,\n        \"license\": null,\n        \"region\": null,\n        \"industry\": null,\n        \"uuid\": \"b3a700f7-00be-4ef9-90c6-3c8fe6e1be63\",\n        \"createUser\": null,\n        \"createDate\": null,\n        \"modifyUser\": null,\n        \"modifyDate\": null,\n        \"id\": 1\n    },\n    \"conflict\": false,\n    \"tenantRecordId\": 2277,\n    \"id\": 2277,\n    \"recordTags\": [\"SIM\",\"Exfiltration\",\"Malware\"],\n    \"assignee\": \"\",\n    \"fsrQueue\": null\n  }"
+            },
+            "status": null,
+            "top": "570",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "01533eee-bd37-460f-843f-d423fa4bf0d1"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Data Output",
+            "description": null,
+            "arguments": {
+                "@id": "{{vars.steps.Create_Exfiltration_Alert.data[\"@id\"]}}"
+            },
+            "status": null,
+            "top": "1380",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "07a494ab-a300-43d5-817c-cc5e432fb02a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Task Tracker",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "macro": "{{vars.task_tracker_global_var_name}}",
+                    "value": "{{vars.steps.Comment_Get_Device_Details['@id']}}"
+                },
+                "version": "3.2.1",
+                "connector": "cyops_utilities",
+                "operation": "updatemacro",
+                "operationTitle": "FSR: Create\/Update Global Variables",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "1245",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "group": null,
+            "uuid": "356bcbdf-8412-49dc-900f-d58b5155e3fe"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Init Task Tracker",
+            "description": null,
+            "arguments": {
+                "when": "{{globalVars.Last_Task_Comment_IRI is none}}",
+                "params": {
+                    "macro": "{{vars.task_tracker_global_var_name}}",
+                    "value": "empty"
+                },
+                "version": "3.2.1",
+                "connector": "cyops_utilities",
+                "operation": "updatemacro",
+                "operationTitle": "FSR: Create\/Update Global Variables",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "group": null,
+            "uuid": "4c9c0206-d067-41a1-b819-dcae508b397e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Init Hint Icon",
+            "description": null,
+            "arguments": {
+                "when": "{{globalVars.Hint_Icon is none}}",
+                "params": {
+                    "macro": "Hint_Icon",
+                    "value": "<p><span style=\"background-color: orange; color: black; border-radius: 4px; font-size: 8mm;\"><span style=\"font-size: 18px; font-weight: bold; font-family: 'Georgia', monospace;\">\ud83d\udca1Note <br \/><\/span><\/span><\/p>"
+                },
+                "version": "3.2.1",
+                "connector": "cyops_utilities",
+                "operation": "updatemacro",
+                "operationTitle": "FSR: Create\/Update Global Variables",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "475",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "group": null,
+            "uuid": "502c01c0-0470-48f2-b77f-9521b8a0f529"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Exfiltration Alert",
+            "description": null,
+            "arguments": {
+                "name": "FortiSOAR SOC Simulator",
+                "config": "49e31d78-46c3-4d6a-be56-b0758bbf579c",
+                "params": {
+                    "alert_json": "{{vars.alert_payload}}",
+                    "fields_to_ignore": ""
+                },
+                "version": "2.0.0",
+                "connector": "fortisoar-soc-simulator",
+                "operation": "create_simulated_alert",
+                "operationTitle": "Create Simulated Alert",
+                "pickFromTenant": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "705",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "62d30351-8a2e-4b0e-b04e-da07efd928f1"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "98bed7f6-5efa-4a43-8e82-8892d11c4ab8",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": true,
+                "singleRecordExecution": false
+            },
+            "status": null,
+            "top": "30",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "6742f84d-1d03-4b69-8904-3920a5d7659a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Alert Status",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "alerts": "{{vars.steps.Create_Exfiltration_Alert.data['@id']}}",
+                    "people": [],
+                    "content": "<p>{{globalVars.Action_Icon}}<\/p>\n<ul>\n<li>Set the Alert Status to <span style=\"color: #e67e23;\"><strong>Investigating. <\/strong><\/span>FortiSOAR will compute Acknowledgement SLA automatically<\/li>\n<\/ul>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "975",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "74b89206-e851-43d5-96ef-38a85ccb06d8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Comment_Get Device Details",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "alerts": "{{vars.steps.Create_Exfiltration_Alert.data['@id']}}",
+                    "people": [],
+                    "content": "<p>{{globalVars.Action_Icon}}<\/p>\n<ul>\n<li><strong>Run playbook : <span style=\"background-color: #e67e23;\">Get Device Details<\/span><\/strong><strong> <\/strong>to get the <span style=\"color: #e67e23;\">{{vars.steps.Create_Exfiltration_Alert.data.sourceIp}}<\/span> device details from CMDB<\/li>\n<\/ul>\n<p>You can find the created asset (Device) at : <span style=\"color: #e67e23;\"><strong>Correlations &gt;&gt; Assets.<\/strong><\/span><span style=\"color: #e67e23;\"><strong><br><\/strong><\/span><\/p>\n<p>Alternatively, you can run <strong><span style=\"background-color: #e67e23;\">Exfiltration Alert Investigation<\/span><\/strong> to automate Triage and Enrichment<\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "1110",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "b8d1aa58-97fa-4706-8b50-9d91402b8fd6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "mydomain": "fortielab.com",
+                "task_tracker_global_var_name": "Last_Task_Comment_IRI"
+            },
+            "status": null,
+            "top": "165",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "c54deb63-907e-4f55-9141-41df3fe0daaa"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Init Exclamation Icon",
+            "description": null,
+            "arguments": {
+                "when": "{{globalVars.Exclamation_Icon is none}}",
+                "params": {
+                    "macro": "Exclamation_Icon",
+                    "value": "<span style=\"color: red; font-size: 6mm;\">\u26a0<\/span>"
+                },
+                "version": "3.2.1",
+                "connector": "cyops_utilities",
+                "operation": "updatemacro",
+                "operationTitle": "FSR: Create\/Update Global Variables",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "475",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "group": null,
+            "uuid": "d95a2f19-fffe-4e78-803b-08e3403645eb"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Init Action Icon",
+            "description": null,
+            "arguments": {
+                "when": "{{globalVars.Action_Icon is none}}",
+                "params": {
+                    "macro": "Action_Icon",
+                    "value": "<p><span style=\"background-color: red; color: black; border-radius: 4px; font-size: 8mm;\"><span style=\"font-size: 18px; font-weight: bold; font-family: 'Georgia', monospace;\">\ud83d\udccbAction <\/span><\/span><\/p>"
+                },
+                "version": "3.2.1",
+                "connector": "cyops_utilities",
+                "operation": "updatemacro",
+                "operationTitle": "FSR: Create\/Update Global Variables",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "group": null,
+            "uuid": "f0b833b0-4a87-475f-bbc0-61362bcceb40"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Guiding Comment On Alert",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "alerts": "{{vars.steps.Create_Exfiltration_Alert.data['@id']}}",
+                    "people": [],
+                    "content": "<p>{{globalVars.Hint_Icon}} This workflow will guide you through enrichment, triage, threat hunting and remediation. <span style=\"background-color: #e03e2d;\">\ud83d\udccb<strong>Action<\/strong><\/span><strong> <\/strong>comments are indications of the tasks you have to perform while <span style=\"background-color: #e67e23;\"><strong>\ud83d\udca1Notes<\/strong><\/span> are best practices recommedations<\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "840",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "f0e419a2-24d3-4481-b09e-bd555d71f040"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Init Task Tracker -> Compute Alert Payload",
+            "targetStep": "\/api\/3\/workflow_steps\/01533eee-bd37-460f-843f-d423fa4bf0d1",
+            "sourceStep": "\/api\/3\/workflow_steps\/4c9c0206-d067-41a1-b819-dcae508b397e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "0455cdb2-2901-4340-8938-adb7da1e9f9a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "_GC_Get Device Details -> Copy of Init Task Tracker",
+            "targetStep": "\/api\/3\/workflow_steps\/356bcbdf-8412-49dc-900f-d58b5155e3fe",
+            "sourceStep": "\/api\/3\/workflow_steps\/b8d1aa58-97fa-4706-8b50-9d91402b8fd6",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "17eb9ce0-12d9-49ad-876f-c4a9e5e7cdf7"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "_GC_ Guiding Comment -> _GC_Get Alert Status",
+            "targetStep": "\/api\/3\/workflow_steps\/74b89206-e851-43d5-96ef-38a85ccb06d8",
+            "sourceStep": "\/api\/3\/workflow_steps\/f0e419a2-24d3-4481-b09e-bd555d71f040",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4502112e-a24e-4d23-b0d2-71bb9f4af21f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Copy of Init Task Tracker -> Data Output",
+            "targetStep": "\/api\/3\/workflow_steps\/07a494ab-a300-43d5-817c-cc5e432fb02a",
+            "sourceStep": "\/api\/3\/workflow_steps\/356bcbdf-8412-49dc-900f-d58b5155e3fe",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "646996a4-b1d8-4103-aa03-86523d521a4f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Init Action Icon",
+            "targetStep": "\/api\/3\/workflow_steps\/f0b833b0-4a87-475f-bbc0-61362bcceb40",
+            "sourceStep": "\/api\/3\/workflow_steps\/c54deb63-907e-4f55-9141-41df3fe0daaa",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "7db2aa32-6730-4a54-a3f7-dc9445354162"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "_GC_Get Alert Status -> _GC_Get Device Details",
+            "targetStep": "\/api\/3\/workflow_steps\/b8d1aa58-97fa-4706-8b50-9d91402b8fd6",
+            "sourceStep": "\/api\/3\/workflow_steps\/74b89206-e851-43d5-96ef-38a85ccb06d8",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "7f5f06f9-b23f-4915-ba6e-91656cbb0e31"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/c54deb63-907e-4f55-9141-41df3fe0daaa",
+            "sourceStep": "\/api\/3\/workflow_steps\/6742f84d-1d03-4b69-8904-3920a5d7659a",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "929f6dd0-0b08-4ccd-adfc-df0bed764db0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Exfiltration Alert -> Copy of Add Start Guiding Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/f0e419a2-24d3-4481-b09e-bd555d71f040",
+            "sourceStep": "\/api\/3\/workflow_steps\/62d30351-8a2e-4b0e-b04e-da07efd928f1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "98abde96-11b4-443e-9410-d07669844e2f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Init Exclamation Icon -> Compute Alert Payload",
+            "targetStep": "\/api\/3\/workflow_steps\/01533eee-bd37-460f-843f-d423fa4bf0d1",
+            "sourceStep": "\/api\/3\/workflow_steps\/d95a2f19-fffe-4e78-803b-08e3403645eb",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a3ef3d00-3033-4c6b-9921-51c76821ac18"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Init Action Icon -> Init Task Tracker",
+            "targetStep": "\/api\/3\/workflow_steps\/4c9c0206-d067-41a1-b819-dcae508b397e",
+            "sourceStep": "\/api\/3\/workflow_steps\/f0b833b0-4a87-475f-bbc0-61362bcceb40",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "abbf3303-4e41-49bf-8afa-34d932f11eff"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Init Hint Icon",
+            "targetStep": "\/api\/3\/workflow_steps\/502c01c0-0470-48f2-b77f-9521b8a0f529",
+            "sourceStep": "\/api\/3\/workflow_steps\/c54deb63-907e-4f55-9141-41df3fe0daaa",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d23bb5d8-ab9f-4f33-a782-9e50ccfe04f2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compute Email Alert Payload -> False Positive Create Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/62d30351-8a2e-4b0e-b04e-da07efd928f1",
+            "sourceStep": "\/api\/3\/workflow_steps\/01533eee-bd37-460f-843f-d423fa4bf0d1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d5192592-36d7-48f3-8d7b-bb86f7d92d89"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Init Hint Icon -> Copy of Init Hint Icon",
+            "targetStep": "\/api\/3\/workflow_steps\/d95a2f19-fffe-4e78-803b-08e3403645eb",
+            "sourceStep": "\/api\/3\/workflow_steps\/502c01c0-0470-48f2-b77f-9521b8a0f529",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f9627349-b57c-4514-9507-db5384249da5"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "0c269f1d-16b0-4b2c-8a1d-637a766538ad",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Alert",
+        "Scenario",
+        "Data-Exfiltration"
+    ]
+}

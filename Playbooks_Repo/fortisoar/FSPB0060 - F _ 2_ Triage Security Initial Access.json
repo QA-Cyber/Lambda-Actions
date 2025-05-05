@@ -1,0 +1,267 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "F > 2: Triage Security Initial Access",
+    "aliasName": null,
+    "tag": null,
+    "description": null,
+    "isActive": true,
+    "debug": true,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "alert_data"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1645552903,
+    "collection": "\/api\/3\/workflow_collections\/5b5e50c1-2ae8-4cf7-b4fb-e6ac730eda61",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/873b556f-578e-4b48-a372-6e365642c155",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Debug",
+            "description": null,
+            "arguments": {
+                "All": "{{vars}}"
+            },
+            "status": null,
+            "top": "705",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "20c5b75d-be16-4963-bb8f-ada09f15330c",
+            "id": 7893
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": {
+                            "alert_data": "{{ vars.alert_data }}"
+                        }
+                    }
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "873b556f-578e-4b48-a372-6e365642c155",
+            "id": 7894
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Escalate To Incident",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "alert_data": "{{vars.alert_data}}",
+                    "escalation_reason": "VPN connection from unauthorized user and\/or Malicious source IP"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "workflowReference": "\/api\/3\/workflows\/30c99b0d-bfa6-4b7e-9a11-a0fe7ef30b30"
+            },
+            "status": null,
+            "top": "585",
+            "left": "500",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "uuid": "571189cf-fa6b-4b67-8d9e-44ae7a9f4374",
+            "id": 7895
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Source Data",
+            "description": null,
+            "arguments": {
+                "user_data": "{{(vars.input.params['alert_data'].users.0[\"@id\"] + \"?$relationships=true\")|fromIRI}}",
+                "alert_data": "{{vars.input.params['alert_data']}}",
+                "indicators_data": "{{(vars.input.params['alert_data'].indicators.0[\"@id\"] + \"?$relationships=true\")|fromIRI}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "3bfb1644-2d25-4ca7-9284-18aae08ec67d",
+            "id": 7896
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Required Fields",
+            "description": null,
+            "arguments": {
+                "user_groups": "{{vars.user_data.memberOf}}",
+                "source_country": "Japan",
+                "indicator_reputation": "{{vars.indicators_data.reputation.itemValue}}"
+            },
+            "status": null,
+            "top": "300",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "7d529be8-b364-4ecf-be6a-6538fda7ef09",
+            "id": 7897
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "True Positive",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "no",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/911a17a2-bd29-4a90-b81d-5dee4612145d",
+                        "step_name": "Close Alerts if False Positive"
+                    },
+                    {
+                        "option": "yes",
+                        "step_iri": "\/api\/3\/workflow_steps\/571189cf-fa6b-4b67-8d9e-44ae7a9f4374",
+                        "condition": "{{ (vars.source_country not in vars.user_groups|join(\",\")) or 'Malicious' in vars.indicator_reputation }}",
+                        "step_name": "Escalate To Incident"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "440",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "45fd6493-9c04-45d4-8014-1a077dc036ec",
+            "id": 7898
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Close Alerts if False Positive",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "status": {
+                        "id": 246,
+                        "@id": "\/api\/3\/picklists\/fac53e73-8d16-4189-98d5-95fbd1555232",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Closed",
+                        "listName": "\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a",
+                        "itemValue": "Closed",
+                        "orderIndex": 4
+                    },
+                    "severity": {
+                        "id": 12,
+                        "@id": "\/api\/3\/picklists\/0d609b08-45e0-469f-8910-41145c0b7c03",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#157DD9",
+                        "display": "Minimal",
+                        "listName": "\/api\/3\/picklist_names\/4e80cba3-032f-48b4-ac03-17e3ec247aac",
+                        "itemValue": "Minimal",
+                        "orderIndex": 0
+                    },
+                    "closureNotes": "Closed Automatically: User is Allowed to connect from the remote location and the source IP is not Malicious",
+                    "closureReason": {
+                        "id": 250,
+                        "@id": "\/api\/3\/picklists\/2b0112f6-4746-4dab-ada6-a8cd1e675572",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "False Positive",
+                        "listName": "\/api\/3\/picklist_names\/4ebacea1-88cd-4ea8-9dcc-385bea42cc59",
+                        "itemValue": "False Positive",
+                        "orderIndex": 2
+                    }
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "580",
+            "left": "89",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "uuid": "911a17a2-bd29-4a90-b81d-5dee4612145d",
+            "id": 7899
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Required Fields -> False Positive",
+            "targetStep": "\/api\/3\/workflow_steps\/45fd6493-9c04-45d4-8014-1a077dc036ec",
+            "sourceStep": "\/api\/3\/workflow_steps\/7d529be8-b364-4ecf-be6a-6538fda7ef09",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "90e9007b-d7a3-43cd-9492-81dc5f20a03e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Close Alerts if CVE not matched -> Debug",
+            "targetStep": "\/api\/3\/workflow_steps\/20c5b75d-be16-4963-bb8f-ada09f15330c",
+            "sourceStep": "\/api\/3\/workflow_steps\/911a17a2-bd29-4a90-b81d-5dee4612145d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "95f83ea9-c925-4c73-a361-d30bc43c881a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Asset Vulnerable to The Attack -> Close Alerts if CVE not matched",
+            "targetStep": "\/api\/3\/workflow_steps\/911a17a2-bd29-4a90-b81d-5dee4612145d",
+            "sourceStep": "\/api\/3\/workflow_steps\/45fd6493-9c04-45d4-8014-1a077dc036ec",
+            "label": "no",
+            "isExecuted": false,
+            "uuid": "76b4ca2a-7245-4d89-bd17-e33d685f0d00"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Source Data -> Get Required Fields",
+            "targetStep": "\/api\/3\/workflow_steps\/7d529be8-b364-4ecf-be6a-6538fda7ef09",
+            "sourceStep": "\/api\/3\/workflow_steps\/3bfb1644-2d25-4ca7-9284-18aae08ec67d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "40758c9d-6e2d-412a-bbb6-aac920dff673"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Asset Vulnerable to The Attack -> Escalate To Incident",
+            "targetStep": "\/api\/3\/workflow_steps\/571189cf-fa6b-4b67-8d9e-44ae7a9f4374",
+            "sourceStep": "\/api\/3\/workflow_steps\/45fd6493-9c04-45d4-8014-1a077dc036ec",
+            "label": "yes",
+            "isExecuted": false,
+            "uuid": "c4d4e6d8-1b1c-4019-a05c-89a5b8d7ef60"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Set Source Data",
+            "targetStep": "\/api\/3\/workflow_steps\/3bfb1644-2d25-4ca7-9284-18aae08ec67d",
+            "sourceStep": "\/api\/3\/workflow_steps\/873b556f-578e-4b48-a372-6e365642c155",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5063fb6d-a983-4ed8-80d2-f1b5e194241d"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Escalate To Incident -> Debug",
+            "targetStep": "\/api\/3\/workflow_steps\/20c5b75d-be16-4963-bb8f-ada09f15330c",
+            "sourceStep": "\/api\/3\/workflow_steps\/571189cf-fa6b-4b67-8d9e-44ae7a9f4374",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a0b825f8-e20f-4e14-986d-4740ad795483"
+        }
+    ],
+    "priority": null,
+    "uuid": "0fa0a67f-3b17-4eaf-9cf3-d35e781a27cd",
+    "recordTags": [],
+    "id": 1547,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1645552903,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1645553911,
+    "owners": [],
+    "isPrivate": false
+}

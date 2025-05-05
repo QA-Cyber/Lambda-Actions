@@ -1,0 +1,235 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Phishing Email Triage Based On ML Classifier",
+    "aliasName": null,
+    "tag": null,
+    "description": "Identify Phishing Emails using FortiSOAR Phishing ML Classifier and take further triage actions based on confidence.",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/de82601b-bba4-46a1-98e9-c936a288397e",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/510576c1-c538-4c44-9fdd-0e153d5aa44f",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Is Phishing Email",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "If Phishing with high confidence",
+                        "step_iri": "\/api\/3\/workflow_steps\/954f9bfc-09bc-48fc-b064-36382798c6d0",
+                        "condition": "{{ vars.is_phishing }}",
+                        "step_name": "Raise Severity"
+                    },
+                    {
+                        "option": "Else",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/dab24bc6-f88f-4687-8606-3362087fae61",
+                        "step_name": "Do Nothing"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "435",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "group": null,
+            "uuid": "35e6b9bf-7647-4aef-9cb9-259ee885ee85"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "9d826114-3f2b-46fb-bbed-c431b5e3d510",
+                "title": "Phishing Email Triage Based On ML Classifier",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "object",
+                                "field": "type",
+                                "value": "\/api\/3\/picklists\/c145394b-069a-449b-a05e-67980d0f4b82",
+                                "_value": {
+                                    "@id": "\/api\/3\/picklists\/c145394b-069a-449b-a05e-67980d0f4b82",
+                                    "display": "Suspicious Email",
+                                    "itemValue": "Suspicious Email"
+                                },
+                                "operator": "eq"
+                            }
+                        ]
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "singleRecordExecution": false
+            },
+            "status": null,
+            "top": "20",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "510576c1-c538-4c44-9fdd-0e153d5aa44f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Raise Severity",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "severity": "\/api\/3\/picklists\/7efa2220-39bb-44e4-961f-ac368776e3b0"
+                },
+                "_showJson": false,
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "560",
+            "left": "480",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "954f9bfc-09bc-48fc-b064-36382798c6d0"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": "Configure the threshold value for confidence here. Threshold identifies the confidence level above which we are sure that the email is phishing.",
+            "arguments": {
+                "THRESHOLD": "90"
+            },
+            "status": null,
+            "top": "165",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "aa34996d-7773-4d4f-8958-95062940dc5d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Do Nothing",
+            "description": null,
+            "arguments": {
+                "params": [],
+                "version": "3.2.1",
+                "connector": "cyops_utilities",
+                "operation": "no_op",
+                "operationTitle": "Utils: No Operation",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "group": null,
+            "uuid": "dab24bc6-f88f-4687-8606-3362087fae61"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Classify Email",
+            "description": null,
+            "arguments": {
+                "name": "Phishing Classifier",
+                "config": "963a5b6e-3015-4ddb-a372-6dc7e7964768",
+                "params": {
+                    "record": "{{vars.input.records[0]['@id']}}"
+                },
+                "version": "1.0.0",
+                "connector": "phishing-classifier",
+                "operation": "predict",
+                "operationTitle": "Predict",
+                "pickFromTenant": false,
+                "step_variables": {
+                    "is_phishing": "{% if vars.result.status == \"Success\" and vars.result.data.status == \"success\" and vars.result.data.label == 1 and  vars.result.data.confidence > vars.THRESHOLD\/100 %}\ntrue\n{% else %}\nfalse\n{% endif %}"
+                }
+            },
+            "status": null,
+            "top": "300",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "e51e5295-c8c4-4eef-9798-b811e85c3a8a"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Define Constants and Variables -> Classify Email",
+            "targetStep": "\/api\/3\/workflow_steps\/e51e5295-c8c4-4eef-9798-b811e85c3a8a",
+            "sourceStep": "\/api\/3\/workflow_steps\/aa34996d-7773-4d4f-8958-95062940dc5d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "00c1e105-1cb8-4c02-bbfa-281ad43186f2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Define Constants and Variables",
+            "targetStep": "\/api\/3\/workflow_steps\/aa34996d-7773-4d4f-8958-95062940dc5d",
+            "sourceStep": "\/api\/3\/workflow_steps\/510576c1-c538-4c44-9fdd-0e153d5aa44f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "6218365e-c189-4762-a9a3-0da910853543"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Classify Email -> Is Phishing Email",
+            "targetStep": "\/api\/3\/workflow_steps\/35e6b9bf-7647-4aef-9cb9-259ee885ee85",
+            "sourceStep": "\/api\/3\/workflow_steps\/e51e5295-c8c4-4eef-9798-b811e85c3a8a",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "77d58b08-ad3b-466e-8b08-e603fbfef310"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Phishing Email -> Do Nothing",
+            "targetStep": "\/api\/3\/workflow_steps\/dab24bc6-f88f-4687-8606-3362087fae61",
+            "sourceStep": "\/api\/3\/workflow_steps\/35e6b9bf-7647-4aef-9cb9-259ee885ee85",
+            "label": "Else",
+            "isExecuted": false,
+            "uuid": "d8379e94-d0b7-43a1-962e-b95e007880ff"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is Phishing Email -> Raise Severity",
+            "targetStep": "\/api\/3\/workflow_steps\/954f9bfc-09bc-48fc-b064-36382798c6d0",
+            "sourceStep": "\/api\/3\/workflow_steps\/35e6b9bf-7647-4aef-9cb9-259ee885ee85",
+            "label": "If Phishing with high confidence",
+            "isExecuted": false,
+            "uuid": "e5b5a62c-d151-47d8-90db-0d5c536c99ae"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "90ac253c-405f-421a-aacc-01f861f85a00",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "phishing-classifier",
+        "Phishing"
+    ]
+}

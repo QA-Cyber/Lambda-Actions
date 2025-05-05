@@ -1,0 +1,334 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "High Risk Rogue Mobile App Response",
+    "aliasName": null,
+    "tag": null,
+    "description": "Creates a manual task to raise takedown request for high risk rogue mobile app",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/acbb32ac-2907-4f34-8d0c-81e2d1fe1513",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/d32fbf8d-a589-45a3-b653-611f67c1c665",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Task for Takedown Request",
+            "description": "Create a manual task to raise rogue mobile app takedown request",
+            "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "content": "<p>Created <a href=\"\/modules\/view-panel\/tasks\/{{vars.result.uuid}}\" title=\"Task #{{vars.result.id}} - {{vars.result.name}}\">Task #{{vars.result.id}} - {{vars.result.name}}<\/a> to raise takedown request for rouge mobile app.<\/p>",
+                    "records": "{{vars.alertIRI}}"
+                },
+                "resource": {
+                    "name": "Raise Takedown Request - {{vars.alertSourceData.name}}",
+                    "type": "\/api\/3\/picklists\/a4f387b1-ff5f-4fc6-b1eb-c2025bfa7089",
+                    "__link": {
+                        "alerts": "{{vars.alertIRI}}"
+                    },
+                    "status": "\/api\/3\/picklists\/7669725a-28cc-4b19-98a3-9ca71e0f88f4",
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "priority": "\/api\/3\/picklists\/612befbc-4255-403a-958b-11efce3e1d8c",
+                    "__replace": "",
+                    "recordTags": [
+                        "\/api\/3\/tags\/FortiRecon",
+                        "\/api\/3\/tags\/Rogue Mobile App",
+                        "\/api\/3\/tags\/Takedown Request"
+                    ],
+                    "description": "{{vars.input.records[0].description}}",
+                    "assignedOnDate": "{{arrow.utcnow().int_timestamp}}",
+                    "assignedToPerson": "{{vars.input.records[0].assignedTo['@id']}}"
+                },
+                "operation": "Append",
+                "collection": "\/api\/3\/tasks",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "4b76a83a-9d2e-469d-8511-ad44e228e6e2"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Add Note as Task Completed",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "alerts": "{{vars.alertIRI}}",
+                    "people": [],
+                    "content": "<p><a href=\"\/modules\/view-panel\/tasks\/{{vars.steps.Create_Task_for_Takedown_Request.uuid}}\" title=\"Task #{{vars.steps.Create_Task_for_Takedown_Request.id}}\">Task #{{vars.steps.Create_Task_for_Takedown_Request.id}}<\/a> was marked as <strong>Completed<\/strong> upon raising the rouge mobile app takedown request.<\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "52100d5a-7eed-4b78-8c95-3484c3a1f11d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait Till Task Completed",
+            "description": null,
+            "arguments": {
+                "rule": {
+                    "actions": [
+                        {
+                            "type": "resume_playbook",
+                            "enabled": true,
+                            "channel_uuid": "e2ce87c2-c55a-11ec-9d64-0242ac120002"
+                        }
+                    ],
+                    "is_active": true,
+                    "event_type": "update",
+                    "entity_name": "Tasks",
+                    "entity_type": "tasks",
+                    "event_source": "crudhub",
+                    "trigger_condition": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "primitive",
+                                "field": "uuid",
+                                "value": "{{vars.steps.Create_Task_for_Takedown_Request.uuid}}",
+                                "operator": "eq",
+                                "_operator": "eq"
+                            },
+                            {
+                                "type": "object",
+                                "field": "status",
+                                "value": "\/api\/3\/picklists\/343f4b67-e929-4205-bf95-ba5b70545fed",
+                                "_value": {
+                                    "@id": "\/api\/3\/picklists\/343f4b67-e929-4205-bf95-ba5b70545fed",
+                                    "itemValue": "Completed"
+                                },
+                                "operator": "eq"
+                            },
+                            {
+                                "type": "object",
+                                "field": "status",
+                                "value": "",
+                                "_value": {
+                                    "@id": "",
+                                    "display": "",
+                                    "itemValue": ""
+                                },
+                                "operator": "changed"
+                            }
+                        ]
+                    }
+                },
+                "type": "ConditionBased",
+                "delay": {
+                    "days": 0,
+                    "hours": 0,
+                    "weeks": 0,
+                    "minutes": 0,
+                    "seconds": 0
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/6832e556-b9c7-497a-babe-feda3bd27dbf",
+            "group": null,
+            "uuid": "546db1c1-cdda-4614-a456-7e8beeaf3e01"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "alertID": "{{vars.input.records[0].id}}",
+                "alertIRI": "{{vars.input.records[0]['@id']}}",
+                "alertSourceData": "{{vars.input.records[0].sourcedata}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "91a77385-9a83-4c4d-b576-e36fcc300573"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "resource": "alerts",
+                "resources": [
+                    "alerts"
+                ],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": [
+                            "{{vars.input.records[0]}}"
+                        ]
+                    }
+                },
+                "fieldbasedtrigger": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "object",
+                            "field": "state",
+                            "value": "",
+                            "_value": {
+                                "@id": "",
+                                "display": "",
+                                "itemValue": ""
+                            },
+                            "operator": "changed"
+                        },
+                        {
+                            "type": "object",
+                            "field": "state",
+                            "value": "\/api\/3\/picklists\/501d0562-89a0-4079-9a9e-cdde7d34e3ed",
+                            "_value": {
+                                "@id": "\/api\/3\/picklists\/501d0562-89a0-4079-9a9e-cdde7d34e3ed",
+                                "itemValue": "Indicator Extracted"
+                            },
+                            "operator": "eq"
+                        },
+                        {
+                            "type": "array",
+                            "field": "recordTags",
+                            "value": [
+                                "\/api\/3\/tags\/FortiRecon",
+                                "\/api\/3\/tags\/Rogue Mobile App"
+                            ],
+                            "module": "recordTags",
+                            "display": "",
+                            "operator": "in_all",
+                            "template": "tags",
+                            "OPERATOR_KEY": "$",
+                            "previousOperator": "in_all",
+                            "previousTemplate": "tags"
+                        }
+                    ]
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/9300bf69-5063-486d-b3a6-47eb9da24872",
+            "group": null,
+            "uuid": "d32fbf8d-a589-45a3-b653-611f67c1c665"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Mark Alert as Investigating",
+            "description": null,
+            "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "content": "<p>Initiating Rogue Mobile App Investigation<\/p>",
+                    "records": "{{vars.alertIRI}}"
+                },
+                "resource": {
+                    "status": "\/api\/3\/picklists\/758925e7-629c-46d8-89db-fb36f5fbe88a"
+                },
+                "operation": "Append",
+                "collection": "{{vars.alertIRI}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": [],
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "e99780df-cb0a-4837-88ab-cc501de05b8f"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Wait Till Task Completed -> Add Note as Task Completed c",
+            "targetStep": "\/api\/3\/workflow_steps\/52100d5a-7eed-4b78-8c95-3484c3a1f11d",
+            "sourceStep": "\/api\/3\/workflow_steps\/546db1c1-cdda-4614-a456-7e8beeaf3e01",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "27926c83-d7ec-41f8-a02c-1a2b81d30b13"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Mark Alert as Investigating -> Create Task for Takedown Request",
+            "targetStep": "\/api\/3\/workflow_steps\/4b76a83a-9d2e-469d-8511-ad44e228e6e2",
+            "sourceStep": "\/api\/3\/workflow_steps\/e99780df-cb0a-4837-88ab-cc501de05b8f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3a5b66ce-b2af-4d54-ad1d-5a02153608d6"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Mark Alert as Investigating",
+            "targetStep": "\/api\/3\/workflow_steps\/e99780df-cb0a-4837-88ab-cc501de05b8f",
+            "sourceStep": "\/api\/3\/workflow_steps\/91a77385-9a83-4c4d-b576-e36fcc300573",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5907fd74-2053-482c-b09a-5c64185b9f89"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/91a77385-9a83-4c4d-b576-e36fcc300573",
+            "sourceStep": "\/api\/3\/workflow_steps\/d32fbf8d-a589-45a3-b653-611f67c1c665",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a90b2dc4-e8a7-4fb7-8c0d-381fc817cc72"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Task for Takedown Request -> Wait Till Task Completed",
+            "targetStep": "\/api\/3\/workflow_steps\/546db1c1-cdda-4614-a456-7e8beeaf3e01",
+            "sourceStep": "\/api\/3\/workflow_steps\/4b76a83a-9d2e-469d-8511-ad44e228e6e2",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "cbc4df11-aa0c-406a-909c-fa135d3de0d6"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "eab68e3d-e69d-45e9-b976-922820cb283a",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "PostUpdate"
+    ]
+}

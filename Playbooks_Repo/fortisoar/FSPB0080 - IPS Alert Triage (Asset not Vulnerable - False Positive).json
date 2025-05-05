@@ -1,0 +1,124 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "IPS Alert Triage (Asset not Vulnerable - False Positive)",
+    "aliasName": null,
+    "tag": null,
+    "description": null,
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1646839897,
+    "collection": "\/api\/3\/workflow_collections\/5b5e50c1-2ae8-4cf7-b4fb-e6ac730eda61",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/00e0f23a-52fa-4a83-8654-d1bad8642155",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "47033fae-01d2-415f-a115-1501f0db2fa6",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": true,
+                "singleRecordExecution": false
+            },
+            "status": null,
+            "top": "40",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "uuid": "00e0f23a-52fa-4a83-8654-d1bad8642155",
+            "id": 8211
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Alert",
+            "description": null,
+            "arguments": {
+                "name": "FortiSOAR SOC Simulator",
+                "config": "8f76c7c3-22c9-4ff8-b31a-3642df79164a",
+                "params": {
+                    "alert_json": "{\n  \"@context\": \"\/api\/3\/contexts\/Alert\",\n  \"@id\": \"\/api\/3\/alerts\/f7b85f79-9803-4b93-bf26-10a45f8c91c5\",\n  \"@type\": \"Alert\",\n  \"vulnerabilitySeverity\": null,\n  \"ackSLApausedon\": null,\n  \"alertRemainingRespSLA\": null,\n  \"alertRemainingAckSLA\": null,\n  \"deviceSerialNo\": null,\n  \"deviceOwner\": null,\n  \"priorityWeight\": 1,\n  \"bucketName\": null,\n  \"alertDetectionDate\": null,\n  \"destinationID\": null,\n  \"respSLApausedon\": null,\n  \"mitreattackid\": \"T1210\",\n  \"mitreTechnique\": \"Exploitation of Remote Services\",\n  \"respDate\": null,\n  \"ackDate\": null,\n  \"assigneddate\": null,\n  \"resolveddate\": null,\n  \"closureNotes\": \"Closed Automatically: System not vulnerable to the used CVE\",\n  \"escalationReason\": \"\",\n  \"sourceType\": \"PH_RULE_HIGH_SEV_SEC_IPS_IN_PERMIT\",\n  \"name\": \"High Severity Inbound Permitted IPS Exploit\",\n  \"attachmentNames\": null,\n  \"bytesTransferred\": null,\n  \"commandLine\": null,\n  \"computerName\": null,\n  \"decodedCommandLine\": null,\n  \"description\": \"<span style=\\\"color:orange;font-weight:bold\\\">High Severity Inbound Permitted IPS Exploit FortiGate-ips-signature-15995 from <<TR_MALICIOUS_IP>> to 10.222.248.67<\/span><br>\\n- Alert Type: <span style=\\\"color:orange;font-weight:bold\\\">SECURITY_EXECUTION<\/span><br>\\n- Source IP:<span style=\\\"color:orange;font-weight:bold\\\"><<TR_MALICIOUS_IP>><\/span><br>\\n- Destination IP:<span style=\\\"color:orange;font-weight:bold\\\">10.222.248.67<\/span><br>\\n- Reporting Device: <span style=\\\"color:orange;font-weight:bold\\\">FortiGate-Edge<\/span><br>\\n\\n- Attack CVE: <span style=\\\"color:orange;font-weight:bold\\\">CVE-2008-4250<\/span><br>\",\n  \"destinationIp\": \"10.222.248.67\",\n  \"destinationPort\": null,\n  \"deviceUID\": null,\n  \"domain\": null,\n  \"dueBy\": null,\n  \"fileEmail\": null,\n  \"emailBody\": \"\",\n  \"emailFrom\": null,\n  \"emailHeaders\": null,\n  \"emailTo\": null,\n  \"emailSubject\": null,\n  \"epochTime\": null,\n  \"eventTime\": null,\n  \"fileHash\": null,\n  \"fileName\": null,\n  \"fileNames\": null,\n  \"filePath\": null,\n  \"latestLogin\": null,\n  \"metrics\": null,\n  \"parentProcessCmdLine\": null,\n  \"parentProcessPid\": null,\n  \"parentProcessName\": null,\n  \"processGuid\": null,\n  \"processId\": null,\n  \"processName\": null,\n  \"processTree\": null,\n  \"respDueDate\": null,\n  \"sourcedata\": \"{\\\"incident_data\\\": {\\\"id\\\": \\\"0\\\", \\\"nid\\\": \\\"1611421\\\", \\\"index\\\": \\\"8\\\", \\\"custId\\\": \\\"2000\\\", \\\"dataStr\\\": null, \\\"eventType\\\": \\\"PH_RULE_HIGH_SEV_SEC_IPS_IN_PERMIT\\\", \\\"attributes\\\": {\\\"user\\\": \\\"\\\", \\\"count\\\": \\\"2462\\\", \\\"customer\\\": \\\"demopack\\\", \\\"eventName\\\": \\\"High Severity Inbound Permitted IPS Exploit\\\", \\\"eventType\\\": \\\"PH_RULE_HIGH_SEV_SEC_IPS_IN_PERMIT\\\", \\\"srcGeoOrg\\\": \\\"IPG-AS-AP Philippine Long Distance Telephone Company  PH\\\", \\\"srcIpAddr\\\": \\\"<<TR_MALICIOUS_IP>>\\\", \\\"bizService\\\": \\\"\\\", \\\"destIpAddr\\\": \\\"10.222.248.67\\\", \\\"incidentId\\\": \\\"1611421\\\", \\\"phRecvTime\\\": \\\"<<TR_FORMATTED_TIME>> \\\", \\\"srcGeoCity\\\": \\\"Mandaluyong\\\", \\\"incidentSrc\\\": \\\"srcIpAddr:<<TR_MALICIOUS_IP>>,\\\", \\\"srcGeoState\\\": \\\"Metro Manila\\\", \\\"incidentReso\\\": \\\"1 (Open)\\\", \\\"eventSeverity\\\": \\\"9\\\", \\\"incidentRptIp\\\": \\\"10.222.248.67\\\", \\\"incidentTitle\\\": \\\"High Severity Inbound Permitted IPS Exploit FortiGate-ips-signature-15995 from <<TR_MALICIOUS_IP>> to 10.222.248.67\\\", \\\"srcGeoCountry\\\": \\\"Philippines\\\", \\\"incidentDetail\\\": \\\"compEventType:FortiGate-ips-signature-15995, attackName:, ipsSignatureId:15995, incidentCount:6,\\\", \\\"incidentStatus\\\": \\\"0 (Active)\\\", \\\"incidentTarget\\\": \\\"destIpAddr:10.222.248.67,\\\", \\\"srcGeoLatitude\\\": \\\"14.57944\\\", \\\"incidentExtUser\\\": \\\"\\\", \\\"phEventCategory\\\": \\\"1 (Incident)\\\", \\\"srcGeoLongitude\\\": \\\"121.03592\\\", \\\"eventSeverityCat\\\": \\\"HIGH\\\", \\\"incidentComments\\\": \\\"[FortiGate-ips-signature-15995] related to [CVE-2008-4250] from CMDB lookup.\\\\nSource [<<TR_MALICIOUS_IP>>] external.\\\\nTarget [10.222.248.67] not found.\\\\nInsufficient information to decide True\/False positive.\\\\n\\\\n[FortiGate-ips-signature-15995] related to [CVE-2008-4250] from CMDB lookup.\\\\nSource [<<TR_MALICIOUS_IP>>] external.\\\\nTarget [10.222.248.67] not found.\\\\nInsufficient information to decide True\/False positive.\\\", \\\"incidentLastSeen\\\": \\\"<<TR_FORMATTED_TIME>> \\\", \\\"incidentTicketId\\\": \\\"\\\", \\\"incidentFirstSeen\\\": \\\"1646207388\\\", \\\"incidentViewUsers\\\": \\\"\\\", \\\"phIncidentImpacts\\\": \\\"Application\\\", \\\"incidentNotiStatus\\\": \\\"\\\", \\\"incidentRptDevName\\\": \\\"FortiGate-Edge\\\", \\\"incidentTicketUser\\\": \\\"\\\", \\\"incidentViewStatus\\\": \\\"1 (Read)\\\", \\\"phIncidentCategory\\\": \\\"4\\\", \\\"incidentClearedTime\\\": \\\"<<TR_FORMATTED_TIME>> \\\", \\\"incidentClearedUser\\\": \\\"\\\", \\\"incidentExtTicketId\\\": \\\"T1210\\\", \\\"incidentRptDevStatus\\\": \\\"1 (Pending)\\\", \\\"incidentTicketStatus\\\": \\\"6 (None)\\\", \\\"incidentClearedReason\\\": \\\"\\\", \\\"incidentExtTicketType\\\": \\\"\\\", \\\"phSubIncidentCategory\\\": \\\"PH_RULE_SECURITY_EXECUTION\\\", \\\"incidentExtClearedTime\\\": \\\"<<TR_FORMATTED_TIME>> \\\", \\\"incidentExtTicketState\\\": \\\"\\\", \\\"incidentNotiRecipients\\\": \\\"\\\"}, \\\"receiveTime\\\": \\\"2020-09-02T07:33:00+02:00\\\"}, \\\"associated_events\\\": [{\\\"id\\\": \\\"8908964491548181012\\\", \\\"nid\\\": \\\"8908964491548181012\\\", \\\"index\\\": \\\"0\\\", \\\"custId\\\": \\\"2000\\\", \\\"dataStr\\\": null, \\\"eventType\\\": \\\"FortiGate-ips-signature-15995\\\", \\\"attributes\\\": {\\\"vdom\\\": \\\"root\\\", \\\"count\\\": \\\"1\\\", \\\"fwRule\\\": \\\"6\\\", \\\"eventId\\\": \\\"8908964491548181012\\\", \\\"ipProto\\\": \\\"6 (TCP)\\\", \\\"srcName\\\": \\\"HOST-<<TR_MALICIOUS_IP>>\\\", \\\"subtype\\\": \\\"ips\\\", \\\"customer\\\": \\\"demopack\\\", \\\"destName\\\": \\\"HOST-10.222.248.67\\\", \\\"fwAction\\\": \\\"detected\\\", \\\"logLevel\\\": \\\"alert\\\", \\\"memberID\\\": \\\"0419016384\\\", \\\"totFlows\\\": \\\"1\\\", \\\"direction\\\": \\\"outgoing\\\", \\\"eventName\\\": \\\"MS.DCERPC.NETAPI32.Buffer.Overflow\\\", \\\"eventType\\\": \\\"FortiGate-ips-signature-15995\\\", \\\"reptModel\\\": \\\"FortiOS\\\", \\\"sessionId\\\": \\\"51992519\\\", \\\"srcIpAddr\\\": \\\"<<TR_MALICIOUS_IP>>\\\", \\\"srcIpPort\\\": \\\"3038\\\", \\\"destIpAddr\\\": \\\"10.222.248.67\\\", \\\"destIpPort\\\": \\\"445 (MICROSOFT-DS)\\\", \\\"deviceTime\\\": \\\"<<TR_FORMATTED_TIME>> \\\", \\\"parserName\\\": \\\"FortiGateParser\\\", \\\"phRecvTime\\\": \\\"<<TR_FORMATTED_TIME>> \\\", \\\"reptVendor\\\": \\\"Fortinet\\\", \\\"srcGeoCity\\\": \\\"Mandaluyong\\\", \\\"collectorId\\\": \\\"10000\\\", \\\"eventAction\\\": \\\"0 (Permit)\\\", \\\"rawEventMsg\\\": \\\"<185>Sep  2 06:32:20 date=2016-09-13 time=16:50:23 devname=FG240D3913800441 devid=FG240D3913800441 logid=0419016384 type=utm subtype=ips eventtype=signature level=alert vd=root severity=critical srcip=<<TR_MALICIOUS_IP>> srccountry=\\\\\\\"\\\\\\\"Philippines\\\\\\\"\\\\\\\" dstip=10.222.248.67 srcintf=\\\\\\\"\\\\\\\"wan1\\\\\\\"\\\\\\\" dstintf=\\\\\\\"\\\\\\\"HoneyZone\\\\\\\"\\\\\\\" policyid=6 sessionid=51992519 action=detected proto=6 service=\\\\\\\"\\\\\\\"SMB\\\\\\\"\\\\\\\" attack=\\\\\\\"\\\\\\\"MS.DCERPC.netAPI32.Buffer.Overflow\\\\\\\"\\\\\\\" srcport=3038 dstport=445 direction=outgoing attackid=15995 profile=\\\\\\\"\\\\\\\"Honeydrive_monitor\\\\\\\"\\\\\\\" ref=\\\\\\\"\\\\\\\"http:\/\/www.fortinet.com\/ids\/VID15995\\\\\\\"\\\\\\\" incidentserialno=2022574121 msg=\\\\\\\"\\\\\\\"netbios: MS.DCERPC.netAPI32.Buffer.Overflow\\\", \\\"reptDevName\\\": \\\"FG240D3913800441\\\", \\\"srcGeoState\\\": \\\"Metro Manila\\\", \\\"timeSkewSec\\\": \\\"125242917\\\", \\\"eventParsedOk\\\": \\\"1\\\", \\\"eventSeverity\\\": \\\"10\\\", \\\"reptDevIpAddr\\\": \\\"10.222.248.67\\\", \\\"srcGeoCountry\\\": \\\"Philippines\\\", \\\"ipsSignatureId\\\": \\\"15995\\\", \\\"relayDevIpAddr\\\": \\\"10.222.248.67\\\", \\\"srcGeoLatitude\\\": \\\"14.57944\\\", \\\"phEventCategory\\\": \\\"0 (External)\\\", \\\"srcGeoLongitude\\\": \\\"121.03592\\\", \\\"eventRuleTrigger\\\": \\\"1\\\", \\\"eventSeverityCat\\\": \\\"HIGH\\\", \\\"ipsFPCheckStatus\\\": \\\"0 (Couldnot determine)\\\", \\\"extEventRecvProto\\\": \\\"Syslog\\\", \\\"srcGeoCountryCodeStr\\\": \\\"PH\\\"}, \\\"receiveTime\\\": \\\"<<TR_FORMATTED_TIME>> \\\"}]}\",\n  \"recipientEmailAddress\": null,\n  \"registryKey\": null,\n  \"registryKeyValue\": null,\n  \"reporter\": \"FortiGate-Edge\",\n  \"reporterEmailBody\": null,\n  \"returnPath\": null,\n  \"scheduledTask\": null,\n  \"senderDomain\": null,\n  \"senderEmailAddress\": null,\n  \"services\": null,\n  \"source\": \"SIM-AETR\",\n  \"sourceId\": \"1611421-57736\",\n  \"sourceIp\": \"<<TR_MALICIOUS_IP>>\",\n  \"sourcePort\": null,\n  \"sourceProcess\": null,\n  \"sourceTool\": null,\n  \"targetAsset\": null,\n  \"targetProcess\": \"CVE-2008-4250\",\n  \"url\": null,\n  \"userName\": null,\n  \"userDetails\": null,\n  \"mitretactics\": null,\n  \"mitregroups\": null,\n  \"deviceType\": null,\n  \"assignedTo\": {\n    \"@id\": \"\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n    \"@type\": \"Person\",\n    \"phoneHome\": null,\n    \"firstname\": \"CS\",\n    \"lastname\": \"Admin\",\n    \"title\": \"Admin\",\n    \"department\": null,\n    \"email\": \"fortisoar@fortielab.com\",\n    \"description\": null,\n    \"phoneFax\": null,\n    \"phoneMobile\": null,\n    \"phoneWork\": \"+16462759691\",\n    \"csActive\": true,\n    \"accessType\": \"Named\",\n    \"companyId\": null,\n    \"type\": null,\n    \"userType\": null,\n    \"avatar\": null,\n    \"uuid\": \"3451141c-bac6-467c-8d72-85e0fab569ce\",\n    \"createUser\": \"\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n    \"createDate\": 1633035299,\n    \"modifyUser\": \"\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n    \"modifyDate\": 1645027495,\n    \"id\": 3,\n    \"userId\": \"8b7c587a-727a-4860-85ec-fd7b1eeea505\",\n    \"@settings\": \"\/api\/3\/user_settings\/3451141c-bac6-467c-8d72-85e0fab569ce\"\n  },\n  \"ackSlaStatus\": {\n    \"@id\": \"\/api\/3\/picklists\/090115d7-90fc-4dc6-97ca-27950fc30c1c\",\n    \"@type\": \"Picklist\",\n    \"itemValue\": \"Met\",\n    \"orderIndex\": 0,\n    \"color\": \"#14b341\",\n    \"icon\": null,\n    \"listName\": \"\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153\",\n    \"uuid\": \"090115d7-90fc-4dc6-97ca-27950fc30c1c\",\n    \"id\": 7\n  },\n  \"respSlaStatus\": {\n    \"@id\": \"\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818\",\n    \"@type\": \"Picklist\",\n    \"itemValue\": \"Awaiting Action\",\n    \"orderIndex\": 2,\n    \"color\": \"#808080\",\n    \"icon\": null,\n    \"listName\": \"\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153\",\n    \"uuid\": \"72979f64-e8b9-4888-a965-957e0ec24818\",\n    \"id\": 328\n  },\n  \"closureReason\": {\n    \"@id\": \"\/api\/3\/picklists\/2b0112f6-4746-4dab-ada6-a8cd1e675572\",\n    \"@type\": \"Picklist\",\n    \"itemValue\": \"False Positive\",\n    \"orderIndex\": 2,\n    \"color\": null,\n    \"icon\": null,\n    \"listName\": \"\/api\/3\/picklist_names\/4ebacea1-88cd-4ea8-9dcc-385bea42cc59\",\n    \"uuid\": \"2b0112f6-4746-4dab-ada6-a8cd1e675572\",\n    \"id\": 249\n  },\n  \"escalatedtoincident\": null,\n  \"killChainPhase\": {\n    \"@id\": \"\/api\/3\/picklists\/8dfaa4f1-cd5b-43dc-bc3f-8821261fcb69\",\n    \"@type\": \"Picklist\",\n    \"itemValue\": \"Actions on Objectives\",\n    \"orderIndex\": 7,\n    \"color\": null,\n    \"icon\": null,\n    \"listName\": \"\/api\/3\/picklist_names\/eddbc863-c725-479a-867f-cec66206a6b4\",\n    \"uuid\": \"8dfaa4f1-cd5b-43dc-bc3f-8821261fcb69\",\n    \"id\": 137\n  },\n  \"severity\": {\n    \"@id\": \"\/api\/3\/picklists\/0d609b08-45e0-469f-8910-41145c0b7c03\",\n    \"@type\": \"Picklist\",\n    \"itemValue\": \"Minimal\",\n    \"orderIndex\": 0,\n    \"color\": \"#157DD9\",\n    \"icon\": null,\n    \"listName\": \"\/api\/3\/picklist_names\/4e80cba3-032f-48b4-ac03-17e3ec247aac\",\n    \"uuid\": \"0d609b08-45e0-469f-8910-41145c0b7c03\",\n    \"id\": 12\n  },\n  \"state\": {\n    \"@id\": \"\/api\/3\/picklists\/8675a07f-2d0d-4e3a-89af-4822b8341df8\",\n    \"@type\": \"Picklist\",\n    \"itemValue\": \"Ready to Investigate\",\n    \"orderIndex\": 4,\n    \"color\": null,\n    \"icon\": null,\n    \"listName\": \"\/api\/3\/picklist_names\/2f9ed741-25fe-475a-9f12-64336288eebf\",\n    \"uuid\": \"8675a07f-2d0d-4e3a-89af-4822b8341df8\",\n    \"id\": 125\n  },\n  \"status\": {\n    \"@id\": \"\/api\/3\/picklists\/fac53e73-8d16-4189-98d5-95fbd1555232\",\n    \"@type\": \"Picklist\",\n    \"itemValue\": \"Closed\",\n    \"orderIndex\": 4,\n    \"color\": null,\n    \"icon\": null,\n    \"listName\": \"\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a\",\n    \"uuid\": \"fac53e73-8d16-4189-98d5-95fbd1555232\",\n    \"id\": 245\n  },\n  \"systemAssignedQueue\": null,\n  \"type\": {\n    \"@id\": \"\/api\/3\/picklists\/33272f56-79aa-4edd-8f27-8e0aeccad730\",\n    \"@type\": \"Picklist\",\n    \"itemValue\": \"SECURITY_EXECUTION\",\n    \"orderIndex\": null,\n    \"color\": null,\n    \"icon\": null,\n    \"listName\": \"\/api\/3\/picklist_names\/a7087b9c-5660-495f-a8ac-c3b198ddb8c2\",\n    \"uuid\": \"33272f56-79aa-4edd-8f27-8e0aeccad730\",\n    \"id\": 336\n  },\n  \"uuid\": \"f7b85f79-9803-4b93-bf26-10a45f8c91c5\",\n  \"createUser\": {\n    \"@id\": \"\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n    \"@type\": \"Person\",\n    \"phoneHome\": null,\n    \"firstname\": \"CS\",\n    \"lastname\": \"Admin\",\n    \"title\": \"Admin\",\n    \"department\": null,\n    \"email\": \"fortisoar@fortielab.com\",\n    \"description\": null,\n    \"phoneFax\": null,\n    \"phoneMobile\": null,\n    \"phoneWork\": \"+16462759691\",\n    \"csActive\": true,\n    \"accessType\": \"Named\",\n    \"companyId\": null,\n    \"type\": null,\n    \"userType\": null,\n    \"avatar\": null,\n    \"uuid\": \"3451141c-bac6-467c-8d72-85e0fab569ce\",\n    \"createUser\": \"\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n    \"createDate\": 1633035299,\n    \"modifyUser\": \"\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n    \"modifyDate\": 1645027495,\n    \"id\": 3,\n    \"userId\": \"8b7c587a-727a-4860-85ec-fd7b1eeea505\",\n    \"@settings\": \"\/api\/3\/user_settings\/3451141c-bac6-467c-8d72-85e0fab569ce\"\n  },\n  \"createDate\": 1646214768,\n  \"modifyUser\": {\n    \"@id\": \"\/api\/3\/appliances\/57545210-2adc-472b-a24f-2df6ee8dfe63\",\n    \"@type\": \"Appliance\",\n    \"name\": \"Playbook\",\n    \"userType\": null,\n    \"avatar\": null,\n    \"uuid\": \"57545210-2adc-472b-a24f-2df6ee8dfe63\",\n    \"createUser\": null,\n    \"createDate\": 1633035299,\n    \"modifyUser\": \"\/api\/3\/appliances\/57545210-2adc-472b-a24f-2df6ee8dfe63\",\n    \"modifyDate\": 1645546357,\n    \"id\": 1,\n    \"userId\": \"6f3626c1-0da7-4b44-8d5e-43750f780a47\"\n  },\n  \"modifyDate\": 1646214836,\n  \"tenant\": {\n    \"@id\": \"\/api\/3\/tenants\/b3a700f7-00be-4ef9-90c6-3c8fe6e1be63\",\n    \"@type\": \"Tenant\",\n    \"name\": \"Self\",\n    \"isDedicated\": true,\n    \"tenantId\": \"ed6ecc3a68effb9665d98c9841996e38\",\n    \"role\": \"self\",\n    \"description\": \"sample\",\n    \"allowRemoteMMDModification\": true,\n    \"license\": null,\n    \"region\": null,\n    \"industry\": null,\n    \"uuid\": \"b3a700f7-00be-4ef9-90c6-3c8fe6e1be63\",\n    \"createUser\": null,\n    \"createDate\": null,\n    \"modifyUser\": null,\n    \"modifyDate\": null,\n    \"id\": 1\n  },\n  \"conflict\": false,\n  \"tenantRecordId\": 97,\n  \"id\": 97,\n  \"recordTags\": [],\n  \"assignee\": \"\"\n}",
+                    "fields_to_ignore": ""
+                },
+                "version": "1.0.9",
+                "connector": "fortisoar-soc-simulator",
+                "operation": "create_simulated_alert",
+                "operationTitle": "Create Simulated Alert",
+                "pickFromTenant": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "91",
+            "left": "427",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "20c5c4c5-2c9a-44a9-bb6c-7a32570f3d30",
+            "id": 8212
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Data Output",
+            "description": null,
+            "arguments": {
+                "recordIRI": "{{vars.steps.Create_Alert.data}}"
+            },
+            "status": null,
+            "top": "116",
+            "left": "713",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "09af9df7-bdde-4666-90f6-d2d9aa0d0e6a",
+            "id": 8214
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Create Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/20c5c4c5-2c9a-44a9-bb6c-7a32570f3d30",
+            "sourceStep": "\/api\/3\/workflow_steps\/00e0f23a-52fa-4a83-8654-d1bad8642155",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f2d3fc66-4fac-4323-9cd8-7d6bb297c391"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Alert -> Data Output",
+            "targetStep": "\/api\/3\/workflow_steps\/09af9df7-bdde-4666-90f6-d2d9aa0d0e6a",
+            "sourceStep": "\/api\/3\/workflow_steps\/20c5c4c5-2c9a-44a9-bb6c-7a32570f3d30",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3041ec43-55d6-45b7-bf6c-e9949dd58cec"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "1ff23ce8-2cf9-422c-b7a2-89d8b7fa0e53",
+    "recordTags": [],
+    "id": 1598,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1646221816,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1646996856,
+    "owners": [],
+    "isPrivate": false
+}

@@ -1,0 +1,190 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "> Set Alert Comment Status",
+    "aliasName": null,
+    "tag": null,
+    "description": "Set alert comment status to completed",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/389c8b50-4172-4340-8b0c-ad759d1703fa",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/29890ad3-8558-40e0-9da9-819e592fe4a7",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "resource": "alerts",
+                "resources": [
+                    "alerts"
+                ],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": [
+                            "{{vars.input.records[0]}}"
+                        ]
+                    }
+                },
+                "fieldbasedtrigger": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "object",
+                            "field": "status",
+                            "value": "",
+                            "_value": {
+                                "@id": "",
+                                "display": "",
+                                "itemValue": ""
+                            },
+                            "operator": "changed"
+                        },
+                        {
+                            "type": "object",
+                            "field": "status",
+                            "value": "\/api\/3\/picklists\/758925e7-629c-46d8-89db-fb36f5fbe88a",
+                            "_value": {
+                                "@id": "\/api\/3\/picklists\/758925e7-629c-46d8-89db-fb36f5fbe88a",
+                                "display": "Investigating",
+                                "itemValue": "Investigating"
+                            },
+                            "operator": "eq"
+                        },
+                        {
+                            "type": "array",
+                            "field": "recordTags",
+                            "value": [
+                                "\/api\/3\/tags\/SIM"
+                            ],
+                            "module": "recordTags",
+                            "display": null,
+                            "operator": "in_all",
+                            "template": "tags",
+                            "OPERATOR_KEY": "$",
+                            "previousOperator": "in_all",
+                            "previousTemplate": "tags"
+                        },
+                        {
+                            "type": "primitive",
+                            "field": "targetAsset",
+                            "value": "%fortielab.com%",
+                            "operator": "like",
+                            "_operator": "like"
+                        }
+                    ]
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/9300bf69-5063-486d-b3a6-47eb9da24872",
+            "group": null,
+            "uuid": "29890ad3-8558-40e0-9da9-819e592fe4a7"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Comment",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.steps.Find_Status_Comment | length > 0}}",
+                "resource": {
+                    "__link": {
+                        "recordTags": [
+                            "\/api\/3\/tags\/Done"
+                        ]
+                    }
+                },
+                "operation": "Append",
+                "collection": "{{vars.steps.Find_Status_Comment[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/comments",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "52462062-c6fb-4570-910b-47d5028cc51a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Find Status Comment",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "alerts.id",
+                            "value": "{{vars.input.records[0].id}}",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        },
+                        {
+                            "type": "primitive",
+                            "field": "content",
+                            "value": "%Set the Alert Status to%",
+                            "operator": "like",
+                            "_operator": "like"
+                        }
+                    ]
+                },
+                "module": "comments?$limit=1",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "abe0973e-72a1-4f60-884e-6ffcce91e1a2"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Find Status Comment -> Update Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/52462062-c6fb-4570-910b-47d5028cc51a",
+            "sourceStep": "\/api\/3\/workflow_steps\/abe0973e-72a1-4f60-884e-6ffcce91e1a2",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "7f4abb6e-380f-4b86-b0a2-56bcffbfdf42"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Find Status Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/abe0973e-72a1-4f60-884e-6ffcce91e1a2",
+            "sourceStep": "\/api\/3\/workflow_steps\/29890ad3-8558-40e0-9da9-819e592fe4a7",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "92fd3137-cb05-4d09-97e7-dfba95e003ec"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "ac7549b4-ea2a-4804-8911-ed7e4b7b18aa",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Alerts",
+        "Comment",
+        "On-Update"
+    ]
+}

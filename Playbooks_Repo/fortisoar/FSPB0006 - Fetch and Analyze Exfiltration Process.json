@@ -1,0 +1,213 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "04 - Fetch and Analyze Exfiltration Process",
+    "aliasName": null,
+    "tag": null,
+    "description": "Parses binary file indicator and extract all its artifacts to be rated with CTI",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/389c8b50-4172-4340-8b0c-ad759d1703fa",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/f7e121df-818e-44cf-9650-44f3be2bd4e1",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Exfiltration File",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "device_ip_address": "{{vars.input.records[0].sourceIp}}",
+                    "parent_object_IRI": "{{vars.input.records[0]['@id']}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/166ea2be-0bf6-4e4d-b15a-c29bf86bc948"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "2180fa36-6da6-4274-bcaf-c90d8d8c785d"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Comment_Set Reputation",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "alerts": "{{vars.input.records[0]['@id']}}",
+                    "people": [],
+                    "content": "<p>{{globalVars.Action_Icon}} Once the suspicious file analysis is completed it will have to be rated (set reputation)<\/p>\n<ul>\n<li>Within this alert, browse to <span style=\"color: #e67e23;\"><strong>Indicators<\/strong><\/span><\/li>\n<li>Locate the fetched <span style=\"color: #e67e23;\"><strong>binary file<\/strong><\/span> indicator and open it by clicking on its ID\n<ul>\n<li><span data-tomark-pass=\"\" style=\"color: red; font-size: 6mm;\">\u26a0<\/span> Caution: if you click on the file name you will download it to your workstation. The file can harm your device !<\/li>\n<\/ul>\n<\/li>\n<li>Browse to <span style=\"color: #e67e23;\"><strong>Sightings &gt;&gt; Indicators <\/strong><\/span>tab within the file indicator view to check the reputation of the indicators extracted from the file<\/li>\n<li>If any of them is malicious or suspicious set the file indicator reputation to <span style=\"color: #e67e23;\"><strong>Malicious<\/strong><\/span><\/li>\n<\/ul>\n<p>&nbsp;<\/p>",
+                    "__replace": "",
+                    "indicators": "{{vars.steps.Get_Exfiltration_File.indicator_IRI}}",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "bebbef26-8fcb-4f19-85ce-254d531539eb"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Previous Comment",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "comments_IRIs": "{{vars.steps.Comment_Set_Reputation['@id']}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/1ece048a-43ee-45b1-b860-5a4675a45ad2"
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "d5c4a515-78a2-4977-8f15-c92e45a6deab"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Analyze Exfiltration Process",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "file_IRI": "{{vars.steps.Get_Exfiltration_File.file_IRI}}",
+                    "alert_IRI": "{{vars.input.records[0]['@id']}}",
+                    "parent_object_IRI": "{{vars.steps.Get_Exfiltration_File.indicator_IRI}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/d1843268-3d3f-458d-95b7-eb0f70d1de3a"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "ef954adf-bf7b-4231-af85-ef5805d02047"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "12b8eb9c-e264-4699-b547-ae025733c8f9",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "object",
+                                "field": "type",
+                                "value": [
+                                    "\/api\/3\/picklists\/a043fb35-f373-44c0-bfa9-5bce2f711141",
+                                    "\/api\/3\/picklists\/0cbc2c31-c360-4770-b1e7-3653a8c24ead"
+                                ],
+                                "module": "type",
+                                "display": "",
+                                "operator": "in",
+                                "template": "multiselectpicklist",
+                                "OPERATOR_KEY": "$",
+                                "displayTemplate": "",
+                                "previousOperator": "in",
+                                "previousTemplate": "multiselectpicklist"
+                            }
+                        ]
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "singleRecordExecution": true
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "f7e121df-818e-44cf-9650-44f3be2bd4e1"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Analyze Exfiltration Process -> _GC_ Set Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/bebbef26-8fcb-4f19-85ce-254d531539eb",
+            "sourceStep": "\/api\/3\/workflow_steps\/ef954adf-bf7b-4231-af85-ef5805d02047",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "06097037-c958-4534-a313-757efe5c52e8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "_GC_ Set Reputation -> Update Previous Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/d5c4a515-78a2-4977-8f15-c92e45a6deab",
+            "sourceStep": "\/api\/3\/workflow_steps\/bebbef26-8fcb-4f19-85ce-254d531539eb",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "2b2c053d-67f7-4824-b0ca-d22147995ea1"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Get Exfiltration File",
+            "targetStep": "\/api\/3\/workflow_steps\/2180fa36-6da6-4274-bcaf-c90d8d8c785d",
+            "sourceStep": "\/api\/3\/workflow_steps\/f7e121df-818e-44cf-9650-44f3be2bd4e1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4031ac3b-d740-4c59-a775-3caae5afc484"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Exfiltration File -> Analyze Exfiltration Process",
+            "targetStep": "\/api\/3\/workflow_steps\/ef954adf-bf7b-4231-af85-ef5805d02047",
+            "sourceStep": "\/api\/3\/workflow_steps\/2180fa36-6da6-4274-bcaf-c90d8d8c785d",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c3de00c1-8a29-478f-8fa5-c42d65e79f62"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "cbf1cd3c-a489-4e95-bc15-747c325facb7",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Threat Hunting",
+        "Alert"
+    ]
+}

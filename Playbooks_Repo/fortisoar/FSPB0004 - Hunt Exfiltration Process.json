@@ -1,0 +1,221 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "03 - Hunt Exfiltration Process",
+    "aliasName": null,
+    "tag": null,
+    "description": "Identify the process exfiltrating data and fetch it from the endpoint device as an indicator",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/389c8b50-4172-4340-8b0c-ad759d1703fa",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/6bcd4768-c2da-46c4-b16a-4921848625bd",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Previous Comment",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "comments_IRIs": "{{vars.steps.Comment_Analyze_Exfiltration_Process['@id']}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/1ece048a-43ee-45b1-b860-5a4675a45ad2"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "14317ce2-8b0b-4531-8b0b-33362ef0c310"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Hunt Exfiltration Process Name",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "device_ip_address": "{{vars.input.records[0].sourceIp}}",
+                    "parent_record_IRI": "{{vars.input.records[0]['@id']}}",
+                    "destination_ip_address": "{{vars.input.records[0].destinationIp}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/65b08ec8-a332-49f1-a7f2-58d8f03dd957"
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "2a81a59e-8e4f-4a7a-8a56-b233281e9161"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Comment_Populated Alert Fields",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "alerts": "{{vars.input.records[0]['@id']}}",
+                    "people": [],
+                    "content": "<p>{{globalVars.Hint_Icon}} Notice the alert fields (<span style=\"color: #e67e23;\"><strong>Username, File Path...<\/strong><\/span>) are being populated with data from the enrichment playbooks<\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "42f079d4-0cd6-4a46-9dff-65511d43f903"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "3d0eafc5-0f00-4ecb-a63e-80a83c736ec3",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "object",
+                                "field": "type",
+                                "value": [
+                                    "\/api\/3\/picklists\/a043fb35-f373-44c0-bfa9-5bce2f711141",
+                                    "\/api\/3\/picklists\/0cbc2c31-c360-4770-b1e7-3653a8c24ead"
+                                ],
+                                "module": "type",
+                                "display": "",
+                                "operator": "in",
+                                "template": "multiselectpicklist",
+                                "OPERATOR_KEY": "$",
+                                "displayTemplate": "",
+                                "previousOperator": "in",
+                                "previousTemplate": "multiselectpicklist"
+                            }
+                        ]
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "singleRecordExecution": true
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "6bcd4768-c2da-46c4-b16a-4921848625bd"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Comment_Analyze Exfiltration Process",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "alerts": "{{vars.input.records[0]['@id']}}",
+                    "people": [],
+                    "content": "<p>{{globalVars.Action_Icon}} <strong>Run playbook : <span style=\"background-color: #e67e23;\">Fetch and Analyze Exfiltration Process<\/span><\/strong><strong> <\/strong>to<\/p>\n<ul>\n<li>Fetch the suspicious file from the asset via WinRM\/CIFS\/Endpoint integration<\/li>\n<li>Save the file as indicator and and keep a copy as evidence in the attachment module<\/li>\n<li>Extract indicators from the suspicious file and link them to it. Linked indicators can be found under <span style=\"color: #e67e23;\"><strong>Sightings &gt;&gt; Indicators<\/strong><\/span><\/li>\n<li>Get reputation for the extracted artifacts<\/li>\n<\/ul>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "7bec9a3c-c02b-4fdb-9652-765d779cd461"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "_GC_ Analyze Exfiltration Process -> Update Previous Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/14317ce2-8b0b-4531-8b0b-33362ef0c310",
+            "sourceStep": "\/api\/3\/workflow_steps\/7bec9a3c-c02b-4fdb-9652-765d779cd461",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "21174cd5-95a3-4de9-9fb7-52ec1df1508a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "_GC_ Manual Username Entry -> _GC_ Analyze Exfiltration Process",
+            "targetStep": "\/api\/3\/workflow_steps\/7bec9a3c-c02b-4fdb-9652-765d779cd461",
+            "sourceStep": "\/api\/3\/workflow_steps\/42f079d4-0cd6-4a46-9dff-65511d43f903",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3cf8b656-33d2-4094-a9e8-1c1e97716940"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> _GC_ Manual Username Entry",
+            "targetStep": "\/api\/3\/workflow_steps\/42f079d4-0cd6-4a46-9dff-65511d43f903",
+            "sourceStep": "\/api\/3\/workflow_steps\/6bcd4768-c2da-46c4-b16a-4921848625bd",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3d0378c1-2a2f-484c-8980-7d2c5c55e036"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Previous Comment -> Hunt Exfiltration Process Name",
+            "targetStep": "\/api\/3\/workflow_steps\/2a81a59e-8e4f-4a7a-8a56-b233281e9161",
+            "sourceStep": "\/api\/3\/workflow_steps\/14317ce2-8b0b-4531-8b0b-33362ef0c310",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "7f08a049-a1bf-4f0d-931b-6dee515f6a4b"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "cfe1b737-b9e3-495e-8dd5-843ec5149883",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Enrichment",
+        "Alert"
+    ]
+}

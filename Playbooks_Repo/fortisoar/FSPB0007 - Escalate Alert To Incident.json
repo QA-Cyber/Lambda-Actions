@@ -1,0 +1,143 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "05 - Escalate Alert To Incident",
+    "aliasName": null,
+    "tag": null,
+    "description": "Alert escalation",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/389c8b50-4172-4340-8b0c-ad759d1703fa",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/6db00337-07d1-41a7-9d74-4d3c91b45917",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "65a22ceb-8e21-4e9e-8648-993fd666ea5c",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "object",
+                                "field": "type",
+                                "value": [
+                                    "\/api\/3\/picklists\/a043fb35-f373-44c0-bfa9-5bce2f711141",
+                                    "\/api\/3\/picklists\/0cbc2c31-c360-4770-b1e7-3653a8c24ead"
+                                ],
+                                "module": "type",
+                                "display": "",
+                                "operator": "in",
+                                "template": "multiselectpicklist",
+                                "OPERATOR_KEY": "$",
+                                "displayTemplate": "",
+                                "previousOperator": "in",
+                                "previousTemplate": "multiselectpicklist"
+                            }
+                        ]
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "singleRecordExecution": true
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "6db00337-07d1-41a7-9d74-4d3c91b45917"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Escalate Alert",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "alert_IRI": "{{vars.input.records[0]['@id']}}",
+                    "automated": ""
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/ca2dcb7f-2e0d-44d3-8c31-bfab33d20d31"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "946694d2-524b-435b-a869-9d3c7a6dff2b"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Previous Comment",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "comments_IRIs": "{{vars.steps.Escalate_Alert.comments_IRIs}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/1ece048a-43ee-45b1-b860-5a4675a45ad2"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "c0ab1aaa-fbfc-44b7-84ca-415f7971ab54"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Escalate Alert -> Update Previous Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/c0ab1aaa-fbfc-44b7-84ca-415f7971ab54",
+            "sourceStep": "\/api\/3\/workflow_steps\/946694d2-524b-435b-a869-9d3c7a6dff2b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "25e87bd8-e47b-458d-9d40-071bbd92ffc9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Escalate Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/946694d2-524b-435b-a869-9d3c7a6dff2b",
+            "sourceStep": "\/api\/3\/workflow_steps\/6db00337-07d1-41a7-9d74-4d3c91b45917",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c63c1b1f-5175-499b-92a9-99e978344176"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "34fa7fd0-f079-4790-8ceb-fac83e72866e",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Incident",
+        "Escalation",
+        "Alert"
+    ]
+}

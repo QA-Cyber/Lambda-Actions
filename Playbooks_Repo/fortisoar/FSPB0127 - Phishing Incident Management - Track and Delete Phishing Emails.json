@@ -1,0 +1,222 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Phishing Incident Management - Track and Delete Phishing Emails",
+    "aliasName": null,
+    "tag": null,
+    "description": "Delete malicious content from Mailboxes",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "Target_Email",
+        "Email_Subject"
+    ],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/6dadec2b-3024-4b1b-832c-c612f0bca071",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/33684472-4635-4444-88b6-8e3251b4a25e",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute Message IDs",
+            "description": null,
+            "arguments": {
+                "message_ids": "{%if vars.email_search_results.emails%}{{(vars.email_search_results.emails|json_query(\"[].headers.[\\\"Message-ID\\\"]\"))|flatten(levels=1)}}{%else%}<161521630813.1257.6206494626344010218@fortisoar-53>{%endif%}"
+            },
+            "status": null,
+            "top": "574",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "95484975-3636-4fd9-bc38-f2b2e275579a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Email Address",
+            "description": null,
+            "arguments": {
+                "target_email": "{{vars.input.params['Target_Email']}}",
+                "email_subject": "{{vars.input.params['Email_Subject']}}"
+            },
+            "status": null,
+            "top": "167",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "2443ccba-5bd3-4e8e-a021-88c4bd7bb209"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Search Results",
+            "description": null,
+            "arguments": {
+                "email_search_results": "{{vars.steps.Search_Target_Inbox.data}}"
+            },
+            "status": null,
+            "top": "439",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "a43e5461-1ec9-44e7-a970-28d3047e3c36"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Move to trash",
+            "description": null,
+            "arguments": {
+                "name": "Exchange",
+                "when": "{{vars.message_ids|length > 0}}",
+                "config": "ab05b0db-0294-499a-83a8-0e40ea35282f",
+                "params": {
+                    "message_id": "{{vars.item}}",
+                    "delete_type": "Move To Trash",
+                    "folder_name": "",
+                    "target_email": "{{vars.target_email}}"
+                },
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "content": "<p>Email <span class=\"badge badge-pill badge-danger\" style=\"background: #e31b1d; color: #fff;\">Deleted<\/span> from <span style=\"font-size: 12pt;\"><strong>{{vars.target_email}}<\/strong><\/span> Inbox<\/p>",
+                    "records": ""
+                },
+                "version": "3.4.4",
+                "for_each": {
+                    "item": "{{vars.message_ids}}",
+                    "parallel": false,
+                    "condition": ""
+                },
+                "connector": "exchange",
+                "operation": "delete_email",
+                "mock_result": "[\n  {\n    \"data\": {\n      \"message\": \"Email Deleted successfully\"\n    },\n    \"status\": \"Success\",\n    \"_status\": true,\n    \"message\": \"\",\n    \"operation\": null,\n    \"request_id\": null\n  },\n  {\n    \"data\": {\n      \"message\": \"Email Deleted successfully\"\n    },\n    \"status\": \"Success\",\n    \"_status\": true,\n    \"message\": \"\",\n    \"operation\": null,\n    \"request_id\": null\n  },\n  {\n    \"data\": {\n      \"message\": \"Email Deleted successfully\"\n    },\n    \"status\": \"Success\",\n    \"_status\": true,\n    \"message\": \"\",\n    \"operation\": null,\n    \"request_id\": null\n  },\n  {\n    \"data\": {\n      \"message\": \"Email Deleted successfully\"\n    },\n    \"status\": \"Success\",\n    \"_status\": true,\n    \"message\": \"\",\n    \"operation\": null,\n    \"request_id\": null\n  }\n]",
+                "ignore_errors": true,
+                "operationTitle": "Delete Email",
+                "pickFromTenant": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "709",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "2260a3f4-bd07-4b1d-9296-52a04558f09e"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Search Target Inbox",
+            "description": null,
+            "arguments": {
+                "name": "Exchange",
+                "config": "ab05b0db-0294-499a-83a8-0e40ea35282f",
+                "params": {
+                    "query": "",
+                    "range": "",
+                    "folder": "Inbox",
+                    "body_text": "",
+                    "pull_oldest": false,
+                    "sender_text": "",
+                    "parse_inline": "",
+                    "subject_text": "{{vars.email_subject}}",
+                    "target_email": "{{vars.target_email}}",
+                    "extract_attach_data": false
+                },
+                "version": "3.4.3",
+                "connector": "exchange",
+                "operation": "run_query",
+                "mock_result": "{\n  \"data\": {\n    \"emails\": [\n      {\n        \"body\": {\n          \"html\": \"<meta http-equiv=\\\"Content-Type\\\" content=\\\"text\/html; charset=utf-8\\\"><p><html><head>\\r\\n<\/head><body><div style=\\\"font-family: Verdana;font-size: 12.0px;\\\"><div>\\r\\n<p>A Critical vulnerability has been found in our internal ERP client application<br>\\r\\n, a patch has been made available in our internal website&nbsp;<a href=\\\"https:\/\/wo.rentalshackapp.com\/u..u\/firstlog.php?public\/enroll\/IdentifyUser-aspx-LOB=RBGLogon=MTIwNDQyMzI3MTIwNDQyMzI3&amp;session=MTIwNDQyMzI3MTIwNDQyMzI3\\\" target=\\\"_blank\\\"><span style=\\\"color:#22a6af\\\"><span style=\\\"text-decoration:none\\\">ER16453 Patch<\/span><\/span><\/a><br>\\r\\n.It is mandatory for all employes to download it and install it immediately. Instructions PDF Attached<br>\\r\\nOffice of the CTO<\/p>\\r\\n\\r\\n<hr><font color=\\\"#000000\\\"><b>*** Please note that this message and any attachments may contain confidential and proprietary material and information and are intended only for the use of the intended recipient(s). If you are not the intended recipient, you are hereby notified that any review, use, disclosure, dissemination, distribution or copying of this message and any attachments is strictly prohibited. If you have received this email in error, please immediately notify the sender and destroy this e-mail and any attachments and all copies, whether electronic or printed. Please also note that any views, opinions, conclusions or commitments expressed in this message are those of the individual sender and do not necessarily reflect the views of fortielab, Inc., its affiliates, and emails are not binding on fortielab and only a writing manually signed by fortielab's General Counsel can be a binding commitment of fortielab to fortielab's customers or partners. Thank you. ***<\/b><\/font><\/div><\/div><\/body><\/html><\/p>\",\n          \"json\": null,\n          \"text\": \"\\r\\n\\r\\nA Critical vulnerability has been found in our internal ERP client application\\r\\n, a patch has been made available in our internal website&nbsp;ER16453 Patch\\r\\n.It is mandatory for all employes to download it and install it immediately. Instructions PDF Attached\\r\\nOffice of the CTO\\r\\n\\r\\n*** Please note that this message and any attachments may contain confidential and proprietary material and information and are intended only for the use of the intended recipient(s). If you are not the intended recipient, you are hereby notified that any review, use, disclosure, dissemination, distribution or copying of this message and any attachments is strictly prohibited. If you have received this email in error, please immediately notify the sender and destroy this e-mail and any attachments and all copies, whether electronic or printed. Please also note that any views, opinions, conclusions or commitments expressed in this message are those of the individual sender and do not necessarily reflect the views of fortielab, Inc., its affiliates, and emails are not binding on fortielab and only a writing manually signed by fortielab's General Counsel can be a binding commitment of fortielab to fortielab's customers or partners. Thank you. ***\"\n        },\n        \"headers\": {\n          \"To\": \"masha@fortielab.com, asmith@fortielab.com, dricardo@fortielab.com, sasha@fortielab.com\",\n          \"Date\": \"Mon, 08 Mar 2021 15:11:48 +0000\",\n          \"From\": \"cto_office@signaltechnet.com\",\n          \"Subject\": \"Immediate action required\",\n          \"Received\": [\n            \"from Exch19.fortielab.com (10.222.248.67) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5 via Mailbox Transport; Mon, 8 Mar 2021 16:11:48 +0100\",\n            \"from Exch19.fortielab.com (10.222.248.67) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5; Mon, 8 Mar 2021 16:11:48 +0100\",\n            \"from fortisoar-53 (10.222.248.53) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server id 15.2.529.5 via Frontend Transport; Mon, 8 Mar 2021 16:11:48 +0100\"\n          ],\n          \"Message-ID\": \"<161521630813.1257.6206494626344010218@fortisoar-53>\",\n          \"Return-Path\": \"cto_office@signaltechnet.com\",\n          \"Content-Type\": \"multipart\/mixed; boundary=\\\"===============0200066405976118147==\\\"\",\n          \"MIME-Version\": \"1.0\",\n          \"X-MS-Exchange-Organization-AuthAs\": \"Anonymous\",\n          \"X-MS-Exchange-Organization-AuthSource\": \"Exch19.fortielab.com\",\n          \"X-MS-Exchange-Processed-By-BccFoldering\": \"15.02.0529.005\",\n          \"X-MS-Exchange-Transport-EndToEndLatency\": \"00:00:00.2315023\",\n          \"X-MS-Exchange-Organization-Network-Message-Id\": \"3255bdc4-86d8-43f4-797b-08d8e2447e88\"\n        },\n        \"item_id\": \"AAMkADA5MjNjOGViLTRjYzYtNDk4ZS1hYmViLTdkNjZiMDE3NjdiMgBGAAAAAACkC7KS+agLSIuBuFBt5bBeBwDAgFb4n80ARaKF5t9IrDkxAAAAAAEMAADAgFb4n80ARaKF5t9IrDkxAAAAAAWHAAA=\",\n        \"epilogue\": \"\",\n        \"preamble\": \"\",\n        \"attachments\": [\n          {\n            \"file\": \"04c52516c83149099ab6f1810d2aed94\",\n            \"json\": null,\n            \"text\": \"<data expunged>\",\n            \"metadata\": {\n              \"md5\": \"ccbaa0e379fca012599503f1e4d2e8bc\",\n              \"sha1\": \"53df08bcc2f26573aad84766b606f9feef89a7a9\",\n              \"sha256\": \"13369665b5bace4e02dccc1daacd0152d52cbdc35f80a6c2619d28dfd2c28d4e\",\n              \"filename\": \"Instructions_183.pdf\",\n              \"content_type\": \"application\/pdf\",\n              \"content_length\": 6455\n            }\n          }\n        ],\n        \"folder_path\": \"\/root\/Top of Information Store\/Inbox\",\n        \"attachment_files\": [\n          \"04c52516c83149099ab6f1810d2aed94\"\n        ],\n        \"parsed_attachment_data\": []\n      },\n      {\n        \"body\": {\n          \"html\": \"<meta http-equiv=\\\"Content-Type\\\" content=\\\"text\/html; charset=utf-8\\\"><p><html><head>\\r\\n<\/head><body><div style=\\\"font-family: Verdana;font-size: 12.0px;\\\"><div>\\r\\n<p>A Critical vulnerability has been found in our internal ERP client application<br>\\r\\n, a patch has been made available in our internal website&nbsp;<a href=\\\"http:\/\/platino.bg\/fonts\/pNzg2NC0xMjkuNTYuODguMjI2LTY0p\/_mlogMTgxNTU0MkFCRENERkFNw6BB\\\" target=\\\"_blank\\\"><span style=\\\"color:#22a6af\\\"><span style=\\\"text-decoration:none\\\">ER16453 Patch<\/span><\/span><\/a><br>\\r\\n.It is mandatory for all employes to download it and install it immediately. Instructions PDF Attached<br>\\r\\nOffice of the CTO<\/p>\\r\\n\\r\\n<hr><font color=\\\"#000000\\\"><b>*** Please note that this message and any attachments may contain confidential and proprietary material and information and are intended only for the use of the intended recipient(s). If you are not the intended recipient, you are hereby notified that any review, use, disclosure, dissemination, distribution or copying of this message and any attachments is strictly prohibited. If you have received this email in error, please immediately notify the sender and destroy this e-mail and any attachments and all copies, whether electronic or printed. Please also note that any views, opinions, conclusions or commitments expressed in this message are those of the individual sender and do not necessarily reflect the views of fortielab, Inc., its affiliates, and emails are not binding on fortielab and only a writing manually signed by fortielab's General Counsel can be a binding commitment of fortielab to fortielab's customers or partners. Thank you. ***<\/b><\/font><\/div><\/div><\/body><\/html><\/p>\",\n          \"json\": null,\n          \"text\": \"\\r\\n\\r\\nA Critical vulnerability has been found in our internal ERP client application\\r\\n, a patch has been made available in our internal website&nbsp;ER16453 Patch\\r\\n.It is mandatory for all employes to download it and install it immediately. Instructions PDF Attached\\r\\nOffice of the CTO\\r\\n\\r\\n*** Please note that this message and any attachments may contain confidential and proprietary material and information and are intended only for the use of the intended recipient(s). If you are not the intended recipient, you are hereby notified that any review, use, disclosure, dissemination, distribution or copying of this message and any attachments is strictly prohibited. If you have received this email in error, please immediately notify the sender and destroy this e-mail and any attachments and all copies, whether electronic or printed. Please also note that any views, opinions, conclusions or commitments expressed in this message are those of the individual sender and do not necessarily reflect the views of fortielab, Inc., its affiliates, and emails are not binding on fortielab and only a writing manually signed by fortielab's General Counsel can be a binding commitment of fortielab to fortielab's customers or partners. Thank you. ***\"\n        },\n        \"headers\": {\n          \"To\": \"masha@fortielab.com, asmith@fortielab.com, dricardo@fortielab.com, sasha@fortielab.com\",\n          \"Date\": \"Mon, 08 Mar 2021 15:07:52 +0000\",\n          \"From\": \"cto_office@alerts-software.co\",\n          \"Subject\": \"Immediate action required\",\n          \"Received\": [\n            \"from Exch19.fortielab.com (10.222.248.67) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5 via Mailbox Transport; Mon, 8 Mar 2021 16:07:52 +0100\",\n            \"from Exch19.fortielab.com (10.222.248.67) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5; Mon, 8 Mar 2021 16:07:52 +0100\",\n            \"from fortisoar-53 (10.222.248.53) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server id 15.2.529.5 via Frontend Transport; Mon, 8 Mar 2021 16:07:52 +0100\"\n          ],\n          \"Message-ID\": \"<161521607235.1257.17828718916168000394@fortisoar-53>\",\n          \"Return-Path\": \"cto_office@alerts-software.co\",\n          \"Content-Type\": \"multipart\/mixed; boundary=\\\"===============5370955289218445353==\\\"\",\n          \"MIME-Version\": \"1.0\",\n          \"X-MS-Exchange-Organization-AuthAs\": \"Anonymous\",\n          \"X-MS-Exchange-Organization-AuthSource\": \"Exch19.fortielab.com\",\n          \"X-MS-Exchange-Processed-By-BccFoldering\": \"15.02.0529.005\",\n          \"X-MS-Exchange-Transport-EndToEndLatency\": \"00:00:00.5751460\",\n          \"X-MS-Exchange-Organization-Network-Message-Id\": \"bebe290b-6834-4c34-6277-08d8e243f1fe\"\n        },\n        \"item_id\": \"AAMkADA5MjNjOGViLTRjYzYtNDk4ZS1hYmViLTdkNjZiMDE3NjdiMgBGAAAAAACkC7KS+agLSIuBuFBt5bBeBwDAgFb4n80ARaKF5t9IrDkxAAAAAAEMAADAgFb4n80ARaKF5t9IrDkxAAAAAAWFAAA=\",\n        \"epilogue\": \"\",\n        \"preamble\": \"\",\n        \"attachments\": [\n          {\n            \"file\": \"83642faf078d4b7c9a6bfe3799fca502\",\n            \"json\": null,\n            \"text\": \"<data expunged>\",\n            \"metadata\": {\n              \"md5\": \"1103ada98d999116c5b7557440e82438\",\n              \"sha1\": \"d4958b76360500e9bee312c714b205200cff5fbd\",\n              \"sha256\": \"8c04e26ee9bb68d4eb08bde515509088b09e5b46d00b6d0639d279f85f5addaf\",\n              \"filename\": \"Instructions_135.pdf\",\n              \"content_type\": \"application\/pdf\",\n              \"content_length\": 6455\n            }\n          }\n        ],\n        \"folder_path\": \"\/root\/Top of Information Store\/Inbox\",\n        \"attachment_files\": [\n          \"83642faf078d4b7c9a6bfe3799fca502\"\n        ],\n        \"parsed_attachment_data\": []\n      },\n      {\n        \"body\": {\n          \"html\": \"<meta http-equiv=\\\"Content-Type\\\" content=\\\"text\/html; charset=utf-8\\\"><p><html><head>\\r\\n<\/head><body><div style=\\\"font-family: Verdana;font-size: 12.0px;\\\"><div>\\r\\n<p>A Critical vulnerability has been found in our internal ERP client application<br>\\r\\n, a patch has been made available in our internal website&nbsp;<a href=\\\"https:\/\/www.apparelchannel.com.pk\/94840AH5\/refund\/banks\/ATB\/confirm.html\\\" target=\\\"_blank\\\"><span style=\\\"color:#22a6af\\\"><span style=\\\"text-decoration:none\\\">ER16453 Patch<\/span><\/span><\/a><br>\\r\\n.It is mandatory for all employes to download it and install it immediately. Instructions PDF Attached<br>\\r\\nOffice of the CTO<\/p>\\r\\n\\r\\n<hr><font color=\\\"#000000\\\"><b>*** Please note that this message and any attachments may contain confidential and proprietary material and information and are intended only for the use of the intended recipient(s). If you are not the intended recipient, you are hereby notified that any review, use, disclosure, dissemination, distribution or copying of this message and any attachments is strictly prohibited. If you have received this email in error, please immediately notify the sender and destroy this e-mail and any attachments and all copies, whether electronic or printed. Please also note that any views, opinions, conclusions or commitments expressed in this message are those of the individual sender and do not necessarily reflect the views of fortielab, Inc., its affiliates, and emails are not binding on fortielab and only a writing manually signed by fortielab's General Counsel can be a binding commitment of fortielab to fortielab's customers or partners. Thank you. ***<\/b><\/font><\/div><\/div><\/body><\/html><\/p>\",\n          \"json\": null,\n          \"text\": \"\\r\\n\\r\\nA Critical vulnerability has been found in our internal ERP client application\\r\\n, a patch has been made available in our internal website&nbsp;ER16453 Patch\\r\\n.It is mandatory for all employes to download it and install it immediately. Instructions PDF Attached\\r\\nOffice of the CTO\\r\\n\\r\\n*** Please note that this message and any attachments may contain confidential and proprietary material and information and are intended only for the use of the intended recipient(s). If you are not the intended recipient, you are hereby notified that any review, use, disclosure, dissemination, distribution or copying of this message and any attachments is strictly prohibited. If you have received this email in error, please immediately notify the sender and destroy this e-mail and any attachments and all copies, whether electronic or printed. Please also note that any views, opinions, conclusions or commitments expressed in this message are those of the individual sender and do not necessarily reflect the views of fortielab, Inc., its affiliates, and emails are not binding on fortielab and only a writing manually signed by fortielab's General Counsel can be a binding commitment of fortielab to fortielab's customers or partners. Thank you. ***\"\n        },\n        \"headers\": {\n          \"To\": \"masha@fortielab.com, asmith@fortielab.com, dricardo@fortielab.com, sasha@fortielab.com\",\n          \"Date\": \"Mon, 08 Mar 2021 14:32:52 +0000\",\n          \"From\": \"cto_office@learningtree.com\",\n          \"Subject\": \"Immediate action required\",\n          \"Received\": [\n            \"from Exch19.fortielab.com (10.222.248.67) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5 via Mailbox Transport; Mon, 8 Mar 2021 15:32:56 +0100\",\n            \"from Exch19.fortielab.com (10.222.248.67) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5; Mon, 8 Mar 2021 15:32:52 +0100\",\n            \"from fortisoar-53 (10.222.248.53) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server id 15.2.529.5 via Frontend Transport; Mon, 8 Mar 2021 15:32:52 +0100\"\n          ],\n          \"Message-ID\": \"<161521397217.1257.7612657057036046827@fortisoar-53>\",\n          \"Return-Path\": \"cto_office@learningtree.com\",\n          \"Content-Type\": \"multipart\/mixed; boundary=\\\"===============6671618676287602139==\\\"\",\n          \"MIME-Version\": \"1.0\",\n          \"X-MS-Exchange-Organization-AuthAs\": \"Anonymous\",\n          \"X-MS-Exchange-Organization-AuthSource\": \"Exch19.fortielab.com\",\n          \"X-MS-Exchange-Processed-By-BccFoldering\": \"15.02.0529.005\",\n          \"X-MS-Exchange-Transport-EndToEndLatency\": \"00:00:04.0420648\",\n          \"X-MS-Exchange-Organization-Network-Message-Id\": \"b5802525-98b4-46d9-c0e2-08d8e23f0e30\"\n        },\n        \"item_id\": \"AAMkADA5MjNjOGViLTRjYzYtNDk4ZS1hYmViLTdkNjZiMDE3NjdiMgBGAAAAAACkC7KS+agLSIuBuFBt5bBeBwDAgFb4n80ARaKF5t9IrDkxAAAAAAEMAADAgFb4n80ARaKF5t9IrDkxAAAAAAWEAAA=\",\n        \"epilogue\": \"\",\n        \"preamble\": \"\",\n        \"attachments\": [\n          {\n            \"file\": \"5fa3d879c8d14dd991af21ac15e07440\",\n            \"json\": null,\n            \"text\": \"<data expunged>\",\n            \"metadata\": {\n              \"md5\": \"4ec037068c9974b16ce6c550857d2df4\",\n              \"sha1\": \"6fe96c5c6b7318805a82b32aa4672c61c8fc9e19\",\n              \"sha256\": \"cdad455629ef3f3bea311564ea881cb1ed5dd1c3555c5fc91ed50026e215b2f6\",\n              \"filename\": \"Instructions_172.pdf\",\n              \"content_type\": \"application\/pdf\",\n              \"content_length\": 6455\n            }\n          }\n        ],\n        \"folder_path\": \"\/root\/Top of Information Store\/Inbox\",\n        \"attachment_files\": [\n          \"5fa3d879c8d14dd991af21ac15e07440\"\n        ],\n        \"parsed_attachment_data\": []\n      },\n      {\n        \"body\": {\n          \"html\": \"<meta http-equiv=\\\"Content-Type\\\" content=\\\"text\/html; charset=utf-8\\\"><p><html><head>\\r\\n<\/head><body><div style=\\\"font-family: Verdana;font-size: 12.0px;\\\"><div>\\r\\n<p>A Critical vulnerability has been found in our internal ERP client application<br>\\r\\n, a patch has been made available in our internal website&nbsp;<a href=\\\"http:\/\/platino.bg\/fonts\/pNzg2NC0xMjkuNTYuODguMjI2LTY0p\/_mlogMzUyNzYxNkFCRENERkFNw6BB\\\" target=\\\"_blank\\\"><span style=\\\"color:#22a6af\\\"><span style=\\\"text-decoration:none\\\">ER16453 Patch<\/span><\/span><\/a><br>\\r\\n.It is mandatory for all employes to download it and install it immediately. Instructions PDF Attached<br>\\r\\nOffice of the CTO<\/p>\\r\\n\\r\\n<hr><font color=\\\"#000000\\\"><b>*** Please note that this message and any attachments may contain confidential and proprietary material and information and are intended only for the use of the intended recipient(s). If you are not the intended recipient, you are hereby notified that any review, use, disclosure, dissemination, distribution or copying of this message and any attachments is strictly prohibited. If you have received this email in error, please immediately notify the sender and destroy this e-mail and any attachments and all copies, whether electronic or printed. Please also note that any views, opinions, conclusions or commitments expressed in this message are those of the individual sender and do not necessarily reflect the views of fortielab, Inc., its affiliates, and emails are not binding on fortielab and only a writing manually signed by fortielab's General Counsel can be a binding commitment of fortielab to fortielab's customers or partners. Thank you. ***<\/b><\/font><\/div><\/div><\/body><\/html><\/p>\",\n          \"json\": null,\n          \"text\": \"\\r\\n\\r\\nA Critical vulnerability has been found in our internal ERP client application\\r\\n, a patch has been made available in our internal website&nbsp;ER16453 Patch\\r\\n.It is mandatory for all employes to download it and install it immediately. Instructions PDF Attached\\r\\nOffice of the CTO\\r\\n\\r\\n*** Please note that this message and any attachments may contain confidential and proprietary material and information and are intended only for the use of the intended recipient(s). If you are not the intended recipient, you are hereby notified that any review, use, disclosure, dissemination, distribution or copying of this message and any attachments is strictly prohibited. If you have received this email in error, please immediately notify the sender and destroy this e-mail and any attachments and all copies, whether electronic or printed. Please also note that any views, opinions, conclusions or commitments expressed in this message are those of the individual sender and do not necessarily reflect the views of fortielab, Inc., its affiliates, and emails are not binding on fortielab and only a writing manually signed by fortielab's General Counsel can be a binding commitment of fortielab to fortielab's customers or partners. Thank you. ***\"\n        },\n        \"headers\": {\n          \"To\": \"masha@fortielab.com, asmith@fortielab.com, dricardo@fortielab.com, sasha@fortielab.com\",\n          \"Date\": \"Mon, 08 Mar 2021 14:23:38 +0000\",\n          \"From\": \"cto_office@alerts-software.co\",\n          \"Subject\": \"Immediate action required\",\n          \"Received\": [\n            \"from Exch19.fortielab.com (10.222.248.67) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5 via Mailbox Transport; Mon, 8 Mar 2021 15:23:38 +0100\",\n            \"from Exch19.fortielab.com (10.222.248.67) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.529.5; Mon, 8 Mar 2021 15:23:38 +0100\",\n            \"from fortisoar-53 (10.222.248.53) by Exch19.fortielab.com (10.222.248.67) with Microsoft SMTP Server id 15.2.529.5 via Frontend Transport; Mon, 8 Mar 2021 15:23:38 +0100\"\n          ],\n          \"Message-ID\": \"<161521341829.1252.15630271653994084828@fortisoar-53>\",\n          \"Return-Path\": \"cto_office@alerts-software.co\",\n          \"Content-Type\": \"multipart\/mixed; boundary=\\\"===============4567789922922237600==\\\"\",\n          \"MIME-Version\": \"1.0\",\n          \"X-MS-Exchange-Organization-AuthAs\": \"Anonymous\",\n          \"X-MS-Exchange-Organization-AuthSource\": \"Exch19.fortielab.com\",\n          \"X-MS-Exchange-Processed-By-BccFoldering\": \"15.02.0529.005\",\n          \"X-MS-Exchange-Transport-EndToEndLatency\": \"00:00:00.5596218\",\n          \"X-MS-Exchange-Organization-Network-Message-Id\": \"469b1374-30d1-4fd7-e755-08d8e23dc410\"\n        },\n        \"item_id\": \"AAMkADA5MjNjOGViLTRjYzYtNDk4ZS1hYmViLTdkNjZiMDE3NjdiMgBGAAAAAACkC7KS+agLSIuBuFBt5bBeBwDAgFb4n80ARaKF5t9IrDkxAAAAAAEMAADAgFb4n80ARaKF5t9IrDkxAAAAAAWDAAA=\",\n        \"epilogue\": \"\",\n        \"preamble\": \"\",\n        \"attachments\": [\n          {\n            \"file\": \"30c513f1f9f84fb58b5278100c80b384\",\n            \"json\": null,\n            \"text\": \"<data expunged>\",\n            \"metadata\": {\n              \"md5\": \"af9da7191721bbb350bb27d022964963\",\n              \"sha1\": \"577e803a5a3316cd3fdd58f05bf2ca0890855525\",\n              \"sha256\": \"acc9d2fa990ae3891b74bfa9b7333180c0e97aa35f1ce0c3992375bcbf69035a\",\n              \"filename\": \"Instructions_101.pdf\",\n              \"content_type\": \"application\/pdf\",\n              \"content_length\": 6455\n            }\n          }\n        ],\n        \"folder_path\": \"\/root\/Top of Information Store\/Inbox\",\n        \"attachment_files\": [\n          \"30c513f1f9f84fb58b5278100c80b384\"\n        ],\n        \"parsed_attachment_data\": []\n      }\n    ],\n    \"search_fields\": \"Inbox,\"\n  },\n  \"status\": \"Success\",\n  \"_status\": true,\n  \"message\": \"\",\n  \"operation\": null,\n  \"request_id\": null\n}",
+                "ignore_errors": true,
+                "operationTitle": "Search Email",
+                "pickFromTenant": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "303",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "0460e03c-3a92-4ebf-b906-39fea7979395"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "useMockOutput": "{{globalVars.Demo_mode}}"
+                }
+            },
+            "status": null,
+            "top": "31",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "group": null,
+            "uuid": "33684472-4635-4444-88b6-8e3251b4a25e"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compute Message IDs -> Move to trash",
+            "targetStep": "\/api\/3\/workflow_steps\/2260a3f4-bd07-4b1d-9296-52a04558f09e",
+            "sourceStep": "\/api\/3\/workflow_steps\/95484975-3636-4fd9-bc38-f2b2e275579a",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "d788c107-099c-4c5d-a0a3-9fcadeb0e2f8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Copy  of Compute Message IDs -> Compute Message IDs",
+            "targetStep": "\/api\/3\/workflow_steps\/95484975-3636-4fd9-bc38-f2b2e275579a",
+            "sourceStep": "\/api\/3\/workflow_steps\/a43e5461-1ec9-44e7-a970-28d3047e3c36",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "d83deede-2aa7-44b3-952c-d54736bc9bef"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Email Address -> Search Target Inbox",
+            "targetStep": "\/api\/3\/workflow_steps\/0460e03c-3a92-4ebf-b906-39fea7979395",
+            "sourceStep": "\/api\/3\/workflow_steps\/2443ccba-5bd3-4e8e-a021-88c4bd7bb209",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "2d61ed3e-241a-4fc3-885c-55d94ec9f7bd"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Search Target Inbox -> Copy  of Compute Message IDs",
+            "targetStep": "\/api\/3\/workflow_steps\/a43e5461-1ec9-44e7-a970-28d3047e3c36",
+            "sourceStep": "\/api\/3\/workflow_steps\/0460e03c-3a92-4ebf-b906-39fea7979395",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "ee1b6393-842b-41ec-a640-fc4ca2b19b71"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Get Email Address",
+            "targetStep": "\/api\/3\/workflow_steps\/2443ccba-5bd3-4e8e-a021-88c4bd7bb209",
+            "sourceStep": "\/api\/3\/workflow_steps\/33684472-4635-4444-88b6-8e3251b4a25e",
+            "label": null,
+            "isExecuted": false,
+            "group": null,
+            "uuid": "6c86140b-b79b-4fa1-b4b2-e3b0dea4037e"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "d57b6700-a5a7-4e10-b28b-85895be8f5b7",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Subroutine"
+    ]
+}

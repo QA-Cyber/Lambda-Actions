@@ -1,0 +1,292 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "> Download Exfiltration Process",
+    "aliasName": null,
+    "tag": null,
+    "description": "Determine the event reporting the exfiltration process for the first time",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "device_ip_address",
+        "parent_object_IRI"
+    ],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/389c8b50-4172-4340-8b0c-ad759d1703fa",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/87904d42-45ca-4c71-b090-68edf328b122",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Save File As Attachment",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "name": "Attachment",
+                    "filename": "{{vars.downloaded_file.filename}}",
+                    "file_path": "{{vars.downloaded_file.cyops_file_path}}",
+                    "description": "Evidence",
+                    "create_attachment": true
+                },
+                "version": "3.2.1",
+                "connector": "cyops_utilities",
+                "operation": "upload_file_to_cyops",
+                "operationTitle": "File: Upload a file in the system and Create an Attachment",
+                "step_variables": {
+                    "attachment": "{{vars.result.data}}"
+                }
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "group": null,
+            "uuid": "18cf269e-0217-4a7d-9a81-ae5463839658"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Output",
+            "description": null,
+            "arguments": {
+                "file_IRI": "{{vars.attachment.file['@id']}}",
+                "indicator_IRI": "{{vars.steps.Create_Indicator['@id']}}"
+            },
+            "status": null,
+            "top": "975",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "45a7a2d2-e17a-4adf-8183-41ab2c6b277f"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    }
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "group": null,
+            "uuid": "87904d42-45ca-4c71-b090-68edf328b122"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Process Downloaded File",
+            "description": null,
+            "arguments": {
+                "params": {
+                    "url": "{{vars.malware_lnk}}",
+                    "password": "Arjaan@2000",
+                    "username": "csadmin",
+                    "request_headers": ""
+                },
+                "version": "3.2.1",
+                "connector": "cyops_utilities",
+                "operation": "download_file_from_url",
+                "operationTitle": "File: Download File from URL",
+                "step_variables": {
+                    "downloaded_file": "{{vars.result.data}}"
+                }
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "group": null,
+            "uuid": "9ea7f7d2-056d-4ea6-8d3f-89c56cca20a2"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Suspicious Process",
+            "description": null,
+            "arguments": {
+                "name": "Microsoft WinRM",
+                "config": "7a34f69c-46b0-4db2-89f3-9d58c6c85bd1",
+                "params": {
+                    "url": "{{vars.input.params['device_ip_address']}}",
+                    "port": 5985,
+                    "command": "get file",
+                    "protocol": "https"
+                },
+                "version": "1.0.2",
+                "connector": "microsoft-winrm",
+                "operation": "execute_command",
+                "ignore_errors": true,
+                "operationTitle": "Run Command",
+                "pickFromTenant": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "d02c9c44-2c30-40d3-9424-c4f7e0d219ef"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Parent Object",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "__link": {
+                        "indicators": "{{vars.steps.Create_Indicator['@id']}}",
+                        "attachments": "{{vars.steps.Save_File_As_Attachment.data['@id']}}"
+                    }
+                },
+                "operation": "Append",
+                "collection": "{{vars.input.params['parent_object_IRI']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": [],
+                "step_variables": []
+            },
+            "status": null,
+            "top": "840",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "e7affa38-0c64-433b-ba06-ed03cea962cd"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "malware_lnk": "https:\/\/github.com\/ftnt-cse\/FSR\/raw\/master\/SystemUpdate64.exe",
+                "useMockOutput": "{{globalVars.Demo_mode}}",
+                "exfiltration_ip_address": "{{vars.input.params['exfiltration_ip_address']}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "f421c1b2-fd00-436c-8031-c6b6a78a04c8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Indicator",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "tlp": "\/api\/3\/picklists\/7bff95b7-6438-4b01-b23a-0fe8cb5b33d3",
+                    "file": "{{vars.attachment.file['@id']}}",
+                    "value": "{{vars.attachment.file.filename}}",
+                    "lastSeen": "{{globalVars.Current_Date}}",
+                    "__replace": "true",
+                    "recordTags": [
+                        "\/api\/3\/tags\/SIM",
+                        "\/api\/3\/tags\/Malware"
+                    ],
+                    "filehashMD5": "{{vars.downloaded_file.md5}}",
+                    "filehashSHA1": "{{vars.downloaded_file.sha1}}",
+                    "filehashSHA256": "{{vars.downloaded_file.sha256}}",
+                    "indicatorStatus": "\/api\/3\/picklists\/2f5cff61-fbff-4bb3-96be-302b78a9fb47",
+                    "typeofindicator": "\/api\/3\/picklists\/0162241b-f5bf-4917-a150-00e920be47bd",
+                    "__fieldsToUpdate": [
+                        "lastSeen"
+                    ],
+                    "enrichmentStatus": "\/api\/3\/picklists\/a6d9da29-27b1-4b8a-965d-8d91518540d5"
+                },
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/upsert\/indicators",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "f90eddb4-b58e-4e4e-9218-d51d09d6a1b6"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Get Suspicious Process",
+            "targetStep": "\/api\/3\/workflow_steps\/d02c9c44-2c30-40d3-9424-c4f7e0d219ef",
+            "sourceStep": "\/api\/3\/workflow_steps\/f421c1b2-fd00-436c-8031-c6b6a78a04c8",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "03e2a4b3-5cd4-4533-8274-62823fe87a23"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/f421c1b2-fd00-436c-8031-c6b6a78a04c8",
+            "sourceStep": "\/api\/3\/workflow_steps\/87904d42-45ca-4c71-b090-68edf328b122",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "35ccd8d7-2504-4017-a489-b563693a38ef"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Parent Object -> Output",
+            "targetStep": "\/api\/3\/workflow_steps\/45a7a2d2-e17a-4adf-8183-41ab2c6b277f",
+            "sourceStep": "\/api\/3\/workflow_steps\/e7affa38-0c64-433b-ba06-ed03cea962cd",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5a2ba19d-c20c-43ac-a882-093d30e12730"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Suspicious Process -> Format Suspicious File",
+            "targetStep": "\/api\/3\/workflow_steps\/9ea7f7d2-056d-4ea6-8d3f-89c56cca20a2",
+            "sourceStep": "\/api\/3\/workflow_steps\/d02c9c44-2c30-40d3-9424-c4f7e0d219ef",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5ae59af4-0720-4f0c-8d3c-6ac91372dac0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Indicator -> Update Parent Object",
+            "targetStep": "\/api\/3\/workflow_steps\/e7affa38-0c64-433b-ba06-ed03cea962cd",
+            "sourceStep": "\/api\/3\/workflow_steps\/f90eddb4-b58e-4e4e-9218-d51d09d6a1b6",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5ee82af8-737d-4714-abc1-530e4ded1275"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Process Downloaded File -> Save File As Attachment",
+            "targetStep": "\/api\/3\/workflow_steps\/18cf269e-0217-4a7d-9a81-ae5463839658",
+            "sourceStep": "\/api\/3\/workflow_steps\/9ea7f7d2-056d-4ea6-8d3f-89c56cca20a2",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "d4cf6027-9d3e-458e-8856-529d3ae112dc"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Save File As Attachment -> Create Indicator",
+            "targetStep": "\/api\/3\/workflow_steps\/f90eddb4-b58e-4e4e-9218-d51d09d6a1b6",
+            "sourceStep": "\/api\/3\/workflow_steps\/18cf269e-0217-4a7d-9a81-ae5463839658",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e41fae5a-61fa-4b29-bc85-e71af7c8dd06"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "166ea2be-0bf6-4e4d-b15a-c29bf86bc948",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Process",
+        "Alert"
+    ]
+}

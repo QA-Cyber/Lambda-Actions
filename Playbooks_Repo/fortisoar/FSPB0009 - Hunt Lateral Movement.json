@@ -1,0 +1,211 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "06 - Hunt Lateral Movement",
+    "aliasName": null,
+    "tag": null,
+    "description": "Uses file indicator's Hashcode to hunt infected devices via malware lateral movement",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/389c8b50-4172-4340-8b0c-ad759d1703fa",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/d8935653-2dfa-4faa-89de-6c4e2d927a53",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Previous Comment",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "comments_IRIs": "{{vars.steps.Hunt_Hashcode_On_All_Devices.comments_IRIs}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/1ece048a-43ee-45b1-b860-5a4675a45ad2"
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "539a0e0c-0ec3-4d4a-a75b-f4b2b7a1c623"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Related Records",
+            "description": null,
+            "arguments": {
+                "alerts_IRIs": "{{vars.indicator_data|json_query('alerts[][\"@id\"][]')}}",
+                "alert_username": "{{vars.indicator_data. alerts[0].userName}}",
+                "incidents_IRIs": "{{vars.indicator_data|json_query('incidents[][\"@id\"][]')}}",
+                "device_ip_address": "{{vars.indicator_data. alerts.0.sourceIp}}"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "57bbce48-b21d-4056-a305-92f518290462"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Hunt Hashcode On All Devices",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "hashcode": "{{vars.input.records[0].filehashSHA256}}",
+                    "username": "{{vars.alert_username}}",
+                    "incident_IRI": "{{vars.incidents_IRIs}}",
+                    "device_ip_address": "{{vars.device_ip_address}}",
+                    "parent_object_IRI": "{{vars.input.records[0]['@id']}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/91531007-b144-4d32-8c49-f4d8dbd9afdd"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "635d7035-f998-49b8-922d-0bf4904d6cbe"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "afd90f4e-8bbc-4573-aabe-53d40380b03c",
+                "resources": [
+                    "indicators"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "array",
+                                "field": "type",
+                                "value": [
+                                    "\/api\/3\/picklists\/a043fb35-f373-44c0-bfa9-5bce2f711141",
+                                    "\/api\/3\/picklists\/0cbc2c31-c360-4770-b1e7-3653a8c24ead"
+                                ],
+                                "module": "type",
+                                "display": "",
+                                "operator": "in",
+                                "template": "multiselectpicklist",
+                                "OPERATOR_KEY": "$",
+                                "useInOperator": true,
+                                "previousOperator": "in",
+                                "previousTemplate": "multiselectpicklist"
+                            }
+                        ]
+                    },
+                    "indicators": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "object",
+                                "field": "typeofindicator",
+                                "value": "\/api\/3\/picklists\/0162241b-f5bf-4917-a150-00e920be47bd",
+                                "_value": {
+                                    "@id": "\/api\/3\/picklists\/0162241b-f5bf-4917-a150-00e920be47bd",
+                                    "itemValue": "File"
+                                },
+                                "operator": "eq"
+                            }
+                        ]
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "singleRecordExecution": true
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "d8935653-2dfa-4faa-89de-6c4e2d927a53"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "indicator_data": "{{(vars.input.records[0]['@id']+\"?$relationships=true\")|fromIRI}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "ddb5d350-0080-4d6c-8ba8-597aabc502c3"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/ddb5d350-0080-4d6c-8ba8-597aabc502c3",
+            "sourceStep": "\/api\/3\/workflow_steps\/d8935653-2dfa-4faa-89de-6c4e2d927a53",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "05d1d699-21ce-466b-88f8-10b6c4eff33f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Hunt Hashcode On All Devices -> Update Previous Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/539a0e0c-0ec3-4d4a-a75b-f4b2b7a1c623",
+            "sourceStep": "\/api\/3\/workflow_steps\/635d7035-f998-49b8-922d-0bf4904d6cbe",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "474bce9e-9171-4ed7-bb84-1577defd994f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Get Related Records",
+            "targetStep": "\/api\/3\/workflow_steps\/57bbce48-b21d-4056-a305-92f518290462",
+            "sourceStep": "\/api\/3\/workflow_steps\/ddb5d350-0080-4d6c-8ba8-597aabc502c3",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "bf7e03fa-1901-4286-aacd-49e9bb0d8cb1"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Related Records -> Escalate Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/635d7035-f998-49b8-922d-0bf4904d6cbe",
+            "sourceStep": "\/api\/3\/workflow_steps\/57bbce48-b21d-4056-a305-92f518290462",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c8419d35-d1cb-4b78-94c5-9504057b4f4a"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "3cf835a8-6eb1-4ff2-9609-9d09dbd2bdc0",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Hunt",
+        "Indicator"
+    ]
+}

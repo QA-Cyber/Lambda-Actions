@@ -1,0 +1,310 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Certificate Issue Response",
+    "aliasName": null,
+    "tag": null,
+    "description": "Creates a ServiceNow incident for the asset with a certificate issue discovered in the FortiRecon EASM scan.",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/2d0eb900-fa5b-4c05-8caa-a170717b8ed1",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/7d1c0449-1b32-4a86-9c25-4b7d35b458e3",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Users",
+            "description": null,
+            "arguments": {
+                "name": "ServiceNow",
+                "config": "643b0b4b-6b62-46a0-a3ee-e728b831a6e8",
+                "params": {
+                    "response_fields": [
+                        "Name",
+                        "System ID"
+                    ]
+                },
+                "version": "3.2.0",
+                "connector": "servicenow",
+                "operation": "get_users",
+                "mock_result": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"name\": \"survey user\",\n        \"sys_id\": \"005d500b536073005e0addeeff7b12f4\"\n      }\n    ]\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null,\n  \"execution_time\": \"2 seconds 395 ms\"\n}",
+                "operationTitle": "Get Users",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "1da02258-0b77-4e86-a7d5-481dfda0781a"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "alertIRI": "{{vars.input.records[0]['@id']}}",
+                "alertName": "{{vars.input.records[0].name}}",
+                "sourceData": "{{vars.input.records[0].sourcedata}}",
+                "useMockOutput": "{{globalVars.Demo_mode}}",
+                "alertDescription": "{{vars.input.records[0].description}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "27e8324d-5dbf-4257-8556-092639b0dd40"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "resource": "alerts",
+                "resources": [
+                    "alerts"
+                ],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": [
+                            "{{vars.input.records[0]}}"
+                        ]
+                    }
+                },
+                "fieldbasedtrigger": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "object",
+                            "field": "state",
+                            "value": "",
+                            "_value": {
+                                "@id": "",
+                                "display": "",
+                                "itemValue": ""
+                            },
+                            "operator": "changed"
+                        },
+                        {
+                            "type": "object",
+                            "field": "state",
+                            "value": "\/api\/3\/picklists\/501d0562-89a0-4079-9a9e-cdde7d34e3ed",
+                            "_value": {
+                                "@id": "\/api\/3\/picklists\/501d0562-89a0-4079-9a9e-cdde7d34e3ed",
+                                "display": "Indicator Extracted",
+                                "itemValue": "Indicator Extracted"
+                            },
+                            "operator": "eq"
+                        },
+                        {
+                            "type": "array",
+                            "field": "recordTags",
+                            "value": [
+                                "\/api\/3\/tags\/FortiRecon",
+                                "\/api\/3\/tags\/EASM"
+                            ],
+                            "module": "recordTags",
+                            "display": null,
+                            "operator": "in_all",
+                            "template": "tags",
+                            "OPERATOR_KEY": "$",
+                            "previousOperator": "in_all",
+                            "previousTemplate": "tags"
+                        }
+                    ]
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/9300bf69-5063-486d-b3a6-47eb9da24872",
+            "group": null,
+            "uuid": "7d1c0449-1b32-4a86-9c25-4b7d35b458e3"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create ServiceNow Incident",
+            "description": null,
+            "arguments": {
+                "name": "ServiceNow",
+                "config": "c2547c99-a6e6-4163-83ae-950fe45d3f1c",
+                "params": {
+                    "state": "In Progress",
+                    "impact": "1",
+                    "urgency": "1",
+                    "category": "Software",
+                    "location": "{{vars.steps.Get_Location.data.result[0]['sys_id']}}",
+                    "severity": "1",
+                    "caller_id": "{{vars.steps.Get_Users.data.result[0].name}}",
+                    "work_notes": "",
+                    "assigned_to": "{{vars.steps.Get_Users.data.result[0].name}}",
+                    "description": "FortiRecon EASM has discovered the following certificate issue on the asset:\n\nAsset - {{vars.sourceData.asset}}\nBucket - {{vars.sourceData['bucket']}}\nBucket ID - {{vars.sourceData['bucket_id']}}\nStatus - {{vars.sourceData.status | capitalize or 'NA'}}\nSeverity - {{vars.sourceData.severity | capitalize or 'NA'}}\nUser Name - {{vars.sourceData['user_name'] or 'NA'}}",
+                    "other_fields": "",
+                    "assignment_group": "",
+                    "short_description": "{{vars.alertName}}"
+                },
+                "version": "3.2.0",
+                "connector": "servicenow",
+                "operation": "create_incident",
+                "mock_result": "{\n  \"data\": {\n    \"result\": {\n      \"rfc\": \"\",\n      \"cause\": \"\",\n      \"order\": \"\",\n      \"state\": \"2\",\n      \"active\": \"true\",\n      \"impact\": \"1\",\n      \"notify\": \"1\",\n      \"number\": \"INC{{1000000 | random}}\",\n      \"parent\": \"\",\n      \"sys_id\": \"5a6b6a252f49a11063df52172799b671\",\n      \"cmdb_ci\": \"\",\n      \"company\": \"\",\n      \"sla_due\": \"\",\n      \"urgency\": \"1\",\n      \"approval\": \"not requested\",\n      \"category\": \"software\",\n      \"comments\": \"\",\n      \"contract\": \"\",\n      \"due_date\": \"\",\n      \"location\": {\n        \"link\": \"https:\/\/dev28597.service-now.com\/api\/now\/table\/cmn_location\/0002c0a93790200044e0bfc8bcbe5df5\",\n        \"value\": \"0002c0a93790200044e0bfc8bcbe5df5\"\n      },\n      \"made_sla\": \"true\",\n      \"priority\": \"1\",\n      \"severity\": \"1\",\n      \"sys_tags\": \"\",\n      \"work_end\": \"\",\n      \"caller_id\": {\n        \"link\": \"https:\/\/dev28597.service-now.com\/api\/now\/table\/sys_user\/005d500b536073005e0addeeff7b12f4\",\n        \"value\": \"005d500b536073005e0addeeff7b12f4\"\n      },\n      \"caused_by\": \"\",\n      \"closed_at\": \"\",\n      \"closed_by\": \"\",\n      \"follow_up\": \"\",\n      \"knowledge\": \"false\",\n      \"opened_at\": \"2023-02-16 09:27:57\",\n      \"opened_by\": {\n        \"link\": \"https:\/\/dev28597.service-now.com\/api\/now\/table\/sys_user\/6816f79cc0a8016401c5a33be04be441\",\n        \"value\": \"6816f79cc0a8016401c5a33be04be441\"\n      },\n      \"origin_id\": \"\",\n      \"close_code\": \"\",\n      \"escalation\": \"0\",\n      \"group_list\": \"\",\n      \"problem_id\": \"\",\n      \"sys_domain\": {\n        \"link\": \"https:\/\/dev28597.service-now.com\/api\/now\/table\/sys_user_group\/global\",\n        \"value\": \"global\"\n      },\n      \"user_input\": \"\",\n      \"watch_list\": \"\",\n      \"work_notes\": \"\",\n      \"work_start\": \"\",\n      \"assigned_to\": {\n        \"link\": \"https:\/\/dev28597.service-now.com\/api\/now\/table\/sys_user\/005d500b536073005e0addeeff7b12f4\",\n        \"value\": \"005d500b536073005e0addeeff7b12f4\"\n      },\n      \"close_notes\": \"\",\n      \"description\": \"FortiRecon EASM has discovered the following certificate issue on the asset:\\n\\nAsset - info.demo5.com\\nBucket - Certificate Issues\\nBucket ID - certificate_issues\\nStatus - Active\\nSeverity - Critical\\nUser Name - NA\",\n      \"hold_reason\": \"\",\n      \"reopened_by\": \"\",\n      \"resolved_at\": \"\",\n      \"resolved_by\": \"\",\n      \"subcategory\": \"\",\n      \"time_worked\": \"\",\n      \"upon_reject\": \"cancel\",\n      \"activity_due\": \"2023-02-16 11:27:57\",\n      \"approval_set\": \"\",\n      \"business_stc\": \"\",\n      \"calendar_stc\": \"\",\n      \"contact_type\": \"\",\n      \"origin_table\": \"\",\n      \"reopen_count\": \"0\",\n      \"route_reason\": \"\",\n      \"delivery_plan\": \"\",\n      \"delivery_task\": \"\",\n      \"reopened_time\": \"\",\n      \"sys_mod_count\": \"0\",\n      \"upon_approval\": \"proceed\",\n      \"correlation_id\": \"\",\n      \"expected_start\": \"\",\n      \"incident_state\": \"2\",\n      \"sys_class_name\": \"incident\",\n      \"sys_created_by\": \"admin\",\n      \"sys_created_on\": \"2023-02-16 09:27:57\",\n      \"sys_updated_by\": \"admin\",\n      \"sys_updated_on\": \"2023-02-16 09:27:57\",\n      \"business_impact\": \"\",\n      \"child_incidents\": \"0\",\n      \"parent_incident\": \"\",\n      \"sys_domain_path\": \"\/\",\n      \"work_notes_list\": \"\",\n      \"approval_history\": \"\",\n      \"assignment_group\": \"\",\n      \"business_service\": \"\",\n      \"service_offering\": \"\",\n      \"business_duration\": \"\",\n      \"calendar_duration\": \"\",\n      \"short_description\": \"Untrusted Chain Issues for Asset info.demo5.com\",\n      \"universal_request\": \"\",\n      \"reassignment_count\": \"0\",\n      \"correlation_display\": \"\",\n      \"task_effective_number\": \"INC0010044\",\n      \"comments_and_work_notes\": \"\",\n      \"additional_assignee_list\": \"\"\n    }\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null,\n  \"execution_time\": \"3 seconds 582 ms\"\n}",
+                "operationTitle": "Create Incident",
+                "step_variables": {
+                    "step_output": "{{vars.result}}"
+                }
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "8b48b176-b979-471c-9a0b-c2e79873c720"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Assignment Groups",
+            "description": null,
+            "arguments": {
+                "name": "ServiceNow",
+                "config": "643b0b4b-6b62-46a0-a3ee-e728b831a6e8",
+                "params": [],
+                "version": "3.2.0",
+                "connector": "servicenow",
+                "operation": "get_assignment_group",
+                "mock_result": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"name\": \"Analytics Settings Managers\",\n        \"type\": \"\",\n        \"email\": \"\",\n        \"roles\": \"\",\n        \"active\": \"true\",\n        \"parent\": \"\",\n        \"source\": \"\",\n        \"sys_id\": \"019ad92ec7230010393d265c95c260dd\",\n        \"manager\": \"\",\n        \"sys_tags\": \"\",\n        \"cost_center\": \"\",\n        \"description\": \"\\n\\t\\tGroup for all people who have the Analytics Admin role\\n\\t\",\n        \"sys_mod_count\": \"0\",\n        \"sys_created_by\": \"admin\",\n        \"sys_created_on\": \"2020-03-17 11:39:14\",\n        \"sys_updated_by\": \"admin\",\n        \"sys_updated_on\": \"2020-03-17 11:39:14\",\n        \"exclude_manager\": \"false\",\n        \"include_members\": \"false\",\n        \"default_assignee\": \"\"\n      }\n    ]\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null,\n  \"execution_time\": \"2 seconds 830 ms\"\n}",
+                "operationTitle": "Get Assignment Group",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "f47d4f25-8a8d-486e-a755-62511c0207b6"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Add Note for ServiceNow Incident",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "alerts": "{{vars.alertIRI}}",
+                    "people": [],
+                    "content": "<p>A ServiceNow ticket <strong>#{{vars.steps.Create_ServiceNow_Incident.data.result.number}}<\/strong> has been created for this alert.<\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "840",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "f884fee7-0713-4b9b-986f-044188d72e21"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Location",
+            "description": null,
+            "arguments": {
+                "name": "ServiceNow",
+                "config": "f77eb20e-584f-45e1-98e7-81030d7d6464",
+                "params": [],
+                "version": "3.2.0",
+                "connector": "servicenow",
+                "operation": "get_location",
+                "mock_result": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"zip\": \"\",\n        \"city\": \"Tokyo\",\n        \"name\": \"2-10-1 Yurakucho, Chiyoda-ku, Tokyo\",\n        \"phone\": \"\",\n        \"state\": \"\",\n        \"parent\": {\n          \"link\": \"https:\/\/dev28597.service-now.com\/api\/now\/table\/cmn_location\/821c169bac1d55eb68ede6e36aa35112\",\n          \"value\": \"821c169bac1d55eb68ede6e36aa35112\"\n        },\n        \"street\": \"\",\n        \"sys_id\": \"0002c0a93790200044e0bfc8bcbe5df5\",\n        \"company\": {\n          \"link\": \"https:\/\/dev28597.service-now.com\/api\/now\/table\/core_company\/81fd65ecac1d55eb42a426568fc87a63\",\n          \"value\": \"81fd65ecac1d55eb42a426568fc87a63\"\n        },\n        \"contact\": \"\",\n        \"country\": \"Japan\",\n        \"latitude\": \"35.674989\",\n        \"sys_tags\": \"\",\n        \"duplicate\": \"false\",\n        \"fax_phone\": \"\",\n        \"full_name\": \"Apac\/Japan\/Tokyo\/2-10-1 Yurakucho, Chiyoda-ku, Tokyo\",\n        \"longitude\": \"139.764365\",\n        \"time_zone\": \"\",\n        \"stock_room\": \"false\",\n        \"sys_mod_count\": \"0\",\n        \"lat_long_error\": \"\",\n        \"sys_created_by\": \"admin\",\n        \"sys_created_on\": \"2012-02-19 18:39:00\",\n        \"sys_updated_by\": \"admin\",\n        \"sys_updated_on\": \"2012-02-19 18:39:00\",\n        \"phone_territory\": \"\",\n        \"life_cycle_stage\": \"\",\n        \"managed_by_group\": \"\",\n        \"primary_location\": \"\",\n        \"cmn_location_type\": \"\",\n        \"cmn_location_source\": \"\",\n        \"life_cycle_stage_status\": \"\",\n        \"coordinates_retrieved_on\": \"\"\n      }\n    ]\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null,\n  \"execution_time\": \"5 seconds 714 ms\"\n}",
+                "operationTitle": "Get Location",
+                "pickFromTenant": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "group": null,
+            "uuid": "fef47a02-6541-41ee-8713-ca709f3ed230"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Get Users",
+            "targetStep": "\/api\/3\/workflow_steps\/1da02258-0b77-4e86-a7d5-481dfda0781a",
+            "sourceStep": "\/api\/3\/workflow_steps\/27e8324d-5dbf-4257-8556-092639b0dd40",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "3523518b-a1ba-4408-992d-e9dfe1335d45"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Incident -> Add Note for ServiceNow Incident",
+            "targetStep": "\/api\/3\/workflow_steps\/f884fee7-0713-4b9b-986f-044188d72e21",
+            "sourceStep": "\/api\/3\/workflow_steps\/8b48b176-b979-471c-9a0b-c2e79873c720",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "544ee139-d4cf-4ef8-9a2c-5e830bb3da76"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Location -> Create Incident",
+            "targetStep": "\/api\/3\/workflow_steps\/8b48b176-b979-471c-9a0b-c2e79873c720",
+            "sourceStep": "\/api\/3\/workflow_steps\/fef47a02-6541-41ee-8713-ca709f3ed230",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5622f395-32ab-4dde-9fd2-1c1d67c2d798"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Assignment Groups -> Get Location",
+            "targetStep": "\/api\/3\/workflow_steps\/fef47a02-6541-41ee-8713-ca709f3ed230",
+            "sourceStep": "\/api\/3\/workflow_steps\/f47d4f25-8a8d-486e-a755-62511c0207b6",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "6b613b02-f0e7-48b5-8c1c-347f7b93fdd0"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/27e8324d-5dbf-4257-8556-092639b0dd40",
+            "sourceStep": "\/api\/3\/workflow_steps\/7d1c0449-1b32-4a86-9c25-4b7d35b458e3",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "8fd1cd49-57fb-4983-8efd-a57049585844"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Users -> Get Assignment Groups",
+            "targetStep": "\/api\/3\/workflow_steps\/f47d4f25-8a8d-486e-a755-62511c0207b6",
+            "sourceStep": "\/api\/3\/workflow_steps\/1da02258-0b77-4e86-a7d5-481dfda0781a",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ba750c74-b167-42aa-b842-f315fd1a118e"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "103471dd-bed1-4ea0-8e8f-172fe36f5db4",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "PostUpdate"
+    ]
+}

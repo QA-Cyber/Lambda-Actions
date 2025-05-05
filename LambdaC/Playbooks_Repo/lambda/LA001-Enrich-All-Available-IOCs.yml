@@ -1,0 +1,105 @@
+id: LA001-Enrich-All-Available-IOCs
+name: Enrich All Available Indicators of Compromise
+description: Generic enrichment playbook that gathers reputation data for common IOC types such as IPs, Domains, Hashes, URLs, etc.
+
+trigger:
+  type: event
+  event:
+    source: indicators_module
+    on: create
+    filters:
+      typeofindicator:
+        - "Domain"
+        - "File"
+        - "Hash"
+        - "IP Address"
+        - "URL"
+        - "Email Address"
+        - "User"
+      indicatorStatus:
+        neq: "Excluded from Enrichment"
+      reputation:
+        or:
+          - "To be Determined"
+          - null
+
+inputs:
+  - name: indicator_value
+    description: The raw value of the indicator (e.g., IP address, domain name, hash).
+  - name: indicator_type
+    description: The type of indicator (e.g., IP Address, File, Domain, etc.).
+  - name: indicator_iri
+    description: IRI reference to the indicator object
+  - name: indicator_file_iri
+    description: File IRI (used when the indicator type is 'File').
+  - name: indicator_file_name
+    description: File name (used when the indicator type is 'File').
+
+steps:
+  - id: check-if-indicator-is-valid
+    type: action
+    description: Validate the indicator value format (e.g., valid IPv4, Hash, etc.)
+    action: validate_ioc
+    inputs:
+      indicator_value: "{{ inputs.indicator_value }}"
+      indicator_type: "{{ inputs.indicator_type }}"
+    outputs:
+      valid_indicator: true/false
+
+  - id: check-indicator-type-is-supported
+    type: condition
+    description: Determine if the indicator type is supported for enrichment.
+    conditions:
+      - if: "{{ inputs.indicator_type in ['Domain', 'File', 'IP Address', 'URL', 'Email Address', 'Hash', 'User'] }}"
+        then: step to fetch-enrichment-playbooks
+        else: exit-unsupported-type
+
+  - id: fetch-enrichment-playbooks
+    type: action
+    description: Retrieve available enrichment playbooks based on indicator type.
+    action: get_available_playbooks
+    inputs:
+      indicator_type: "{{ inputs.indicator_type }}"
+    outputs:
+      playbook_list: "{{ result.playbooks }}"
+
+  - id: check-playbooks
+    type: condition
+    description: Determine whether enrichment playbooks are available for the indicator.
+    conditions:
+      - if: "{{ steps.fetch-enrichment-playbooks.outputs.playbook_list | length > 0 }}"
+        then: run-enrichment-playbooks
+        else: exit-no-integration
+
+  - id: run-enrichment-playbooks
+    type: subplaybook
+    description: Run available enrichment playbooks in parallel.
+    subplaybooks: "{{ steps.fetch-enrichment-playbooks.outputs.playbook_list }}"
+    parallel: true
+    inputs:
+      indicator_value: "{{ inputs.indicator_value }}"
+      indicator_type: "{{ inputs.indicator_type }}"
+
+  - id: exit-no-integration
+    type: action
+    description: Log and exit if no enrichment integrations are found.
+    connector: system
+    action: log
+    inputs:
+      message: "No enrichment playbooks available for indicator type: {{ inputs.indicator_type }}"
+
+  - id: exit-unsupported-type
+    type: action
+    description: Log and exit if the indicator type is not supported.
+    connector: system
+    action: log
+    inputs:
+      message: "Unsupported indicator type encountered: {{ inputs.indicator_type }}"
+
+outputs:
+  - name: reputation
+    description: Final determined reputation of the indicator.
+    value: "{{ vars.reputation }}"
+  - name: enrichment_summaries
+    description: Consolidated enrichment data summary from executed playbooks.
+    value: "{{ vars.enrichment_summaries }}"

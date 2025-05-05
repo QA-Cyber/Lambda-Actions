@@ -1,0 +1,116 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "IPS Alert Triage (Asset Vulnerable - True Positive)",
+    "aliasName": null,
+    "tag": null,
+    "description": null,
+    "isActive": true,
+    "debug": true,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "lastModifyDate": 1646998399,
+    "collection": "\/api\/3\/workflow_collections\/5b5e50c1-2ae8-4cf7-b4fb-e6ac730eda61",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/7ad4a828-b56c-4d44-8750-6b4f57d4f020",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "c4effa8d-af8c-4ef5-9e31-2097441c7740",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": true,
+                "singleRecordExecution": false
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "uuid": "7ad4a828-b56c-4d44-8750-6b4f57d4f020",
+            "id": 8209
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Alert",
+            "description": null,
+            "arguments": {
+                "name": "FortiSOAR SOC Simulator",
+                "config": "8f76c7c3-22c9-4ff8-b31a-3642df79164a",
+                "params": {
+                    "alert_json": "{\n    \"@context\":\"\\\/api\\\/3\\\/contexts\\\/Alert\",\n    \"@id\":\"\\\/api\\\/3\\\/alerts\\\/21e1da6f-9a56-48c1-975f-6f23826473e7\",\n    \"@type\":\"Alert\",\n    \"vulnerabilitySeverity\":null,\n    \"ackSLApausedon\":null,\n    \"alertRemainingRespSLA\":null,\n    \"alertRemainingAckSLA\":null,\n    \"deviceSerialNo\":null,\n    \"deviceOwner\":null,\n    \"priorityWeight\":1,\n    \"bucketName\":null,\n    \"alertDetectionDate\":1646761401,\n    \"destinationID\":null,\n    \"respSLApausedon\":null,\n    \"mitreattackid\":\"T1210\",\n    \"mitreTechnique\":\"Exploitation of Remote Services\",\n    \"respDate\":null,\n    \"ackDate\":1646761416,\n    \"assigneddate\":1646761401,\n    \"resolveddate\":null,\n    \"closureNotes\":null,\n    \"escalationReason\":\"\\u003Cp\\u003E\\u003Cspan style=\\u0022color:red;font-weight:bold\\u0022\\u003EMalicious Indicator Detected !\\u003C\\\/span\\u003E\\u003C\\\/p\\u003E\",\n    \"sourceType\":\"PH_RULE_HIGH_SEV_SEC_IPS_IN_PERMIT\",\n    \"name\":\"High Severity Inbound Permitted IPS Exploit\",\n    \"attachmentNames\":null,\n    \"bytesTransferred\":null,\n    \"commandLine\":null,\n    \"computerName\":null,\n    \"decodedCommandLine\":null,\n    \"description\":\"\\u003Cspan style=\\u0022color:orange;font-weight:bold\\u0022\\u003EHigh Severity Inbound Permitted IPS Exploit FortiGate-ips-signature-138600 from {{TR_MALICIOUS_IP}} to 10.222.248.67\\u003C\\\/span\\u003E\\u003Cbr\\u003E\\n- Alert Type: \\u003Cspan style=\\u0022color:orange;font-weight:bold\\u0022\\u003ESECURITY_EXECUTION\\u003C\\\/span\\u003E\\u003Cbr\\u003E\\n- Source IP:\\u003Cspan style=\\u0022color:orange;font-weight:bold\\u0022\\u003E{{TR_MALICIOUS_IP}}\\u003C\\\/span\\u003E\\u003Cbr\\u003E\\n- Destination IP:\\u003Cspan style=\\u0022color:orange;font-weight:bold\\u0022\\u003E10.222.248.67\\u003C\\\/span\\u003E\\u003Cbr\\u003E\\n- Reporting Device: \\u003Cspan style=\\u0022color:orange;font-weight:bold\\u0022\\u003EFortiGate-Edge\\u003C\\\/span\\u003E\\u003Cbr\\u003E\\n\\n- Attack CVE: \\u003Cspan style=\\u0022color:orange;font-weight:bold\\u0022\\u003ECVE-2020-1350\\u003C\\\/span\\u003E\\u003Cbr\\u003E\\n\\u003Cp\\u003E\\u003Cspan style=\\u0022background-color:yellow;color:black;font-weight:bold\\u0022\\u003EAlert has been escalated to an Incident with ID: \\u003C\\\/span\\u003E\\u003Cspan style=\\u0022color:orange;font-weight:bold\\u0022\\u003E46\\u003C\\\/span\\u003E\\u003C\\\/p\\u003E\\n\\u003Cspan style=\\u0022color:orange;font-weight:bold\\u0022\\u003EEscalation reason:\\u003C\\\/span\\u003E   Asset is vulnerable to the CVE CVE-2020-1350 used in the attack\",\n    \"destinationIp\":\"10.222.248.67\",\n    \"destinationPort\":null,\n    \"deviceUID\":null,\n    \"domain\":null,\n    \"dueBy\":1646762579,\n    \"fileEmail\":null,\n    \"emailBody\":\"\",\n    \"emailFrom\":null,\n    \"emailHeaders\":null,\n    \"emailTo\":null,\n    \"emailSubject\":null,\n    \"epochTime\":null,\n    \"eventTime\":null,\n    \"fileHash\":null,\n    \"fileName\":null,\n    \"fileNames\":null,\n    \"filePath\":null,\n    \"latestLogin\":null,\n    \"metrics\":null,\n    \"parentProcessCmdLine\":null,\n    \"parentProcessPid\":null,\n    \"parentProcessName\":null,\n    \"processGuid\":null,\n    \"processId\":null,\n    \"processName\":null,\n    \"processTree\":null,\n    \"respDueDate\":1646762579,\n    \"sourcedata\":\"{\\u0022incident_data\\u0022: {\\u0022id\\u0022: \\u00220\\u0022, \\u0022nid\\u0022: \\u0022{{TR_RANDOM_INTEGER}}1\\u0022, \\u0022index\\u0022: \\u00228\\u0022, \\u0022custId\\u0022: \\u00222000\\u0022, \\u0022dataStr\\u0022: null, \\u0022eventType\\u0022: \\u0022PH_RULE_HIGH_SEV_SEC_IPS_IN_PERMIT\\u0022, \\u0022attributes\\u0022: {\\u0022user\\u0022: \\u0022\\u0022, \\u0022count\\u0022: \\u00222462\\u0022, \\u0022customer\\u0022: \\u0022demopack\\u0022, \\u0022eventName\\u0022: \\u0022High Severity Inbound Permitted IPS Exploit\\u0022, \\u0022eventType\\u0022: \\u0022PH_RULE_HIGH_SEV_SEC_IPS_IN_PERMIT\\u0022, \\u0022srcGeoOrg\\u0022: \\u0022IPG-AS-AP Philippine Long Distance Telephone Company  PH\\u0022, \\u0022srcIpAddr\\u0022: \\u0022{{TR_MALICIOUS_IP}}\\u0022, \\u0022bizService\\u0022: \\u0022\\u0022, \\u0022destIpAddr\\u0022: \\u002210.222.248.67\\u0022, \\u0022incidentId\\u0022: \\u0022{{TR_RANDOM_INTEGER}}1\\u0022, \\u0022phRecvTime\\u0022: \\u0022{{TR_FORMATTED_CURRENT_TIME}}\\u0022, \\u0022srcGeoCity\\u0022: \\u0022Mandaluyong\\u0022, \\u0022incidentSrc\\u0022: \\u0022srcIpAddr:{{TR_MALICIOUS_IP}},\\u0022, \\u0022srcGeoState\\u0022: \\u0022Metro Manila\\u0022, \\u0022incidentReso\\u0022: \\u00221 (Open)\\u0022, \\u0022eventSeverity\\u0022: \\u00229\\u0022, \\u0022incidentRptIp\\u0022: \\u002210.222.248.67\\u0022, \\u0022incidentTitle\\u0022: \\u0022High Severity Inbound Permitted IPS Exploit FortiGate-ips-signature-138600 from {{TR_MALICIOUS_IP}} to 10.222.248.67\\u0022, \\u0022srcGeoCountry\\u0022: \\u0022Philippines\\u0022, \\u0022incidentDetail\\u0022: \\u0022compEventType:FortiGate-ips-signature-138600, attackName:, ipsSignatureId:138600, incidentCount:6,\\u0022, \\u0022incidentStatus\\u0022: \\u00220 (Active)\\u0022, \\u0022incidentTarget\\u0022: \\u0022destIpAddr:10.222.248.67,\\u0022, \\u0022srcGeoLatitude\\u0022: \\u002214.57944\\u0022, \\u0022incidentExtUser\\u0022: \\u0022\\u0022, \\u0022phEventCategory\\u0022: \\u00221 (Incident)\\u0022, \\u0022srcGeoLongitude\\u0022: \\u0022121.03592\\u0022, \\u0022eventSeverityCat\\u0022: \\u0022HIGH\\u0022, \\u0022incidentComments\\u0022: \\u0022[FortiGate-ips-signature-138600] related to [CVE-2020-1350] from CMDB lookup.\\\\nSource [{{TR_MALICIOUS_IP}}] external.\\\\nTarget [10.222.248.67] not found.\\\\nInsufficient information to decide True\\\/False positive.\\\\n\\\\n[FortiGate-ips-signature-138600] related to [CVE-2020-1350] from CMDB lookup.\\\\nSource [{{TR_MALICIOUS_IP}}] external.\\\\nTarget [10.222.248.67] not found.\\\\nInsufficient information to decide True\\\/False positive.\\u0022, \\u0022incidentLastSeen\\u0022: \\u0022{{TR_FORMATTED_CURRENT_TIME}}\\u0022, \\u0022incidentTicketId\\u0022: \\u0022\\u0022, \\u0022incidentFirstSeen\\u0022: \\u00221646750389\\u0022, \\u0022incidentViewUsers\\u0022: \\u0022\\u0022, \\u0022phIncidentImpacts\\u0022: \\u0022Application\\u0022, \\u0022incidentNotiStatus\\u0022: \\u0022\\u0022, \\u0022incidentRptDevName\\u0022: \\u0022{{TR_FG_DEV_NAME}}\\u0022, \\u0022incidentTicketUser\\u0022: \\u0022\\u0022, \\u0022incidentViewStatus\\u0022: \\u00221 (Read)\\u0022, \\u0022phIncidentCategory\\u0022: \\u00224\\u0022, \\u0022incidentClearedTime\\u0022: \\u0022{{TR_FORMATTED_CURRENT_TIME}}\\u0022, \\u0022incidentClearedUser\\u0022: \\u0022\\u0022, \\u0022incidentExtTicketId\\u0022: \\u0022T1210\\u0022, \\u0022incidentRptDevStatus\\u0022: \\u00221 (Pending)\\u0022, \\u0022incidentTicketStatus\\u0022: \\u00226 (None)\\u0022, \\u0022incidentClearedReason\\u0022: \\u0022\\u0022, \\u0022incidentExtTicketType\\u0022: \\u0022\\u0022, \\u0022phSubIncidentCategory\\u0022: \\u0022PH_RULE_SECURITY_EXECUTION\\u0022, \\u0022incidentExtClearedTime\\u0022: \\u0022{{TR_FORMATTED_CURRENT_TIME}}\\u0022, \\u0022incidentExtTicketState\\u0022: \\u0022\\u0022, \\u0022incidentNotiRecipients\\u0022: \\u0022\\u0022}, \\u0022receiveTime\\u0022: \\u00222020-09-02T07:33:00+02:00\\u0022}, \\u0022associated_events\\u0022: [{\\u0022id\\u0022: \\u00228908964491548181012\\u0022, \\u0022nid\\u0022: \\u00228908964491548181012\\u0022, \\u0022index\\u0022: \\u00220\\u0022, \\u0022custId\\u0022: \\u00222000\\u0022, \\u0022dataStr\\u0022: null, \\u0022eventType\\u0022: \\u0022FortiGate-ips-signature-138600\\u0022, \\u0022attributes\\u0022: {\\u0022vdom\\u0022: \\u0022root\\u0022, \\u0022count\\u0022: \\u00221\\u0022, \\u0022fwRule\\u0022: \\u00226\\u0022, \\u0022eventId\\u0022: \\u00228908964491548181012\\u0022, \\u0022ipProto\\u0022: \\u00226 (TCP)\\u0022, \\u0022srcName\\u0022: \\u0022HOST-{{TR_MALICIOUS_IP}}\\u0022, \\u0022subtype\\u0022: \\u0022ips\\u0022, \\u0022customer\\u0022: \\u0022demopack\\u0022, \\u0022destName\\u0022: \\u0022HOST-10.222.248.67\\u0022, \\u0022fwAction\\u0022: \\u0022detected\\u0022, \\u0022logLevel\\u0022: \\u0022alert\\u0022, \\u0022memberID\\u0022: \\u00220419016384\\u0022, \\u0022totFlows\\u0022: \\u00221\\u0022, \\u0022direction\\u0022: \\u0022outgoing\\u0022, \\u0022eventName\\u0022: \\u0022Windows DNS Server RCE (CVE-2020-1350)\\u0022, \\u0022eventType\\u0022: \\u0022FortiGate-ips-signature-138600\\u0022, \\u0022reptModel\\u0022: \\u0022FortiOS\\u0022, \\u0022sessionId\\u0022: \\u002251992519\\u0022, \\u0022srcIpAddr\\u0022: \\u0022{{TR_MALICIOUS_IP}}\\u0022, \\u0022srcIpPort\\u0022: \\u00223038\\u0022, \\u0022destIpAddr\\u0022: \\u002210.222.248.67\\u0022, \\u0022destIpPort\\u0022: \\u002253\\u0022, \\u0022deviceTime\\u0022: \\u0022{{TR_FORMATTED_CURRENT_TIME}}\\u0022, \\u0022parserName\\u0022: \\u0022FortiGateParser\\u0022, \\u0022phRecvTime\\u0022: \\u0022{{TR_FORMATTED_CURRENT_TIME}}\\u0022, \\u0022reptVendor\\u0022: \\u0022Fortinet\\u0022, \\u0022srcGeoCity\\u0022: \\u0022Mandaluyong\\u0022, \\u0022collectorId\\u0022: \\u002210000\\u0022, \\u0022eventAction\\u0022: \\u00220 (Permit)\\u0022, \\u0022rawEventMsg\\u0022: \\u0022\\u0022, \\u0022reptDevName\\u0022: \\u0022FG240D3913800441\\u0022, \\u0022srcGeoState\\u0022: \\u0022Metro Manila\\u0022, \\u0022timeSkewSec\\u0022: \\u0022125242917\\u0022, \\u0022eventParsedOk\\u0022: \\u00221\\u0022, \\u0022eventSeverity\\u0022: \\u002210\\u0022, \\u0022reptDevIpAddr\\u0022: \\u002210.222.248.67\\u0022, \\u0022srcGeoCountry\\u0022: \\u0022Philippines\\u0022, \\u0022ipsSignatureId\\u0022: \\u0022138600\\u0022, \\u0022relayDevIpAddr\\u0022: \\u002210.222.248.67\\u0022, \\u0022srcGeoLatitude\\u0022: \\u002214.57944\\u0022, \\u0022phEventCategory\\u0022: \\u00220 (External)\\u0022, \\u0022srcGeoLongitude\\u0022: \\u0022121.03592\\u0022, \\u0022eventRuleTrigger\\u0022: \\u00221\\u0022, \\u0022eventSeverityCat\\u0022: \\u0022HIGH\\u0022, \\u0022ipsFPCheckStatus\\u0022: \\u00220 (Couldnot determine)\\u0022, \\u0022extEventRecvProto\\u0022: \\u0022Syslog\\u0022, \\u0022srcGeoCountryCodeStr\\u0022: \\u0022PH\\u0022}, \\u0022receiveTime\\u0022: \\u0022{{TR_FORMATTED_CURRENT_TIME}}\\u0022}]}\",\n    \"recipientEmailAddress\":null,\n    \"registryKey\":null,\n    \"registryKeyValue\":null,\n    \"reporter\":\"FortiGate-Edge\",\n    \"reporterEmailBody\":null,\n    \"returnPath\":null,\n    \"scheduledTask\":null,\n    \"senderDomain\":null,\n    \"senderEmailAddress\":null,\n    \"services\":null,\n    \"source\":\"SIM-AETR\",\n    \"sourceId\":\"-29995\",\n    \"sourceIp\":\"<<TR_MALICIOUS_IP>>\",\n    \"sourcePort\":null,\n    \"sourceProcess\":null,\n    \"sourceTool\":null,\n    \"targetAsset\":null,\n    \"targetProcess\":\"CVE-2020-1350\",\n    \"url\":null,\n    \"userName\":null,\n    \"userDetails\":null,\n    \"mitretactics\":null,\n    \"mitregroups\":null,\n    \"deviceType\":null,\n    \"assignedTo\":{\n       \"@id\":\"\\\/api\\\/3\\\/people\\\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n       \"@type\":\"Person\",\n       \"phoneHome\":null,\n       \"firstname\":\"CS\",\n       \"lastname\":\"Admin\",\n       \"title\":\"Admin\",\n       \"department\":null,\n       \"email\":\"fortisoar@fortielab.com\",\n       \"description\":null,\n       \"phoneFax\":null,\n       \"phoneMobile\":null,\n       \"phoneWork\":\"+16462759691\",\n       \"csActive\":true,\n       \"accessType\":\"Named\",\n       \"companyId\":null,\n       \"type\":null,\n       \"userType\":null,\n       \"avatar\":null,\n       \"uuid\":\"3451141c-bac6-467c-8d72-85e0fab569ce\",\n       \"createUser\":\"\\\/api\\\/3\\\/people\\\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n       \"createDate\":1633035299,\n       \"modifyUser\":\"\\\/api\\\/3\\\/people\\\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n       \"modifyDate\":1645027495,\n       \"id\":3,\n       \"userId\":\"8b7c587a-727a-4860-85ec-fd7b1eeea505\",\n       \"@settings\":\"\\\/api\\\/3\\\/user_settings\\\/3451141c-bac6-467c-8d72-85e0fab569ce\"\n    },\n    \"ackSlaStatus\":{\n       \"@id\":\"\\\/api\\\/3\\\/picklists\\\/090115d7-90fc-4dc6-97ca-27950fc30c1c\",\n       \"@type\":\"Picklist\",\n       \"itemValue\":\"Met\",\n       \"orderIndex\":0,\n       \"color\":\"#14b341\",\n       \"icon\":null,\n       \"listName\":\"\\\/api\\\/3\\\/picklist_names\\\/fe36a8f2-fcba-4221-b4ab-1081f596b153\",\n       \"uuid\":\"090115d7-90fc-4dc6-97ca-27950fc30c1c\",\n       \"id\":7\n    },\n    \"respSlaStatus\":{\n       \"@id\":\"\\\/api\\\/3\\\/picklists\\\/72979f64-e8b9-4888-a965-957e0ec24818\",\n       \"@type\":\"Picklist\",\n       \"itemValue\":\"Awaiting Action\",\n       \"orderIndex\":2,\n       \"color\":\"#808080\",\n       \"icon\":null,\n       \"listName\":\"\\\/api\\\/3\\\/picklist_names\\\/fe36a8f2-fcba-4221-b4ab-1081f596b153\",\n       \"uuid\":\"72979f64-e8b9-4888-a965-957e0ec24818\",\n       \"id\":328\n    },\n    \"closureReason\":null,\n    \"escalatedtoincident\":{\n       \"@id\":\"\\\/api\\\/3\\\/picklists\\\/fa12313b-66af-4a2e-864e-a5f19241b734\",\n       \"@type\":\"Picklist\",\n       \"itemValue\":\"Yes\",\n       \"orderIndex\":0,\n       \"color\":\"#bf0a0a\",\n       \"icon\":null,\n       \"listName\":\"\\\/api\\\/3\\\/picklist_names\\\/e131cc54-9ae4-43c9-b830-af6e331fe024\",\n       \"uuid\":\"fa12313b-66af-4a2e-864e-a5f19241b734\",\n       \"id\":243\n    },\n    \"killChainPhase\":{\n       \"@id\":\"\\\/api\\\/3\\\/picklists\\\/8dfaa4f1-cd5b-43dc-bc3f-8821261fcb69\",\n       \"@type\":\"Picklist\",\n       \"itemValue\":\"Actions on Objectives\",\n       \"orderIndex\":7,\n       \"color\":null,\n       \"icon\":null,\n       \"listName\":\"\\\/api\\\/3\\\/picklist_names\\\/eddbc863-c725-479a-867f-cec66206a6b4\",\n       \"uuid\":\"8dfaa4f1-cd5b-43dc-bc3f-8821261fcb69\",\n       \"id\":137\n    },\n    \"severity\":{\n       \"@id\":\"\\\/api\\\/3\\\/picklists\\\/7efa2220-39bb-44e4-961f-ac368776e3b0\",\n       \"@type\":\"Picklist\",\n       \"itemValue\":\"Critical\",\n       \"orderIndex\":4,\n       \"color\":\"#e31b1d\",\n       \"icon\":null,\n       \"listName\":\"\\\/api\\\/3\\\/picklist_names\\\/4e80cba3-032f-48b4-ac03-17e3ec247aac\",\n       \"uuid\":\"7efa2220-39bb-44e4-961f-ac368776e3b0\",\n       \"id\":119\n    },\n    \"state\":{\n       \"@id\":\"\\\/api\\\/3\\\/picklists\\\/8675a07f-2d0d-4e3a-89af-4822b8341df8\",\n       \"@type\":\"Picklist\",\n       \"itemValue\":\"Ready to Investigate\",\n       \"orderIndex\":4,\n       \"color\":null,\n       \"icon\":null,\n       \"listName\":\"\\\/api\\\/3\\\/picklist_names\\\/2f9ed741-25fe-475a-9f12-64336288eebf\",\n       \"uuid\":\"8675a07f-2d0d-4e3a-89af-4822b8341df8\",\n       \"id\":125\n    },\n    \"status\":{\n       \"@id\":\"\\\/api\\\/3\\\/picklists\\\/758925e7-629c-46d8-89db-fb36f5fbe88a\",\n       \"@type\":\"Picklist\",\n       \"itemValue\":\"Investigating\",\n       \"orderIndex\":2,\n       \"color\":null,\n       \"icon\":null,\n       \"listName\":\"\\\/api\\\/3\\\/picklist_names\\\/33e964a9-d607-49f2-813c-7ce46141815a\",\n       \"uuid\":\"758925e7-629c-46d8-89db-fb36f5fbe88a\",\n       \"id\":113\n    },\n    \"systemAssignedQueue\":null,\n    \"type\":{\n       \"@id\":\"\\\/api\\\/3\\\/picklists\\\/33272f56-79aa-4edd-8f27-8e0aeccad730\",\n       \"@type\":\"Picklist\",\n       \"itemValue\":\"SECURITY_EXECUTION\",\n       \"orderIndex\":null,\n       \"color\":null,\n       \"icon\":null,\n       \"listName\":\"\\\/api\\\/3\\\/picklist_names\\\/a7087b9c-5660-495f-a8ac-c3b198ddb8c2\",\n       \"uuid\":\"33272f56-79aa-4edd-8f27-8e0aeccad730\",\n       \"id\":336\n    },\n    \"uuid\":\"21e1da6f-9a56-48c1-975f-6f23826473e7\",\n    \"createUser\":{\n       \"@id\":\"\\\/api\\\/3\\\/people\\\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n       \"@type\":\"Person\",\n       \"phoneHome\":null,\n       \"firstname\":\"CS\",\n       \"lastname\":\"Admin\",\n       \"title\":\"Admin\",\n       \"department\":null,\n       \"email\":\"fortisoar@fortielab.com\",\n       \"description\":null,\n       \"phoneFax\":null,\n       \"phoneMobile\":null,\n       \"phoneWork\":\"+16462759691\",\n       \"csActive\":true,\n       \"accessType\":\"Named\",\n       \"companyId\":null,\n       \"type\":null,\n       \"userType\":null,\n       \"avatar\":null,\n       \"uuid\":\"3451141c-bac6-467c-8d72-85e0fab569ce\",\n       \"createUser\":\"\\\/api\\\/3\\\/people\\\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n       \"createDate\":1633035299,\n       \"modifyUser\":\"\\\/api\\\/3\\\/people\\\/3451141c-bac6-467c-8d72-85e0fab569ce\",\n       \"modifyDate\":1645027495,\n       \"id\":3,\n       \"userId\":\"8b7c587a-727a-4860-85ec-fd7b1eeea505\",\n       \"@settings\":\"\\\/api\\\/3\\\/user_settings\\\/3451141c-bac6-467c-8d72-85e0fab569ce\"\n    },\n    \"createDate\":1646761379,\n    \"modifyUser\":{\n       \"@id\":\"\\\/api\\\/3\\\/appliances\\\/57545210-2adc-472b-a24f-2df6ee8dfe63\",\n       \"@type\":\"Appliance\",\n       \"name\":\"Playbook\",\n       \"userType\":null,\n       \"avatar\":null,\n       \"uuid\":\"57545210-2adc-472b-a24f-2df6ee8dfe63\",\n       \"createUser\":null,\n       \"createDate\":1633035299,\n       \"modifyUser\":\"\\\/api\\\/3\\\/appliances\\\/57545210-2adc-472b-a24f-2df6ee8dfe63\",\n       \"modifyDate\":1645546357,\n       \"id\":1,\n       \"userId\":\"6f3626c1-0da7-4b44-8d5e-43750f780a47\"\n    },\n    \"modifyDate\":1646761451,\n    \"tenant\":{\n       \"@id\":\"\\\/api\\\/3\\\/tenants\\\/b3a700f7-00be-4ef9-90c6-3c8fe6e1be63\",\n       \"@type\":\"Tenant\",\n       \"name\":\"Self\",\n       \"isDedicated\":true,\n       \"tenantId\":\"ed6ecc3a68effb9665d98c9841996e38\",\n       \"role\":\"self\",\n       \"description\":\"sample\",\n       \"allowRemoteMMDModification\":true,\n       \"license\":null,\n       \"region\":null,\n       \"industry\":null,\n       \"uuid\":\"b3a700f7-00be-4ef9-90c6-3c8fe6e1be63\",\n       \"createUser\":null,\n       \"createDate\":null,\n       \"modifyUser\":null,\n       \"modifyDate\":null,\n       \"id\":1\n    },\n    \"conflict\":false,\n    \"tenantRecordId\":232,\n    \"id\":232,\n    \"recordTags\":[\n       \n    ],\n    \"assignee\":\"\"\n }",
+                    "fields_to_ignore": ""
+                },
+                "version": "1.0.9",
+                "connector": "fortisoar-soc-simulator",
+                "operation": "create_simulated_alert",
+                "operationTitle": "Create Simulated Alert",
+                "pickFromTenant": false,
+                "step_variables": []
+            },
+            "status": null,
+            "top": "30",
+            "left": "450",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "3ffd3037-2926-498a-8ff8-b195b263cdc6",
+            "id": 8210
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Data Output",
+            "description": null,
+            "arguments": {
+                "recordIRI": "{{vars.steps.Create_Alert.data}}"
+            },
+            "status": null,
+            "top": "20",
+            "left": "780",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "e6e5061b-06d2-4a1b-81d1-61c050cf5c73",
+            "id": 8262
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Create Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/3ffd3037-2926-498a-8ff8-b195b263cdc6",
+            "sourceStep": "\/api\/3\/workflow_steps\/7ad4a828-b56c-4d44-8750-6b4f57d4f020",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "0bebcd77-0d75-4617-876f-bc8453e5ea39"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Alert -> Set Alert Data",
+            "targetStep": "\/api\/3\/workflow_steps\/e6e5061b-06d2-4a1b-81d1-61c050cf5c73",
+            "sourceStep": "\/api\/3\/workflow_steps\/3ffd3037-2926-498a-8ff8-b195b263cdc6",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "8cfc9dff-8e44-443f-8427-b4627e886362"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "72e9dc7c-4a4b-4ac9-82a8-ad874028bffb",
+    "recordTags": [],
+    "id": 1597,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1646218913,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1646997167,
+    "owners": [],
+    "isPrivate": false
+}

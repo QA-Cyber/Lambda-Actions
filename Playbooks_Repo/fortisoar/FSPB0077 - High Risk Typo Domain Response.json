@@ -1,0 +1,334 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "High Risk Typo Domain Response",
+    "aliasName": null,
+    "tag": null,
+    "description": "Creates a manual task to raise takedown request for high risk typo domain",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/acbb32ac-2907-4f34-8d0c-81e2d1fe1513",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/6e87c69c-44ee-41af-bb20-e4fcd23bb932",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Task for Takedown Request",
+            "description": "Create a manual task to raise typo domain takedown request",
+            "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "content": "<p>Created <a title=\"Task #{{vars.result.id}} - {{vars.result.name}}\" href=\"\/modules\/view-panel\/tasks\/{{vars.result.uuid}}\">Task #{{vars.result.id}} - {{vars.result.name}}<\/a> to raise takedown request for typo squatted domain.<\/p>",
+                    "records": "{{vars.alertIRI}}"
+                },
+                "resource": {
+                    "name": "Raise Takedown Request - {{vars.alertSourceData['similar_domain']}}",
+                    "type": "\/api\/3\/picklists\/a4f387b1-ff5f-4fc6-b1eb-c2025bfa7089",
+                    "__link": {
+                        "alerts": "{{vars.alertIRI}}"
+                    },
+                    "status": "\/api\/3\/picklists\/7669725a-28cc-4b19-98a3-9ca71e0f88f4",
+                    "tenant": "{{vars.input.records[0].tenant['@id']}}",
+                    "priority": "{% if vars.input.records[0].severity.itemValue == 'Critical' %}{{\"TaskPriority\" | picklist(\"Urgent\", \"@id\")}}{% else %}{{\"TaskPriority\" | picklist(\"High\", \"@id\")}}{% endif %}",
+                    "__replace": "",
+                    "recordTags": [
+                        "\/api\/3\/tags\/FortiRecon",
+                        "\/api\/3\/tags\/Takedown Request",
+                        "\/api\/3\/tags\/Typo Squatting"
+                    ],
+                    "description": "{{vars.input.records[0].description}}",
+                    "assignedOnDate": "{{arrow.utcnow().int_timestamp}}",
+                    "assignedToPerson": "{{vars.input.records[0].assignedTo['@id']}}"
+                },
+                "operation": "Append",
+                "collection": "\/api\/3\/tasks",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "0c0e0981-a8ae-487a-8b7d-fef9a9f21e32"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Add Note as Task Completed",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "alerts": "{{vars.alertIRI}}",
+                    "people": [],
+                    "content": "<p><a href=\"\/modules\/view-panel\/tasks\/{{vars.steps.Create_Task_for_Takedown_Request.uuid}}\" title=\"Task #{{vars.steps.Create_Task_for_Takedown_Request.id}}\">Task #{{vars.steps.Create_Task_for_Takedown_Request.id}}<\/a> was marked as <strong>Completed<\/strong> upon raising the typo domain takedown request.<\/p>",
+                    "__replace": "",
+                    "isImportant": false,
+                    "peopleUpdated": false
+                },
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/comments",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "2983c16c-1c21-4369-a866-e65151cc6510"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Wait Till Task Completed",
+            "description": null,
+            "arguments": {
+                "rule": {
+                    "actions": [
+                        {
+                            "type": "resume_playbook",
+                            "enabled": true,
+                            "channel_uuid": "e2ce87c2-c55a-11ec-9d64-0242ac120002"
+                        }
+                    ],
+                    "is_active": true,
+                    "event_type": "update",
+                    "entity_name": "Tasks",
+                    "entity_type": "tasks",
+                    "event_source": "crudhub",
+                    "trigger_condition": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": [
+                            {
+                                "type": "primitive",
+                                "field": "uuid",
+                                "value": "{{vars.steps.Create_Task_for_Takedown_Request.uuid}}",
+                                "operator": "eq",
+                                "_operator": "eq"
+                            },
+                            {
+                                "type": "object",
+                                "field": "status",
+                                "value": "\/api\/3\/picklists\/343f4b67-e929-4205-bf95-ba5b70545fed",
+                                "_value": {
+                                    "@id": "\/api\/3\/picklists\/343f4b67-e929-4205-bf95-ba5b70545fed",
+                                    "itemValue": "Completed"
+                                },
+                                "operator": "eq"
+                            },
+                            {
+                                "type": "object",
+                                "field": "status",
+                                "value": "",
+                                "_value": {
+                                    "@id": "",
+                                    "display": "",
+                                    "itemValue": ""
+                                },
+                                "operator": "changed"
+                            }
+                        ]
+                    }
+                },
+                "type": "ConditionBased",
+                "delay": {
+                    "days": 0,
+                    "hours": 0,
+                    "weeks": 0,
+                    "minutes": 0,
+                    "seconds": 0
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/6832e556-b9c7-497a-babe-feda3bd27dbf",
+            "group": null,
+            "uuid": "567026ae-2837-411f-8720-edd50a5ed9cf"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "resource": "alerts",
+                "resources": [
+                    "alerts"
+                ],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": [
+                            "{{vars.input.records[0]}}"
+                        ]
+                    }
+                },
+                "fieldbasedtrigger": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "object",
+                            "field": "state",
+                            "value": "",
+                            "_value": {
+                                "@id": "",
+                                "display": "",
+                                "itemValue": ""
+                            },
+                            "operator": "changed"
+                        },
+                        {
+                            "type": "object",
+                            "field": "state",
+                            "value": "\/api\/3\/picklists\/501d0562-89a0-4079-9a9e-cdde7d34e3ed",
+                            "_value": {
+                                "@id": "\/api\/3\/picklists\/501d0562-89a0-4079-9a9e-cdde7d34e3ed",
+                                "itemValue": "Indicator Extracted"
+                            },
+                            "operator": "eq"
+                        },
+                        {
+                            "type": "array",
+                            "field": "recordTags",
+                            "value": [
+                                "\/api\/3\/tags\/Typo Squatting",
+                                "\/api\/3\/tags\/FortiRecon"
+                            ],
+                            "module": "recordTags",
+                            "display": "",
+                            "operator": "in_all",
+                            "template": "tags",
+                            "OPERATOR_KEY": "$",
+                            "previousOperator": "in_all",
+                            "previousTemplate": "tags"
+                        }
+                    ]
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/9300bf69-5063-486d-b3a6-47eb9da24872",
+            "group": null,
+            "uuid": "6e87c69c-44ee-41af-bb20-e4fcd23bb932"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Mark Alert as Investigating",
+            "description": null,
+            "arguments": {
+                "message": {
+                    "tags": [],
+                    "type": "\/api\/3\/picklists\/ff599189-3eeb-4c86-acb0-a7915e85ac3b",
+                    "tenant": "",
+                    "content": "<p>Initiating Typo Squatting Domain Investigation<\/p>",
+                    "records": "{{vars.alertIRI}}"
+                },
+                "resource": {
+                    "status": "\/api\/3\/picklists\/758925e7-629c-46d8-89db-fb36f5fbe88a"
+                },
+                "operation": "Append",
+                "collection": "{{vars.alertIRI}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": [],
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "76a4a7a1-0bc3-445d-affa-4cc410c1ec11"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "alertID": "{{vars.input.records[0].id}}",
+                "alertIRI": "{{vars.input.records[0]['@id']}}",
+                "alertSourceData": "{{vars.input.records[0].sourcedata}}"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "f220be00-15a5-4d8f-a015-f714b31d0219"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Wait Till Task Completed -> Add Note as Task Completed c",
+            "targetStep": "\/api\/3\/workflow_steps\/2983c16c-1c21-4369-a866-e65151cc6510",
+            "sourceStep": "\/api\/3\/workflow_steps\/567026ae-2837-411f-8720-edd50a5ed9cf",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "0b75bfc7-734d-4171-a5b5-9104ee33d5e7"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Create Task for Takedown Request -> Wait Till Task Completed",
+            "targetStep": "\/api\/3\/workflow_steps\/567026ae-2837-411f-8720-edd50a5ed9cf",
+            "sourceStep": "\/api\/3\/workflow_steps\/0c0e0981-a8ae-487a-8b7d-fef9a9f21e32",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "7cf9d56c-da7e-4272-a576-c00c6358ee4f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Mark Alert as Investigating -> Create Task for Takedown Request",
+            "targetStep": "\/api\/3\/workflow_steps\/0c0e0981-a8ae-487a-8b7d-fef9a9f21e32",
+            "sourceStep": "\/api\/3\/workflow_steps\/76a4a7a1-0bc3-445d-affa-4cc410c1ec11",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ba9fd382-8453-492a-afd6-5bf06506f4e9"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/f220be00-15a5-4d8f-a015-f714b31d0219",
+            "sourceStep": "\/api\/3\/workflow_steps\/6e87c69c-44ee-41af-bb20-e4fcd23bb932",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e0420849-6b90-44d5-8335-6cdc92b6581b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Mark Alert as Investigating",
+            "targetStep": "\/api\/3\/workflow_steps\/76a4a7a1-0bc3-445d-affa-4cc410c1ec11",
+            "sourceStep": "\/api\/3\/workflow_steps\/f220be00-15a5-4d8f-a015-f714b31d0219",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "e712c8df-e8bc-4f3d-ab47-3054ce65638e"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "6568eeb1-1f32-4765-80fc-9bf2c632cecb",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "PostUpdate"
+    ]
+}

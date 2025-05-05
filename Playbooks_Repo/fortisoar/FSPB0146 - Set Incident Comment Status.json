@@ -1,0 +1,193 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "> Set Incident Comment Status",
+    "aliasName": null,
+    "tag": null,
+    "description": "Set incident comment status to completed",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/389c8b50-4172-4340-8b0c-ad759d1703fa",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/e6b579ae-a46d-4c92-8712-c06e3b4c9777",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Find Status Comment",
+            "description": null,
+            "arguments": {
+                "query": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "field": "incidents.id",
+                            "value": "{{vars.input.records[0].id}}",
+                            "operator": "eq",
+                            "_operator": "eq"
+                        },
+                        {
+                            "type": "primitive",
+                            "field": "content",
+                            "value": "%start the Incident Management by setting%",
+                            "operator": "like",
+                            "_operator": "like"
+                        }
+                    ]
+                },
+                "module": "comments?$limit=1",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928770",
+            "group": null,
+            "uuid": "2c8d37f6-2e15-46b2-8e39-eec234ba51f8"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Comment",
+            "description": null,
+            "arguments": {
+                "when": "{{vars.steps.Find_Status_Comment | length > 0}}",
+                "resource": {
+                    "__link": {
+                        "recordTags": [
+                            "\/api\/3\/tags\/Done"
+                        ]
+                    }
+                },
+                "operation": "Append",
+                "collection": "{{vars.steps.Find_Status_Comment[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/comments",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "cc0ed715-370a-4f7e-a043-d5cf9fe2af75"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "resource": "incidents",
+                "resources": [
+                    "incidents"
+                ],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": [
+                            "{{vars.input.records[0]}}"
+                        ]
+                    }
+                },
+                "fieldbasedtrigger": {
+                    "sort": [],
+                    "limit": 30,
+                    "logic": "AND",
+                    "filters": [
+                        {
+                            "type": "array",
+                            "field": "recordTags",
+                            "value": [
+                                "\/api\/3\/tags\/SIM",
+                                "\/api\/3\/tags\/Malware"
+                            ],
+                            "module": "recordTags",
+                            "display": "",
+                            "operator": "in_all",
+                            "template": "tags",
+                            "OPERATOR_KEY": "$",
+                            "previousOperator": "in_all",
+                            "previousTemplate": "tags"
+                        },
+                        {
+                            "type": "object",
+                            "field": "status",
+                            "value": "\/api\/3\/picklists\/bb7402d6-f699-11e7-8c3f-9a214cf093ae",
+                            "_value": {
+                                "@id": "\/api\/3\/picklists\/bb7402d6-f699-11e7-8c3f-9a214cf093ae",
+                                "itemValue": "In Progress"
+                            },
+                            "operator": "eq"
+                        },
+                        {
+                            "type": "object",
+                            "field": "phase",
+                            "value": "",
+                            "_value": {
+                                "@id": "",
+                                "display": "",
+                                "itemValue": ""
+                            },
+                            "operator": "changed"
+                        },
+                        {
+                            "type": "object",
+                            "field": "phase",
+                            "value": "\/api\/3\/picklists\/cbaa92d2-6fd7-4dbe-88f6-0e0d17e8b430",
+                            "_value": {
+                                "@id": "\/api\/3\/picklists\/cbaa92d2-6fd7-4dbe-88f6-0e0d17e8b430",
+                                "itemValue": "Confirmation"
+                            },
+                            "operator": "eq"
+                        }
+                    ]
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/9300bf69-5063-486d-b3a6-47eb9da24872",
+            "group": null,
+            "uuid": "e6b579ae-a46d-4c92-8712-c06e3b4c9777"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Find Status Comment -> Update Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/cc0ed715-370a-4f7e-a043-d5cf9fe2af75",
+            "sourceStep": "\/api\/3\/workflow_steps\/2c8d37f6-2e15-46b2-8e39-eec234ba51f8",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "0c950b40-588b-4669-a738-92ad4270a578"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Find Status Comment",
+            "targetStep": "\/api\/3\/workflow_steps\/2c8d37f6-2e15-46b2-8e39-eec234ba51f8",
+            "sourceStep": "\/api\/3\/workflow_steps\/e6b579ae-a46d-4c92-8712-c06e3b4c9777",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "2649b93e-e75f-4a66-b048-e80b2f2eec9f"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "f60872a4-2e82-479f-8374-e57e506bbfc5",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Incidents",
+        "Comment",
+        "On-Update"
+    ]
+}

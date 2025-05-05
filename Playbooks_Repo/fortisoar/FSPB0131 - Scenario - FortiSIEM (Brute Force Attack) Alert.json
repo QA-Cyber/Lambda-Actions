@@ -1,0 +1,186 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Scenario - FortiSIEM (Brute Force Attack) Alert",
+    "aliasName": null,
+    "tag": null,
+    "description": "Generates a demo alert for Brute Force Attack from FortiSIEM.",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/e9cc2d67-b69f-45d8-ad30-a9998c1d5874",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/22aa0ba9-a74b-455a-b108-00ca9dfe4fdf",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": []
+            },
+            "status": null,
+            "top": "40",
+            "left": "40",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "group": null,
+            "uuid": "22aa0ba9-a74b-455a-b108-00ca9dfe4fdf"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "alert_data": "{\n  \"incident_data\": {\n    \"id\": \"0\",\n    \"nid\": \"1613\",\n    \"index\": \"0\",\n    \"custId\": \"1\",\n    \"dataStr\": null,\n    \"eventType\": \"PH_RULE_ANOMALY_FAILED_LOGON\",\n    \"attributes\": {\n      \"count\": \"232\",\n      \"customer\": \"Super\",\n      \"hostName\": \"ec2-1.compute-1.amazonaws.com\",\n      \"eventName\": \"Sudden Increase in Failed Logons To A Host\",\n      \"eventType\": \"PH_RULE_ANOMALY_FAILED_LOGON\",\n      \"bizService\": \"\",\n      \"hostIpAddr\": \"172.168.12.35\",\n      \"incidentId\": \"1613\",\n      \"phRecvTime\": \"Thu Apr 02 04:36:30 UTC 2020\",\n      \"incidentSrc\": \"\",\n      \"incidentReso\": \"1 (Open)\",\n      \"eventSeverity\": \"7\",\n      \"incidentRptIp\": \"172.168.12.35\",\n      \"incidentDetail\": \"count:12, avgMatchedEvents:7.47,\",\n      \"incidentStatus\": \"0 (Active)\",\n      \"incidentTarget\": \"hostName:ec2-1.compute-1.amazonaws.com, hostIpAddr:172.168.12.35,\",\n      \"incidentExtUser\": \"\",\n      \"phEventCategory\": \"1 (Incident)\",\n      \"eventSeverityCat\": \"Medium\",\n      \"incidentComments\": \"\",\n      \"incidentLastSeen\": \"Thu Apr 02 04:36:30 UTC 2020\",\n      \"incidentTicketId\": \"\",\n      \"incidentFirstSeen\": \"Tue Jan 28 17:36:30 UTC 2020\",\n      \"incidentViewUsers\": \"\",\n      \"phIncidentImpacts\": \"Server\",\n      \"incidentNotiStatus\": \"\",\n      \"incidentRptDevName\": \"ec2-1.compute-1.amazonaws.com\",\n      \"incidentTicketUser\": \"\",\n      \"incidentViewStatus\": \"1 (Read)\",\n      \"phIncidentCategory\": \"4\",\n      \"incidentClearedTime\": \"Thu Jan 01 00:00:00 UTC 1970\",\n      \"incidentClearedUser\": \"\",\n      \"incidentExtTicketId\": \"\",\n      \"incidentRptDevStatus\": \"1 (Pending)\",\n      \"incidentTicketStatus\": \"6 (None)\",\n      \"incidentClearedReason\": \"\",\n      \"incidentExtTicketType\": \"\",\n      \"phSubIncidentCategory\": \"PH_RULE_SECURITY_INIT_ACCESS\",\n      \"incidentExtClearedTime\": \"Thu Jan 01 00:00:00 UTC 1970\",\n      \"incidentExtTicketState\": \"\",\n      \"incidentNotiRecipients\": \"\"\n    },\n    \"receiveTime\": \"2020-04-02T04:36:30Z\"\n  },\n  \"associated_events\": {\n    \"event_ids\": \"3004886114047230960, \",\n    \"event_details\": [\n      [\n        {\n          \"id\": \"3004886114047230960\",\n          \"nid\": \"3004886114047230960\",\n          \"index\": \"0\",\n          \"custId\": \"1\",\n          \"dataStr\": null,\n          \"eventType\": \"Generic_Unix_SSH_Invalid_User\",\n          \"attributes\": {\n            \"user\": \"guest\",\n            \"count\": \"1\",\n            \"eventId\": \"3004886114047230960\",\n            \"customer\": \"Super\",\n            \"destName\": \"ec2-18-207-7-91\",\n            \"srcIpAddr\": \"103.224.182.251\",\n            \"procName\": \"sshd\",\n            \"eventName\": \"Failed SSH logon\",\n            \"eventType\": \"Generic_Unix_SSH_Invalid_User\",\n            \"reptModel\": \"Unix\",\n            \"destIpAddr\": \"172.168.12.35\",\n            \"deviceTime\": \"Thu Apr 02 04:35:44 UTC 2020\",\n            \"parserName\": \"UnixParser\",\n            \"phRecvTime\": \"Thu Apr 02 04:35:44 UTC 2020\",\n            \"reptVendor\": \"Generic\",\n            \"collectorId\": \"1\",\n            \"eventAction\": \"0 (Permit)\",\n            \"rawEventMsg\": \"<86>Apr  2 04:35:44 ec2-18-207-7-91 sshd[9000]: input_userauth_request: invalid user guest\",\n            \"reptDevName\": \"ec2-1.compute-1.amazonaws.com\",\n            \"timeSkewSec\": \"0\",\n            \"eventParsedOk\": \"1\",\n            \"eventSeverity\": \"3\",\n            \"reptDevIpAddr\": \"172.168.12.35\",\n            \"relayDevIpAddr\": \"172.168.12.35\",\n            \"phEventCategory\": \"0 (External)\",\n            \"eventRuleTrigger\": \"1\",\n            \"eventSeverityCat\": \"LOW\",\n            \"extEventRecvProto\": \"Syslog\"\n          },\n          \"receiveTime\": \"2020-04-02T04:35:44Z\"\n        }\n      ]\n    ]\n  }\n}"
+            },
+            "status": null,
+            "top": "140",
+            "left": "211",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "997979d8-6db1-4db0-b546-e352cebbdf05"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Create Alert",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "name": "{{vars.alert_data.incident_data.attributes.eventName}}",
+                    "type": {
+                        "id": 116,
+                        "@id": "\/api\/3\/picklists\/382183df-212d-4ce1-adae-088647cc72c3",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Brute Force Attempts",
+                        "listName": "\/api\/3\/picklist_names\/a7087b9c-5660-495f-a8ac-c3b198ddb8c2",
+                        "itemValue": "Brute Force Attempts",
+                        "orderIndex": 3
+                    },
+                    "state": {
+                        "id": 220,
+                        "@id": "\/api\/3\/picklists\/a1bac09b-1441-45aa-ad1b-c88744e48e72",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "New",
+                        "listName": "\/api\/3\/picklist_names\/2f9ed741-25fe-475a-9f12-64336288eebf",
+                        "itemValue": "New",
+                        "orderIndex": 0
+                    },
+                    "source": "FortiSIEM",
+                    "status": {
+                        "id": 21,
+                        "@id": "\/api\/3\/picklists\/7de816ff-7140-4ee5-bd05-93ce22002146",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Open",
+                        "listName": "\/api\/3\/picklist_names\/33e964a9-d607-49f2-813c-7ce46141815a",
+                        "itemValue": "Open",
+                        "orderIndex": 1
+                    },
+                    "fileName": "{{vars.alert_data.associated_events.event_details[0][0].attributes.fileName}}",
+                    "severity": "{{\"Severity\" | picklist(vars.alert_data.incident_data.attributes.eventSeverityCat, \"@id\")}}",
+                    "sourceId": "{{vars.alert_data.incident_data.nid}}",
+                    "sourceIp": "{{vars.alert_data.associated_events.event_details[0][0].attributes.get('srcIpAddr',None)}}",
+                    "__replace": "true",
+                    "sourcedata": "{{vars.alert_data | toJSON}}",
+                    "processName": "{{vars.alert_data.associated_events.event_details[0][0].attributes.procName}}",
+                    "ackSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "computerName": "{{vars.alert_data.incident_data.attributes.incidentRptDevName}}",
+                    "closureReason": {
+                        "id": 251,
+                        "@id": "\/api\/3\/picklists\/8590c81e-3307-4645-97f5-c3e1bec4e05a",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Tasks Completed",
+                        "listName": "\/api\/3\/picklist_names\/4ebacea1-88cd-4ea8-9dcc-385bea42cc59",
+                        "itemValue": "Tasks Completed",
+                        "orderIndex": 0
+                    },
+                    "destinationIp": "{{vars.alert_data.associated_events.event_details[0][0].attributes.get('destIpAddr',None)}}",
+                    "respSlaStatus": {
+                        "id": 289,
+                        "@id": "\/api\/3\/picklists\/72979f64-e8b9-4888-a965-957e0ec24818",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "Awaiting Action",
+                        "listName": "\/api\/3\/picklist_names\/fe36a8f2-fcba-4221-b4ab-1081f596b153",
+                        "itemValue": "Awaiting Action",
+                        "orderIndex": 2
+                    },
+                    "escalatedtoincident": {
+                        "id": 210,
+                        "@id": "\/api\/3\/picklists\/2128a09c-153d-4db3-985d-de6be33deae5",
+                        "icon": null,
+                        "@type": "Picklist",
+                        "color": "#808080",
+                        "display": "No",
+                        "listName": "\/api\/3\/picklist_names\/e131cc54-9ae4-43c9-b830-af6e331fe024",
+                        "itemValue": "No",
+                        "orderIndex": 1
+                    }
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/upsert\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "227",
+            "left": "360",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "group": null,
+            "uuid": "ef09d18c-ecf2-4ea4-9fab-779838fcde20"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Create Alert",
+            "targetStep": "\/api\/3\/workflow_steps\/ef09d18c-ecf2-4ea4-9fab-779838fcde20",
+            "sourceStep": "\/api\/3\/workflow_steps\/997979d8-6db1-4db0-b546-e352cebbdf05",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "67af28e3-be8f-4a39-89a5-445ed6d61d0c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/997979d8-6db1-4db0-b546-e352cebbdf05",
+            "sourceStep": "\/api\/3\/workflow_steps\/22aa0ba9-a74b-455a-b108-00ca9dfe4fdf",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4a3bb0f7-df64-4a8b-b69f-b0e7d52ac806"
+        }
+    ],
+    "groups": [],
+    "priority": null,
+    "uuid": "77c44e01-4289-483b-9924-e2363aafe95e",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Scenario"
+    ]
+}

@@ -1,0 +1,307 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "Exfiltration Alert Investigation",
+    "aliasName": null,
+    "tag": null,
+    "description": "Analysis and triage of exfiltration alert",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [],
+    "synchronous": false,
+    "collection": "\/api\/3\/workflow_collections\/389c8b50-4172-4340-8b0c-ad759d1703fa",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/113737b9-425f-4ddc-8d75-4fd583d6a9a1",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Escalate Alert to Incident",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "alert_IRI": "{{vars.input.records[0]['@id']}}",
+                    "automated": ""
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/ca2dcb7f-2e0d-44d3-8c31-bfab33d20d31"
+            },
+            "status": null,
+            "top": "1110",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "07f2bd67-40cc-423f-9cb5-0cfe52e44783"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Logged On User",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "comment_IRI": "",
+                    "device_ip_address": "{{vars.input.records[0].sourceIp}}",
+                    "parent_object_IRI": "{{vars.input.records[0]['@id']}}",
+                    "force_manual_input": "False"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/2f631c0a-337d-41ef-ab60-3dd3c4a7b5de"
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "0802cba6-949f-47f9-afe3-45e7620b4faf"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "route": "a5af9b44-b725-4ee6-8678-09d5de90e23d",
+                "resources": [
+                    "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                    "input": {
+                        "params": [],
+                        "records": "{{vars.input.records}}"
+                    }
+                },
+                "displayConditions": {
+                    "alerts": {
+                        "sort": [],
+                        "limit": 30,
+                        "logic": "AND",
+                        "filters": []
+                    }
+                },
+                "executeButtonText": "Execute",
+                "noRecordExecution": false,
+                "singleRecordExecution": true
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+            "group": null,
+            "uuid": "113737b9-425f-4ddc-8d75-4fd583d6a9a1"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Hunt Exfiltration Process Name",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "device_ip_address": "",
+                    "parent_record_IRI": "{{vars.input.records[0]['@id']}}",
+                    "destination_ip_address": ""
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/65b08ec8-a332-49f1-a7f2-58d8f03dd957"
+            },
+            "status": null,
+            "top": "705",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "1d49619d-17d9-42f7-9e1b-7be5bc2343cc"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Analyze Exfiltration Process",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "file_IRI": "{{vars.steps.Get_Exfiltration_File.file_IRI}}",
+                    "alert_IRI": "",
+                    "parent_object_IRI": "{{vars.steps.Get_Exfiltration_File.indicator_IRI}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/d1843268-3d3f-458d-95b7-eb0f70d1de3a"
+            },
+            "status": null,
+            "top": "975",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "5a3b3339-31ca-4766-a0a5-a5b9b012644c"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Update Alert Status",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "status": "\/api\/3\/picklists\/758925e7-629c-46d8-89db-fb36f5fbe88a"
+                },
+                "operation": "Append",
+                "collection": "{{vars.input.records[0]['@id']}}",
+                "__recommend": [],
+                "collectionType": "\/api\/3\/alerts",
+                "fieldOperation": {
+                    "recordTags": "Append"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b593663d-7d13-40ce-a3a3-96dece928722",
+            "group": null,
+            "uuid": "5bc8e83b-5482-4dda-8188-728009cbcddf"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get CMDB Device Details",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "device_ip_address": "{{vars.input.records[0].sourceIp}}",
+                    "parent_object_IRI": "{{vars.input.records[0]['@id']}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/58c830a3-9210-4410-83e3-cc327b03ee9c"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "71534117-4684-4110-8170-269fa69161ab"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": [],
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "group": null,
+            "uuid": "82acc857-d04d-4c48-b36e-1b34a5e0bed1"
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Exfiltration File",
+            "description": null,
+            "arguments": {
+                "arguments": {
+                    "device_ip_address": "{{vars.input.records[0].sourceIp}}",
+                    "parent_object_IRI": "{{vars.input.records[0]['@id']}}"
+                },
+                "apply_async": false,
+                "step_variables": [],
+                "pass_input_record": false,
+                "workflowReference": "\/api\/3\/workflows\/166ea2be-0bf6-4e4d-b15a-c29bf86bc948"
+            },
+            "status": null,
+            "top": "840",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+            "group": null,
+            "uuid": "c2c2b667-bb55-4aa6-b1ce-619ff1e0e016"
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Exfiltration File -> Parse Exfiltration File",
+            "targetStep": "\/api\/3\/workflow_steps\/5a3b3339-31ca-4766-a0a5-a5b9b012644c",
+            "sourceStep": "\/api\/3\/workflow_steps\/c2c2b667-bb55-4aa6-b1ce-619ff1e0e016",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "007810d1-1a66-4ce0-aa8f-e70d59b1c642"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Analyze Exfiltration Process -> Escalate Alert to Incident",
+            "targetStep": "\/api\/3\/workflow_steps\/07f2bd67-40cc-423f-9cb5-0cfe52e44783",
+            "sourceStep": "\/api\/3\/workflow_steps\/5a3b3339-31ca-4766-a0a5-a5b9b012644c",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "22dbee51-7db8-40f1-b73e-76f0c42a0c42"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/82acc857-d04d-4c48-b36e-1b34a5e0bed1",
+            "sourceStep": "\/api\/3\/workflow_steps\/113737b9-425f-4ddc-8d75-4fd583d6a9a1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4785820e-4ca4-482f-adc6-56f9670d50a2"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Hunt Exfiltration Process Name -> Get Exfiltration File",
+            "targetStep": "\/api\/3\/workflow_steps\/c2c2b667-bb55-4aa6-b1ce-619ff1e0e016",
+            "sourceStep": "\/api\/3\/workflow_steps\/1d49619d-17d9-42f7-9e1b-7be5bc2343cc",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "51aa063d-6f97-4fa1-81d0-437b034e3d0e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Update Alert Status",
+            "targetStep": "\/api\/3\/workflow_steps\/5bc8e83b-5482-4dda-8188-728009cbcddf",
+            "sourceStep": "\/api\/3\/workflow_steps\/82acc857-d04d-4c48-b36e-1b34a5e0bed1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5cb680f4-d8f8-4c2c-bf3b-3e277cb793b5"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Logged On User -> Hunt Exfiltration Process Name",
+            "targetStep": "\/api\/3\/workflow_steps\/1d49619d-17d9-42f7-9e1b-7be5bc2343cc",
+            "sourceStep": "\/api\/3\/workflow_steps\/0802cba6-949f-47f9-afe3-45e7620b4faf",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "7e76554b-fbc1-48f9-9233-d35b98f41aee"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get CMDB Device Details -> Get Logged On User",
+            "targetStep": "\/api\/3\/workflow_steps\/0802cba6-949f-47f9-afe3-45e7620b4faf",
+            "sourceStep": "\/api\/3\/workflow_steps\/71534117-4684-4110-8170-269fa69161ab",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "b8fa25a2-58eb-4b4c-8ef1-746915ae702f"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Update Alert Status -> Get CMDB Device Details",
+            "targetStep": "\/api\/3\/workflow_steps\/71534117-4684-4110-8170-269fa69161ab",
+            "sourceStep": "\/api\/3\/workflow_steps\/5bc8e83b-5482-4dda-8188-728009cbcddf",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "fb900eaa-5fc7-4cbc-bd89-e688b7e5f8e8"
+        }
+    ],
+    "groups": [],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "d13f551c-092c-4c08-b1ef-730815066dfa",
+    "owners": [],
+    "isPrivate": false,
+    "deletedAt": null,
+    "recordTags": [
+        "Incident",
+        "Malware",
+        "Alert",
+        "Indicator",
+        "Event"
+    ]
+}

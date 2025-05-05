@@ -1,0 +1,1281 @@
+{
+    "@context": "\/api\/3\/contexts\/Dashboard",
+    "@type": "Dashboard",
+    "uuid": "53b5ab07-1d01-43db-ad16-ffab7c7cd74e",
+    "displayName": "Phishing Case Management",
+    "type": "rows",
+    "templateType": "dashboard",
+    "roles": [],
+    "parentTemplateId": null,
+    "config": {
+        "rows": [
+            {
+                "columns": [
+                    {
+                        "widgets": [
+                            {
+                                "type": "performanceMetrics",
+                                "config": {
+                                    "wid": "c6136e75-b0cd-43af-b7e6-45e6bdc2ae17",
+                                    "includeFailedPlaybooks": true,
+                                    "excludeConfigActions": true,
+                                    "days": 30,
+                                    "showPercentageChanges": true,
+                                    "metricsType": "totalCount",
+                                    "title": "Total Alerts Resolved",
+                                    "resource": "alerts",
+                                    "query": {
+                                        "sort": [],
+                                        "limit": 30,
+                                        "logic": "OR",
+                                        "filters": [
+                                            {
+                                                "field": "status",
+                                                "operator": "eq",
+                                                "value": "\/api\/3\/picklists\/fac53e73-8d16-4189-98d5-95fbd1555232",
+                                                "_value": {
+                                                    "itemValue": "Closed",
+                                                    "@id": "\/api\/3\/picklists\/fac53e73-8d16-4189-98d5-95fbd1555232"
+                                                },
+                                                "type": "object"
+                                            },
+                                            {
+                                                "field": "type",
+                                                "operator": "eq",
+                                                "value": "{{lbl_alert_type}}",
+                                                "_value": {
+                                                    "display": "",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_alert_type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "timeRange": "createDate",
+                                    "showSavings": "dollar",
+                                    "grouping": {
+                                        "primary": [],
+                                        "secondary": []
+                                    }
+                                }
+                            }
+                        ],
+                        "style": "col-lg-3"
+                    },
+                    {
+                        "widgets": [
+                            {
+                                "type": "performanceMetrics",
+                                "config": {
+                                    "wid": "f91f8ac8-ec84-490b-a56c-de09f2ad87f8",
+                                    "includeFailedPlaybooks": true,
+                                    "excludeConfigActions": true,
+                                    "days": 30,
+                                    "showPercentageChanges": true,
+                                    "metricsType": "ratio",
+                                    "title": "Alerts Escalation Ratio",
+                                    "resource": "alerts",
+                                    "query": {
+                                        "sort": [],
+                                        "limit": 30,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "escalatedtoincident",
+                                                "operator": "eq",
+                                                "value": "\/api\/3\/picklists\/fa12313b-66af-4a2e-864e-a5f19241b734",
+                                                "_value": {
+                                                    "display": "Yes",
+                                                    "itemValue": "Yes",
+                                                    "@id": "\/api\/3\/picklists\/fa12313b-66af-4a2e-864e-a5f19241b734"
+                                                },
+                                                "type": "object"
+                                            },
+                                            {
+                                                "field": "type",
+                                                "operator": "eq",
+                                                "value": "{{lbl_alert_type}}",
+                                                "_value": {
+                                                    "display": "",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_alert_type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "timeRange": "createDate",
+                                    "ratioResource": "alerts",
+                                    "ratioquery": {
+                                        "sort": [],
+                                        "limit": 30,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "type",
+                                                "operator": "eq",
+                                                "value": "{{lbl_alert_type}}",
+                                                "_value": {
+                                                    "display": "",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_alert_type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "ratiotimeRange": "createDate",
+                                    "showSavings": "dollar",
+                                    "grouping": {
+                                        "primary": [],
+                                        "secondary": []
+                                    }
+                                }
+                            }
+                        ],
+                        "style": "col-lg-3"
+                    },
+                    {
+                        "widgets": [
+                            {
+                                "type": "performanceMetrics",
+                                "config": {
+                                    "wid": "4716f630-9c48-43e3-a6b2-5a9a704d904d",
+                                    "includeFailedPlaybooks": true,
+                                    "excludeConfigActions": true,
+                                    "days": 30,
+                                    "showPercentageChanges": true,
+                                    "metricsType": "totalCount",
+                                    "title": "Total Incidents",
+                                    "resource": "incidents",
+                                    "query": {
+                                        "sort": [],
+                                        "limit": 30,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "category",
+                                                "operator": "eq",
+                                                "value": "{{lbl_Incident_Type}}",
+                                                "_value": {
+                                                    "display": "Phishing",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_Incident_Type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "timeRange": "createDate",
+                                    "showSavings": "dollar",
+                                    "grouping": {
+                                        "primary": [],
+                                        "secondary": []
+                                    }
+                                }
+                            }
+                        ],
+                        "style": "col-lg-3"
+                    },
+                    {
+                        "widgets": [
+                            {
+                                "type": "performanceMetrics",
+                                "config": {
+                                    "wid": "74585daa-87c9-47bb-89d6-8c7595936c04",
+                                    "includeFailedPlaybooks": true,
+                                    "excludeConfigActions": true,
+                                    "days": 30,
+                                    "showPercentageChanges": true,
+                                    "metricsType": "totalCount",
+                                    "title": "Total Incidents Resolved",
+                                    "resource": "incidents",
+                                    "query": {
+                                        "sort": [],
+                                        "limit": 30,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "status",
+                                                "operator": "eq",
+                                                "value": "\/api\/3\/picklists\/bb73fd5e-f699-11e7-8c3f-9a214cf093ae",
+                                                "_value": {
+                                                    "display": "Resolved",
+                                                    "itemValue": "Resolved",
+                                                    "@id": "\/api\/3\/picklists\/bb73fd5e-f699-11e7-8c3f-9a214cf093ae"
+                                                },
+                                                "type": "object"
+                                            },
+                                            {
+                                                "field": "category",
+                                                "operator": "eq",
+                                                "value": "{{lbl_Incident_Type}}",
+                                                "_value": {
+                                                    "display": "Phishing",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_Incident_Type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "timeRange": "createDate",
+                                    "showSavings": "dollar",
+                                    "grouping": {
+                                        "primary": [],
+                                        "secondary": []
+                                    }
+                                }
+                            }
+                        ],
+                        "style": "col-lg-3"
+                    }
+                ],
+                "wid": "5f90aa7c-545f-41bd-a378-7b8e2570e99e",
+                "container": true,
+                "_collapsed": false
+            },
+            {
+                "columns": [
+                    {
+                        "widgets": [
+                            {
+                                "type": "performanceMetrics",
+                                "config": {
+                                    "wid": "fe2f9ff5-52d7-4477-bb2c-6b9c5b4237c6",
+                                    "showSavings": "dollar",
+                                    "includeFailedPlaybooks": true,
+                                    "excludeConfigActions": true,
+                                    "days": 30,
+                                    "showPercentageChanges": true,
+                                    "metricsType": "timeToX",
+                                    "title": "MTTR",
+                                    "resource": "incidents",
+                                    "query": {
+                                        "sort": [],
+                                        "limit": 30,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "status",
+                                                "operator": "eq",
+                                                "value": "\/api\/3\/picklists\/bb73fd5e-f699-11e7-8c3f-9a214cf093ae",
+                                                "_value": {
+                                                    "itemValue": "Resolved",
+                                                    "@id": "\/api\/3\/picklists\/bb73fd5e-f699-11e7-8c3f-9a214cf093ae"
+                                                },
+                                                "type": "object"
+                                            },
+                                            {
+                                                "field": "category",
+                                                "operator": "eq",
+                                                "value": "{{lbl_Incident_Type}}",
+                                                "_value": {
+                                                    "display": "",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_Incident_Type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "opration": "mean",
+                                    "toDateField": "resolveddate",
+                                    "fromDateField": "identificationDate",
+                                    "timeRange": "createDate",
+                                    "grouping": {
+                                        "primary": [],
+                                        "secondary": []
+                                    },
+                                    "cardLayout": true
+                                }
+                            },
+                            {
+                                "type": "performanceMetrics",
+                                "config": {
+                                    "wid": "84346926-9303-4e9e-bb72-9d7c81c1caec",
+                                    "grouping": {
+                                        "primary": [],
+                                        "secondary": []
+                                    },
+                                    "showSavings": "dollar",
+                                    "includeFailedPlaybooks": true,
+                                    "excludeConfigActions": false,
+                                    "days": 15,
+                                    "showPercentageChanges": true,
+                                    "metricsType": "paCount",
+                                    "title": "Executed Playbook Actions"
+                                }
+                            }
+                        ],
+                        "style": "col-lg-4"
+                    },
+                    {
+                        "widgets": [
+                            {
+                                "type": "performanceMetrics",
+                                "config": {
+                                    "wid": "15c3d9e2-d3bd-4529-a6f4-b4b8f069c669",
+                                    "showSavings": "dollar",
+                                    "includeFailedPlaybooks": true,
+                                    "excludeConfigActions": true,
+                                    "days": 30,
+                                    "showPercentageChanges": true,
+                                    "metricsType": "timeToX",
+                                    "title": "MTTA",
+                                    "resource": "incidents",
+                                    "query": {
+                                        "sort": [],
+                                        "limit": 30,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "category",
+                                                "operator": "eq",
+                                                "value": "{{lbl_Incident_Type}}",
+                                                "_value": {
+                                                    "display": "",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_Incident_Type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "opration": "mean",
+                                    "toDateField": "ackDate",
+                                    "fromDateField": "discoveredOn",
+                                    "timeRange": "createDate",
+                                    "grouping": {
+                                        "primary": [],
+                                        "secondary": []
+                                    },
+                                    "cardLayout": true
+                                }
+                            },
+                            {
+                                "type": "performanceMetrics",
+                                "config": {
+                                    "wid": "db1c23fe-0b5a-4817-b60f-2a7226b7a8f6",
+                                    "grouping": {
+                                        "primary": [],
+                                        "secondary": []
+                                    },
+                                    "showSavings": "dollar",
+                                    "includeFailedPlaybooks": true,
+                                    "excludeConfigActions": true,
+                                    "days": 15,
+                                    "showPercentageChanges": true,
+                                    "metricsType": "totalCount",
+                                    "title": "Quarantined Infected Assets",
+                                    "resource": "assets",
+                                    "query": {
+                                        "sort": [],
+                                        "limit": 30,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "state",
+                                                "operator": "eq",
+                                                "value": "\/api\/3\/picklists\/321ad354-42ce-42b6-8636-2fa184a7dcd5",
+                                                "_value": {
+                                                    "display": "Isolated",
+                                                    "itemValue": "Isolated",
+                                                    "@id": "\/api\/3\/picklists\/321ad354-42ce-42b6-8636-2fa184a7dcd5"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ]
+                                    },
+                                    "timeRange": "modifyDate"
+                                }
+                            }
+                        ],
+                        "style": "col-lg-4"
+                    },
+                    {
+                        "widgets": [
+                            {
+                                "type": "chart",
+                                "config": {
+                                    "wid": "b121de17-25c3-406f-9e77-6cd795b1f772",
+                                    "widgetAlwaysDisplay": true,
+                                    "query": {
+                                        "sort": [],
+                                        "limit": 2147483647,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "type",
+                                                "operator": "eq",
+                                                "value": "{{lbl_alert_type}}",
+                                                "_value": {
+                                                    "display": "",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_alert_type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ],
+                                        "aggregates": [
+                                            {
+                                                "operator": "countdistinct",
+                                                "field": "*",
+                                                "alias": "total"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "userName",
+                                                "field": "userName"
+                                            }
+                                        ]
+                                    },
+                                    "mapping": {
+                                        "assignedToPerson": "",
+                                        "firstGrouping": "",
+                                        "secondGrouping": "type",
+                                        "fieldName": "userName"
+                                    },
+                                    "assignedToSetting": "onlyMe",
+                                    "aggregate": true,
+                                    "title": "Top Targeted Users",
+                                    "resource": "alerts",
+                                    "chart": "pie",
+                                    "barStyle": "horizontal"
+                                }
+                            }
+                        ],
+                        "style": "col-lg-4"
+                    }
+                ],
+                "wid": "10d7cf0e-d920-486c-b4b5-05b65f9c3938",
+                "container": true,
+                "_collapsed": false,
+                "collapsible": false,
+                "collapsibleIndex": 0
+            },
+            {
+                "columns": [
+                    {
+                        "widgets": [
+                            {
+                                "type": "chart",
+                                "config": {
+                                    "query": {
+                                        "sort": [
+                                            {
+                                                "field": "severity.orderIndex",
+                                                "direction": "ASC"
+                                            }
+                                        ],
+                                        "limit": 2147483647,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "type",
+                                                "operator": "eq",
+                                                "value": "{{lbl_alert_type}}",
+                                                "_value": {
+                                                    "display": "",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_alert_type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ],
+                                        "aggregates": [
+                                            {
+                                                "operator": "select",
+                                                "alias": "severity",
+                                                "field": "severity.itemValue"
+                                            },
+                                            {
+                                                "operator": "select",
+                                                "alias": "color",
+                                                "field": "severity.color"
+                                            },
+                                            {
+                                                "operator": "select",
+                                                "alias": "orderIndex",
+                                                "field": "severity.orderIndex"
+                                            },
+                                            {
+                                                "operator": "select",
+                                                "alias": "alertDetectionDate",
+                                                "field": "alertDetectionDate"
+                                            }
+                                        ]
+                                    },
+                                    "mapping": {
+                                        "assignedToPerson": "",
+                                        "fieldName": "severity",
+                                        "timeScope": "day",
+                                        "dateFormat": "%b %e",
+                                        "dateFieldName": "alertDetectionDate"
+                                    },
+                                    "aggregate": true,
+                                    "wid": "15ed23a1-9392-43be-b790-55634ea6b9fa",
+                                    "resource": "alerts",
+                                    "chart": "timeseries",
+                                    "title": "Alerts Timeline",
+                                    "widgetAlwaysDisplay": true,
+                                    "assignedToSetting": "onlyMe"
+                                }
+                            }
+                        ],
+                        "style": "col-lg-4"
+                    },
+                    {
+                        "widgets": [
+                            {
+                                "type": "chart",
+                                "config": {
+                                    "query": {
+                                        "sort": [
+                                            {
+                                                "field": "severity.orderIndex",
+                                                "direction": "ASC"
+                                            }
+                                        ],
+                                        "limit": 2147483647,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "category",
+                                                "operator": "eq",
+                                                "value": "{{lbl_Incident_Type}}",
+                                                "_value": {
+                                                    "display": "",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_Incident_Type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ],
+                                        "aggregates": [
+                                            {
+                                                "operator": "select",
+                                                "alias": "severity",
+                                                "field": "severity.itemValue"
+                                            },
+                                            {
+                                                "operator": "select",
+                                                "alias": "color",
+                                                "field": "severity.color"
+                                            },
+                                            {
+                                                "operator": "select",
+                                                "alias": "orderIndex",
+                                                "field": "severity.orderIndex"
+                                            },
+                                            {
+                                                "operator": "select",
+                                                "alias": "dateOfIncident",
+                                                "field": "dateOfIncident"
+                                            }
+                                        ]
+                                    },
+                                    "mapping": {
+                                        "assignedToPerson": "",
+                                        "fieldName": "severity",
+                                        "timeScope": "day",
+                                        "dateFormat": "%b %e",
+                                        "dateFieldName": "dateOfIncident"
+                                    },
+                                    "aggregate": true,
+                                    "wid": "e6e3f129-6109-4816-bca4-f641e5c34aa5",
+                                    "resource": "incidents",
+                                    "chart": "timeseries",
+                                    "title": "Incidents Timeline",
+                                    "widgetAlwaysDisplay": true,
+                                    "assignedToSetting": "onlyMe"
+                                }
+                            }
+                        ],
+                        "style": "col-lg-4"
+                    },
+                    {
+                        "widgets": [
+                            {
+                                "type": "chart",
+                                "config": {
+                                    "wid": "f4a5654a-9e3d-4cb1-96e6-9ff099050c8d",
+                                    "widgetAlwaysDisplay": true,
+                                    "query": {
+                                        "sort": [
+                                            {
+                                                "field": "type.orderIndex",
+                                                "direction": "ASC"
+                                            },
+                                            {
+                                                "field": "senderDomain",
+                                                "direction": "ASC"
+                                            }
+                                        ],
+                                        "limit": 2147483647,
+                                        "logic": "AND",
+                                        "filters": [],
+                                        "aggregates": [
+                                            {
+                                                "operator": "countdistinct",
+                                                "field": "*",
+                                                "alias": "total"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "type",
+                                                "field": "type.itemValue"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "firstOrderIndex",
+                                                "field": "type.orderIndex"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "senderDomain",
+                                                "field": "senderDomain"
+                                            }
+                                        ]
+                                    },
+                                    "mapping": {
+                                        "assignedToPerson": "",
+                                        "firstGrouping": "type",
+                                        "secondGrouping": "senderDomain"
+                                    },
+                                    "assignedToSetting": "onlyMe",
+                                    "aggregate": true,
+                                    "title": "Top Spammer Domains",
+                                    "resource": "alerts",
+                                    "chart": "bar",
+                                    "barStyle": "horizontal"
+                                }
+                            }
+                        ],
+                        "style": "col-lg-4"
+                    }
+                ],
+                "wid": "d6a95850-ac9f-42f7-b364-bfbd6f9bdd10",
+                "collapsible": false,
+                "collapsibleIndex": 0,
+                "_collapsed": false
+            },
+            {
+                "columns": [
+                    {
+                        "widgets": [
+                            {
+                                "type": "chart",
+                                "config": {
+                                    "query": {
+                                        "sort": [
+                                            {
+                                                "field": "incidentLead.firstname",
+                                                "direction": "ASC"
+                                            },
+                                            {
+                                                "field": "incidentLead.lastname",
+                                                "direction": "ASC"
+                                            },
+                                            {
+                                                "field": "severity.orderIndex",
+                                                "direction": "ASC"
+                                            }
+                                        ],
+                                        "limit": 2147483647,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "category",
+                                                "operator": "eq",
+                                                "value": "{{lbl_Incident_Type}}",
+                                                "_value": {
+                                                    "display": "",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_Incident_Type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ],
+                                        "aggregates": [
+                                            {
+                                                "operator": "countdistinct",
+                                                "field": "*",
+                                                "alias": "total"
+                                            },
+                                            {
+                                                "operator": "select",
+                                                "alias": "incidentLead__firstname",
+                                                "field": "incidentLead.firstname"
+                                            },
+                                            {
+                                                "operator": "select",
+                                                "alias": "incidentLead__lastname",
+                                                "field": "incidentLead.lastname"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "incidentLead__uuid",
+                                                "field": "incidentLead.uuid"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "severity",
+                                                "field": "severity.itemValue"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "secondOrderIndex",
+                                                "field": "severity.orderIndex"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "color",
+                                                "field": "severity.color"
+                                            }
+                                        ]
+                                    },
+                                    "mapping": {
+                                        "assignedToPerson": "",
+                                        "fieldName": "phase",
+                                        "firstGrouping": "incidentLead",
+                                        "secondGrouping": "severity"
+                                    },
+                                    "aggregate": true,
+                                    "wid": "357e0152-1168-49ef-b6ac-bb212a294edb",
+                                    "title": "Analyst Workload",
+                                    "resource": "incidents",
+                                    "chart": "bar",
+                                    "barStyle": "vertical",
+                                    "widgetAlwaysDisplay": true
+                                }
+                            }
+                        ],
+                        "style": "col-lg-4"
+                    },
+                    {
+                        "widgets": [
+                            {
+                                "type": "chart",
+                                "config": {
+                                    "query": {
+                                        "sort": [
+                                            {
+                                                "field": "severity.orderIndex",
+                                                "direction": "ASC"
+                                            }
+                                        ],
+                                        "limit": 2147483647,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "status",
+                                                "operator": "neq",
+                                                "value": "\/api\/3\/picklists\/bb73fd5e-f699-11e7-8c3f-9a214cf093ae",
+                                                "_value": {
+                                                    "itemValue": "Resolved",
+                                                    "@id": "\/api\/3\/picklists\/bb73fd5e-f699-11e7-8c3f-9a214cf093ae"
+                                                },
+                                                "type": "object"
+                                            },
+                                            {
+                                                "field": "category",
+                                                "operator": "eq",
+                                                "value": "{{lbl_Incident_Type}}",
+                                                "_value": {
+                                                    "display": "",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_Incident_Type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ],
+                                        "aggregates": [
+                                            {
+                                                "operator": "countdistinct",
+                                                "field": "*",
+                                                "alias": "total"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "severity",
+                                                "field": "severity.itemValue"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "color",
+                                                "field": "severity.color"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "orderIndex",
+                                                "field": "severity.orderIndex"
+                                            }
+                                        ]
+                                    },
+                                    "mapping": {
+                                        "assignedToPerson": "",
+                                        "fieldName": "severity"
+                                    },
+                                    "aggregate": true,
+                                    "wid": "fe085b68-fe3e-43fd-a66f-43f9189d8f6c",
+                                    "title": "Unresolved Incidents By Severity",
+                                    "resource": "incidents",
+                                    "chart": "donut",
+                                    "widgetAlwaysDisplay": true
+                                }
+                            }
+                        ],
+                        "style": "col-lg-4"
+                    },
+                    {
+                        "widgets": [
+                            {
+                                "type": "chart",
+                                "config": {
+                                    "query": {
+                                        "sort": [
+                                            {
+                                                "field": "category.orderIndex",
+                                                "direction": "ASC"
+                                            },
+                                            {
+                                                "field": "severity.orderIndex",
+                                                "direction": "ASC"
+                                            }
+                                        ],
+                                        "limit": 2147483647,
+                                        "logic": "AND",
+                                        "filters": [
+                                            {
+                                                "field": "status",
+                                                "operator": "neq",
+                                                "value": "\/api\/3\/picklists\/bb73fd5e-f699-11e7-8c3f-9a214cf093ae",
+                                                "_value": {
+                                                    "itemValue": "Resolved",
+                                                    "@id": "\/api\/3\/picklists\/bb73fd5e-f699-11e7-8c3f-9a214cf093ae"
+                                                },
+                                                "type": "object"
+                                            },
+                                            {
+                                                "field": "category",
+                                                "operator": "eq",
+                                                "value": "{{lbl_Incident_Type}}",
+                                                "_value": {
+                                                    "display": "",
+                                                    "itemValue": "",
+                                                    "@id": "{{lbl_Incident_Type}}"
+                                                },
+                                                "type": "object"
+                                            }
+                                        ],
+                                        "aggregates": [
+                                            {
+                                                "operator": "countdistinct",
+                                                "field": "*",
+                                                "alias": "total"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "category",
+                                                "field": "category.itemValue"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "firstOrderIndex",
+                                                "field": "category.orderIndex"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "severity",
+                                                "field": "severity.itemValue"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "secondOrderIndex",
+                                                "field": "severity.orderIndex"
+                                            },
+                                            {
+                                                "operator": "groupby",
+                                                "alias": "color",
+                                                "field": "severity.color"
+                                            }
+                                        ]
+                                    },
+                                    "mapping": {
+                                        "assignedToPerson": "",
+                                        "firstGrouping": "category",
+                                        "secondGrouping": "severity"
+                                    },
+                                    "aggregate": true,
+                                    "wid": "8e9b983f-0646-426b-9df3-8d8f51598639",
+                                    "title": "Unresolved Incidents By Type",
+                                    "resource": "incidents",
+                                    "chart": "bar",
+                                    "barStyle": "horizontal",
+                                    "widgetAlwaysDisplay": true
+                                }
+                            }
+                        ],
+                        "style": "col-lg-4"
+                    }
+                ],
+                "wid": "1b5de2f2-6c29-46f6-bb32-5fa3147858a4",
+                "container": true,
+                "_collapsed": false
+            },
+            {
+                "columns": [
+                    {
+                        "widgets": [
+                            {
+                                "type": "rows",
+                                "config": {
+                                    "wid": "887a4764-b24c-4b90-afcf-5c63de76559c",
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {
+                                                    "widgets": [
+                                                        {
+                                                            "type": "performanceMetrics",
+                                                            "config": {
+                                                                "wid": "a315c8fb-1a99-4d5b-8b1d-0a661ab51bb0",
+                                                                "includeFailedPlaybooks": true,
+                                                                "excludeConfigActions": true,
+                                                                "days": 10,
+                                                                "showPercentageChanges": true,
+                                                                "metricsType": "timeToX",
+                                                                "title": "Mean Time For Identification",
+                                                                "resource": "incidents",
+                                                                "query": {
+                                                                    "sort": [],
+                                                                    "limit": 30,
+                                                                    "logic": "AND",
+                                                                    "filters": [
+                                                                        {
+                                                                            "field": "category",
+                                                                            "operator": "eq",
+                                                                            "value": "{{lbl_Incident_Type}}",
+                                                                            "_value": {
+                                                                                "display": "",
+                                                                                "itemValue": "",
+                                                                                "@id": "{{lbl_Incident_Type}}"
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "opration": "mean",
+                                                                "toDateField": "confirmationDate",
+                                                                "fromDateField": "identificationDate",
+                                                                "timeRange": "createDate",
+                                                                "showSavings": "dollar",
+                                                                "grouping": {
+                                                                    "primary": [],
+                                                                    "secondary": []
+                                                                },
+                                                                "cardLayout": true
+                                                            }
+                                                        }
+                                                    ],
+                                                    "style": "col-lg-4"
+                                                },
+                                                {
+                                                    "widgets": [
+                                                        {
+                                                            "type": "performanceMetrics",
+                                                            "config": {
+                                                                "wid": "7b0e47bd-22bc-4ef4-a96a-f37d0da5880e",
+                                                                "includeFailedPlaybooks": true,
+                                                                "excludeConfigActions": true,
+                                                                "days": 10,
+                                                                "showPercentageChanges": true,
+                                                                "metricsType": "timeToX",
+                                                                "title": "Mean Time For Confirmation",
+                                                                "resource": "incidents",
+                                                                "query": {
+                                                                    "sort": [],
+                                                                    "limit": 30,
+                                                                    "logic": "AND",
+                                                                    "filters": [
+                                                                        {
+                                                                            "field": "category",
+                                                                            "operator": "eq",
+                                                                            "value": "{{lbl_Incident_Type}}",
+                                                                            "_value": {
+                                                                                "display": "",
+                                                                                "itemValue": "",
+                                                                                "@id": "{{lbl_Incident_Type}}"
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "opration": "mean",
+                                                                "toDateField": "containmentDate",
+                                                                "fromDateField": "confirmationDate",
+                                                                "timeRange": "createDate",
+                                                                "showSavings": "dollar",
+                                                                "grouping": {
+                                                                    "primary": [],
+                                                                    "secondary": []
+                                                                },
+                                                                "cardLayout": true
+                                                            }
+                                                        }
+                                                    ],
+                                                    "style": "col-lg-4"
+                                                },
+                                                {
+                                                    "widgets": [
+                                                        {
+                                                            "type": "performanceMetrics",
+                                                            "config": {
+                                                                "wid": "029f88f2-cd45-411a-b3d5-89514db69b6d",
+                                                                "includeFailedPlaybooks": true,
+                                                                "excludeConfigActions": true,
+                                                                "days": 10,
+                                                                "showPercentageChanges": true,
+                                                                "metricsType": "timeToX",
+                                                                "title": "Mean Time For Containment",
+                                                                "resource": "incidents",
+                                                                "query": {
+                                                                    "sort": [],
+                                                                    "limit": 30,
+                                                                    "logic": "AND",
+                                                                    "filters": [
+                                                                        {
+                                                                            "field": "category",
+                                                                            "operator": "eq",
+                                                                            "value": "{{lbl_Incident_Type}}",
+                                                                            "_value": {
+                                                                                "display": "",
+                                                                                "itemValue": "",
+                                                                                "@id": "{{lbl_Incident_Type}}"
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "opration": "mean",
+                                                                "toDateField": "eradicationDate",
+                                                                "fromDateField": "containmentDate",
+                                                                "timeRange": "createDate",
+                                                                "showSavings": "dollar",
+                                                                "grouping": {
+                                                                    "primary": [],
+                                                                    "secondary": []
+                                                                },
+                                                                "cardLayout": true
+                                                            }
+                                                        }
+                                                    ],
+                                                    "style": "col-lg-4"
+                                                }
+                                            ],
+                                            "wid": "a9974559-d62d-41b4-ace3-a81b60cf911f",
+                                            "container": true,
+                                            "_collapsed": false
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "style": "col-lg-6"
+                    },
+                    {
+                        "widgets": [
+                            {
+                                "type": "rows",
+                                "config": {
+                                    "wid": "9ab36c32-37e8-48b2-97e4-ad8b7f9c3306",
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {
+                                                    "widgets": [
+                                                        {
+                                                            "type": "performanceMetrics",
+                                                            "config": {
+                                                                "wid": "7b12314b-425c-4f8d-8448-bc843fb780a9",
+                                                                "includeFailedPlaybooks": true,
+                                                                "excludeConfigActions": true,
+                                                                "days": 10,
+                                                                "showPercentageChanges": true,
+                                                                "metricsType": "timeToX",
+                                                                "resource": "incidents",
+                                                                "query": {
+                                                                    "sort": [],
+                                                                    "limit": 30,
+                                                                    "logic": "AND",
+                                                                    "filters": [
+                                                                        {
+                                                                            "field": "category",
+                                                                            "operator": "eq",
+                                                                            "value": "{{lbl_Incident_Type}}",
+                                                                            "_value": {
+                                                                                "display": "",
+                                                                                "itemValue": "",
+                                                                                "@id": "{{lbl_Incident_Type}}"
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "opration": "mean",
+                                                                "timeRange": "createDate",
+                                                                "title": "Mean Time For Eradication",
+                                                                "toDateField": "recoveryDate",
+                                                                "fromDateField": "eradicationDate",
+                                                                "showSavings": "dollar",
+                                                                "grouping": {
+                                                                    "primary": [],
+                                                                    "secondary": []
+                                                                },
+                                                                "cardLayout": true
+                                                            }
+                                                        }
+                                                    ],
+                                                    "style": "col-lg-4"
+                                                },
+                                                {
+                                                    "widgets": [
+                                                        {
+                                                            "type": "performanceMetrics",
+                                                            "config": {
+                                                                "wid": "780d8c4f-0e5a-4e7a-86f6-0116284faf54",
+                                                                "includeFailedPlaybooks": true,
+                                                                "excludeConfigActions": true,
+                                                                "days": 10,
+                                                                "showPercentageChanges": true,
+                                                                "metricsType": "timeToX",
+                                                                "resource": "incidents",
+                                                                "query": {
+                                                                    "sort": [],
+                                                                    "limit": 30,
+                                                                    "logic": "AND",
+                                                                    "filters": [
+                                                                        {
+                                                                            "field": "category",
+                                                                            "operator": "eq",
+                                                                            "value": "{{lbl_Incident_Type}}",
+                                                                            "_value": {
+                                                                                "display": "",
+                                                                                "itemValue": "",
+                                                                                "@id": "{{lbl_Incident_Type}}"
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "opration": "mean",
+                                                                "timeRange": "createDate",
+                                                                "title": "Mean Time For Recovery",
+                                                                "toDateField": "aftermathDate",
+                                                                "fromDateField": "recoveryDate",
+                                                                "showSavings": "dollar",
+                                                                "grouping": {
+                                                                    "primary": [],
+                                                                    "secondary": []
+                                                                },
+                                                                "cardLayout": true
+                                                            }
+                                                        }
+                                                    ],
+                                                    "style": "col-lg-4"
+                                                },
+                                                {
+                                                    "widgets": [
+                                                        {
+                                                            "type": "performanceMetrics",
+                                                            "config": {
+                                                                "wid": "c017e3b1-0b42-49e3-807c-8032a6701382",
+                                                                "includeFailedPlaybooks": true,
+                                                                "excludeConfigActions": true,
+                                                                "days": 10,
+                                                                "showPercentageChanges": true,
+                                                                "metricsType": "timeToX",
+                                                                "title": "Mean Time For Aftermath",
+                                                                "resource": "incidents",
+                                                                "query": {
+                                                                    "sort": [],
+                                                                    "limit": 30,
+                                                                    "logic": "AND",
+                                                                    "filters": [
+                                                                        {
+                                                                            "field": "category",
+                                                                            "operator": "eq",
+                                                                            "value": "{{lbl_Incident_Type}}",
+                                                                            "_value": {
+                                                                                "display": "",
+                                                                                "itemValue": "",
+                                                                                "@id": "{{lbl_Incident_Type}}"
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "opration": "mean",
+                                                                "toDateField": "resolveddate",
+                                                                "fromDateField": "aftermathDate",
+                                                                "timeRange": "createDate",
+                                                                "showSavings": "dollar",
+                                                                "grouping": {
+                                                                    "primary": [],
+                                                                    "secondary": []
+                                                                },
+                                                                "cardLayout": true
+                                                            }
+                                                        }
+                                                    ],
+                                                    "style": "col-lg-4"
+                                                }
+                                            ],
+                                            "wid": "26b8292f-3610-4659-b5ed-4bed991e12f9",
+                                            "container": true,
+                                            "_collapsed": false
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "style": "col-lg-6"
+                    }
+                ],
+                "wid": "4122274f-5f5d-4b93-a144-198d65973aad",
+                "container": true,
+                "_collapsed": false
+            }
+        ],
+        "wid": "ec834d77-403b-4dfa-abda-719402adbb17",
+        "metadata": {
+            "customTemplateTitle": "Dashboard"
+        }
+    },
+    "filterArray": [
+        {
+            "key": "lbl_alert_type",
+            "open": false,
+            "type": "picklist",
+            "label": "LBL_Alert_Type",
+            "value": "\/api\/3\/picklists\/c145394b-069a-449b-a05e-67980d0f4b82",
+            "expression": "{{lbl_alert_type}}",
+            "defaultValue": "\/api\/3\/picklists\/c145394b-069a-449b-a05e-67980d0f4b82",
+            "picklistName": "\/api\/3\/picklist_names\/a7087b9c-5660-495f-a8ac-c3b198ddb8c2"
+        },
+        {
+            "key": "lbl_Incident_Type",
+            "open": true,
+            "type": "picklist",
+            "label": "LBL_Incident_Type",
+            "value": "\/api\/3\/picklists\/703222e8-f69a-11e7-8c3f-9a214cf093ae",
+            "required": true,
+            "expression": "{{lbl_Incident_Type}}",
+            "defaultValue": "\/api\/3\/picklists\/703222e8-f69a-11e7-8c3f-9a214cf093ae",
+            "picklistName": "\/api\/3\/picklist_names\/f3938848-6220-4b27-af2d-a5329cf63656"
+        }
+    ],
+    "updateDate": 1583387971
+}
