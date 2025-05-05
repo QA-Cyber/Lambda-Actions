@@ -1,0 +1,139 @@
+id: Containment Plan - Disable Account
+name: Containment Plan - Disable Account
+description: "## Containment Plan - Disable Account\n\nThis playbook is a sub-playbook
+  within the containment plan playbook.\nThe playbook disables users by utilizing
+  the sub-playbook \"Block Account - Generic v2\""
+trigger:
+steps:
+- id: 9fb1ed1d-c22c-48bb-8a3c-4d58bbca6347
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 4d874c50-7a1f-489c-8397-3fc3304eeea6
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 73bc4723-d270-4e04-8a74-c13b5b1369f1
+  type: action
+  description: commands.local.cmd.set.parent.incident.context
+  action:
+  connector:
+  inputs:
+    key:
+      simple: UsersBlockList
+    value:
+      complex:
+        root: Blocklist
+        accessor: Final
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 073f607c-a924-43c1-8852-d480e1454fdc
+  type: condition
+  description: Whether to disable the account based on the input values.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 4d874c50-7a1f-489c-8397-3fc3304eeea6
+    else_:
+  - if_: ''
+    then: 32ec3207-df33-4d5f-8551-2a49ca677b62
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 32ec3207-df33-4d5f-8551-2a49ca677b62
+  type: action
+  description: "Set a value in context under the key you entered. If no value is entered,
+    the script doesn't do anything.\n\nThis automation runs using the default Limited
+    User role, unless you explicitly change the permissions.\nFor more information,
+    see the section about permissions here:\n- For Cortex XSOAR 6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+    \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n
+    - For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+  action: SetAndHandleEmpty
+  connector:
+  inputs:
+    key:
+      simple: UsersToDisable
+    value:
+      complex:
+        root: inputs.Username
+        transformers:
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: b35ee9bb-51f1-4f64-8df5-b490d1592b2c
+  type: subplaybook
+  description: ''
+  action:
+  connector:
+  inputs:
+    Tag:
+      simple: XSIAM alert - ${alert.id}
+    UserVerification:
+      complex:
+        root: inputs.UserVerification
+    Username:
+      complex:
+        root: UsersToDisable
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

@@ -1,0 +1,709 @@
+id: Containment Plan
+name: Containment Plan
+description: "This playbook handles the main containment actions available with Cortex
+  XSIAM, including the following sub-playbooks:  \n* Containment Plan - Isolate endpoint\n
+  * Containment Plan - Disable account\n* Containment Plan - Quarantine file\n* Containment
+  Plan - Block indicators\n* Containment Plan - Clear user session (currently, the
+  playbook supports only Okta)\n\nNote: The playbook inputs enable manipulating the
+  execution flow. Read the input descriptions for details."
+trigger:
+steps:
+- id: 8aa2ff75-9b37-45eb-8c00-1233cf5410ac
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 585cb24c-cfe1-45cd-8c5d-370621442364
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: abb87f28-a965-4d8d-8069-eb635815bb13
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: ed18bff1-e327-4889-85e8-65d66ff9ef5a
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 1784b84c-0c06-44ae-8230-83edc6deccba
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f495b99b-b851-438c-8fc8-0db9145c81a2
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c69a7bbb-62d0-447a-8184-87aea4d7c440
+  type: condition
+  description: "Whether to perform containment actions automatically or manually.\n\
+    \n"
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 6b328ab7-5553-4c6b-86d3-ca365bf5766d
+    else_:
+  - if_: ''
+    then: c468a69f-b7e5-4fdc-8ea5-c1b5d6710a2e
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6b328ab7-5553-4c6b-86d3-ca365bf5766d
+  type: action
+  description: Select which indicators to block.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: b14b5f26-d428-4b62-8ba3-2c1253e171fc
+  type: subplaybook
+  description: ''
+  action:
+  connector:
+  inputs:
+    UserContainment:
+      complex:
+        root: inputs.UserContainment
+    UserVerification:
+      complex:
+        root: inputs.UserVerification
+    Username:
+      complex:
+        root: inputs.AutoContainment
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which containment actions would you like to perform?.Answers.2
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoContainment
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.Username
+              iscontext: true
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e302b10a-140c-4997-8584-b2dc75debb4a
+  type: subplaybook
+  description: ''
+  action:
+  connector:
+  inputs:
+    AutoContainment:
+      complex:
+        root: inputs.AutoContainment
+    EndpointID:
+      complex:
+        root: inputs.EndpointID
+    FileContainment:
+      complex:
+        root: inputs.FileContainment
+    FileHash:
+      complex:
+        root: inputs.AutoContainment
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which containment actions would you like to perform?.Answers.3
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoContainment
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.FileHash
+              iscontext: true
+    FilePath:
+      complex:
+        root: inputs.AutoContainment
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which containment actions would you like to perform?.Answers.3
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoContainment
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.FilePath
+              iscontext: true
+    FileRemediation:
+      complex:
+        root: inputs.FileRemediation
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 07e811df-f4de-42bb-8910-13684b6086f1
+  type: subplaybook
+  description: ''
+  action:
+  connector:
+  inputs:
+    AutoBlockIndicators:
+      complex:
+        root: inputs.AutoBlockIndicators
+    AutoContainment:
+      complex:
+        root: inputs.AutoContainment
+    BlockIndicators:
+      complex:
+        root: inputs.BlockIndicators
+    Domain:
+      complex:
+        root: inputs.AutoContainment
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which containment actions would you like to perform?.Answers.7
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoContainment
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.Domain
+              iscontext: true
+    FileHash:
+      complex:
+        root: inputs.AutoContainment
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which containment actions would you like to perform?.Answers.6
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoContainment
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.FileHash
+              iscontext: true
+    FilePath:
+      complex:
+        root: inputs.FilePath
+    IP:
+      complex:
+        root: inputs.AutoContainment
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which containment actions would you like to perform?.Answers.4
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoContainment
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.IP
+              iscontext: true
+    URL:
+      complex:
+        root: inputs.AutoContainment
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which containment actions would you like to perform?.Answers.5
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoContainment
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.URL
+              iscontext: true
+    UserVerification:
+      complex:
+        root: inputs.UserVerification
+    Username:
+      complex:
+        root: inputs.Username
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: df1758c9-fbf9-4532-876f-b60ea180dcbc
+  type: subplaybook
+  description: ''
+  action:
+  connector:
+  inputs:
+    ClearUserSessions:
+      complex:
+        root: inputs.ClearUserSessions
+    IAMUserDomain:
+      complex:
+        root: inputs.IAMUserDomain
+    Username:
+      complex:
+        root: inputs.AutoContainment
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which containment actions would you like to perform?.Answers.8
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoContainment
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.Username
+              iscontext: true
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 8bd87a2a-710a-479b-8356-540bcdf010fd
+  type: subplaybook
+  description: ''
+  action:
+  connector:
+  inputs:
+    EndpointHostName:
+      complex:
+        root: inputs.AutoContainment
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which containment actions would you like to perform?.Answers.0
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoContainment
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: Core.Endpoint.endpoint_name
+              iscontext: true
+    EndpointID:
+      complex:
+        root: inputs.AutoContainment
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which containment actions would you like to perform?.Answers.1
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoContainment
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.EndpointID
+              iscontext: true
+    HostContainment:
+      complex:
+        root: inputs.HostContainment
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 953056e0-a248-437e-8498-348287ca39bc
+  type: action
+  description: Gets a list of endpoints, according to the passed filters. If there
+    are no filters, all endpoints are returned. Filtering by multiple fields is concatenated
+    using the AND condition (OR is not supported). Maximum result set size is 100.
+    Offset is the zero-based number of endpoints from the start of the result set
+    (start by counting from 0).
+  action:
+  connector:
+  inputs:
+    endpoint_id_list:
+      complex:
+        root: inputs.EndpointID
+        transformers:
+        - operator: SetIfEmpty
+          args:
+            applyIfEmpty: {}
+            defaultValue:
+              value:
+                simple: No Value
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c468a69f-b7e5-4fdc-8ea5-c1b5d6710a2e
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: a8f6c601-67bc-4dfd-8c09-008797b89324
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: afefe6f1-1bc6-4c69-8fd4-7072d4fa9962
+  type: action
+  description: Set a value in context under the key you entered.
+  action: Set
+  connector:
+  inputs:
+    key:
+      simple: FilesList
+    stringify:
+      simple: 'false'
+    value:
+      complex:
+        root: inputs.FilePath
+        transformers:
+        - operator: MakePair
+          args:
+            array1_key:
+              iscontext: true
+            array2:
+              value:
+                simple: inputs.FileHash
+              iscontext: true
+            array2_key: {}
+            determine_output_length_by: {}
+            merge_dict: {}
+            output_name1:
+              value:
+                simple: Path
+            output_name2:
+              value:
+                simple: Hash
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 4541881d-148b-4360-83d3-c66c78b3d624
+  type: condition
+  description: Check if the file path and file hash are defined.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 953056e0-a248-437e-8498-348287ca39bc
+    else_:
+  - if_: ''
+    then: afefe6f1-1bc6-4c69-8fd4-7072d4fa9962
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

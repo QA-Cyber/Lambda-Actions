@@ -12,10 +12,11 @@ from exporters.xsoar_exporter import export_xsoar
 from exporters.fortisoar_exporter import export_fortisoar
 from parsers import fortisoar_parser, xsoar_parser, ai_parser
 import importlib.util
-import io
+import io, sys
 
 app = typer.Typer()
 logging.basicConfig(filename="conversion.log", level=logging.INFO)
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 @app.command()
 def convert(
@@ -90,7 +91,6 @@ def convert(
         yaml = ruamel.yaml.YAML()
         yaml.default_flow_style = False
 
-        import io
         stream = io.StringIO()
         yaml.dump(vendor_playbook, stream)
         new_content = stream.getvalue()

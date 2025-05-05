@@ -1,0 +1,368 @@
+id: Block File - Generic v2
+name: Block File - Generic v2
+description: "This playbook is used to block files from running on endpoints. \nThis
+  playbook supports the following integrations:\n- Palo Alto Networks Traps\n- Palo
+  Alto Networks Cortex XDR\n- Cybereason\n- Carbon Black Enterprise Response\n- Cylance
+  Protect v2\n- Crowdstrike Falcon\n- Microsoft Defender for Endpoint."
+trigger:
+steps:
+- id: 420a534c-a6e6-4cf5-8b86-ac7dd1a91441
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 5a2f437e-234a-43ef-858d-28d07fd1c7c2
+  type: subplaybook
+  description: "This playbook receives an MD5 hash and adds it to the block list in
+    Carbon Black Enterprise Response. Files with that MD5 hash are blocked from execution
+    on the managed endpoints.\n\nIf the integration is disabled at the time of running,
+    or if the hash is already on the block list, no action is taken on the MD5."
+  action:
+  connector:
+  inputs:
+    MD5:
+      complex:
+        root: inputs.Hash
+        filters:
+        - - operator: stringHasLength
+            left:
+              value:
+                simple: inputs.Hash
+              iscontext: true
+            right:
+              value:
+                simple: '32'
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.MD5
+              iscontext: true
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c8476a84-8d87-4ff2-8d6c-1dd1cccc503a
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 2efe2a1a-1d31-438c-828f-b6ae50f3899d
+  type: subplaybook
+  description: This playbook accepts an MD5 hash and blocks the file using the Cybereason
+    integration.
+  action:
+  connector:
+  inputs:
+    MD5:
+      complex:
+        root: inputs.Hash
+        filters:
+        - - operator: stringHasLength
+            left:
+              value:
+                simple: inputs.Hash
+              iscontext: true
+            right:
+              value:
+                simple: '32'
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.MD5
+              iscontext: true
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: a887370c-f94a-42f9-866f-2d80b7707f41
+  type: subplaybook
+  description: This playbook accepts a SHA256 hash and adds the hash to the Global
+    Quarantine list using the Cylance Protect v2 integration.
+  action:
+  connector:
+  inputs:
+    SHA256:
+      complex:
+        root: inputs.Hash
+        filters:
+        - - operator: stringHasLength
+            left:
+              value:
+                simple: inputs.Hash
+              iscontext: true
+            right:
+              value:
+                simple: '64'
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.SHA256
+              iscontext: true
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 32d4b47a-e972-4e30-875b-b563130cc4ca
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 0c07d0e1-59b1-436c-8e90-f2d0410df813
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: dcc8e191-213c-4ffd-8bc7-a8e1bc8894d7
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: b42b03dd-99c1-4149-8c32-336d23b88cf0
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: cfefcb2a-3dcf-44a5-8aed-ef231d7fe00b
+  type: subplaybook
+  description: Use this playbook to add files to Cortex XDR block list with a given
+    file SHA256 playbook input.
+  action:
+  connector:
+  inputs:
+    HashList:
+      complex:
+        root: inputs.Hash
+        filters:
+        - - operator: stringHasLength
+            left:
+              value:
+                simple: inputs.Hash
+              iscontext: true
+            right:
+              value:
+                simple: '64'
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.SHA256
+              iscontext: true
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: b6a4a1eb-e837-400c-890a-aa72fdd866d2
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c463f54e-7a18-4dba-804f-acf83e449259
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 07c049da-5bbf-4804-8b51-3b58463ce5be
+  type: subplaybook
+  description: "This playbook receives an MD5 or a SHA256 hash and adds it to the
+    block list in CrowdStrike Falcon. \nThe playbook uses the integration \"CrowdStrike
+    Falcon\"."
+  action:
+  connector:
+  inputs:
+    Hash:
+      complex:
+        root: inputs.Hash
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.MD5
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.SHA256
+              iscontext: true
+        - operator: uniq
+    'Severity ':
+      simple: medium
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 56668cf3-d5c5-424d-85ff-43b568a0d538
+  type: subplaybook
+  description: "This playbook receives an MD5 or a SHA256 hash and adds it to the
+    block list in Microsoft Defender for Endpoint. \nThe playbook uses the integration
+    \"Microsoft Defender for Endpoint\"."
+  action:
+  connector:
+  inputs:
+    GenerateAlert:
+      simple: 'true'
+    Hash:
+      complex:
+        root: inputs.Hash
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.MD5
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.SHA256
+              iscontext: true
+        - operator: uniq
+    IndicatorDescription:
+      simple: Added by Cortex XSOAR
+    IndicatorTitle:
+      simple: Added by Cortex XSOAR
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

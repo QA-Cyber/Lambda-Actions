@@ -1,0 +1,301 @@
+id: Block Email - Generic v2
+name: Block Email - Generic v2
+description: "This playbook will block emails at your mail relay integration.\n\n
+  Supported integrations for this playbook:\n* Mimecast\n* FireEye Email Security
+  (EX)\n* Cisco Email Security\n* Symantec Email Security\n"
+trigger:
+steps:
+- id: d583e596-e160-4401-8bbf-544e34372f9e
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 2a7524dc-dfcd-4dce-8978-5bbb1ba94a67
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f2f94ec5-a4ef-4963-8382-9e334fc350c7
+  type: subplaybook
+  description: ''
+  action:
+  connector:
+  inputs:
+    EmailToBlock:
+      complex:
+        root: inputs.EmailToBlock
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 2c065c72-23f4-41d6-8391-027a43640107
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: FireEye Email Security
+  outputs:
+  conditions:
+  - if_: ''
+    then: 2a7524dc-dfcd-4dce-8978-5bbb1ba94a67
+    else_:
+  - if_: ''
+    then: 3615eb04-9998-4341-86ab-6c3494a4c876
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 75132291-3638-4f49-8d91-26b4021a87a7
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: MimecastV2
+  outputs:
+  conditions:
+  - if_: ''
+    then: 2a7524dc-dfcd-4dce-8978-5bbb1ba94a67
+    else_:
+  - if_: ''
+    then: a3e0c8d9-1eff-4556-8233-4d21f09fc465
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 3615eb04-9998-4341-86ab-6c3494a4c876
+  type: action
+  description: Updates the blocked sender domain.
+  action:
+  connector:
+  inputs:
+    entry_value:
+      complex:
+        root: inputs.EmailToBlock
+    type:
+      simple: sender_email_address
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: a3e0c8d9-1eff-4556-8233-4d21f09fc465
+  type: action
+  description: Create a Blocked Sender Policy
+  action:
+  connector:
+  inputs:
+    description:
+      simple: Blocked accounts
+    fromType:
+      simple: individual_email_address
+    fromValue:
+      complex:
+        root: inputs.EmailToBlock
+    option:
+      simple: block_sender
+    toType:
+      simple: everyone
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: ba2daa5c-96f8-462d-8a50-86c84d4d80e8
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e38a8e79-0254-4d88-8e98-8d023766523d
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 45e2cbf1-08bc-4085-8d3e-a0fe2fd4553e
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: ebbab30d-ccb0-4d3b-8eba-9c953cb7bdb3
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 614bc2e7-b289-44d7-8350-5bc69ace90fa
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 2a7524dc-dfcd-4dce-8978-5bbb1ba94a67
+    else_:
+  - if_: ''
+    then: 3b643c94-60a0-4902-8490-e575b2f9ea9b
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 3b643c94-60a0-4902-8490-e575b2f9ea9b
+  type: action
+  description: Append spam quarantine blocklist/safelist entry.
+  action:
+  connector:
+  inputs:
+    entry_type:
+      simple: blocklist
+    sender_addresses:
+      complex:
+        root: inputs.EmailToBlock
+    view_by:
+      simple: sender
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 9e4f3f09-0897-4f18-86ce-22dd8a09b18c
+  type: condition
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 2a7524dc-dfcd-4dce-8978-5bbb1ba94a67
+    else_:
+  - if_: ''
+    then: ebbab30d-ccb0-4d3b-8eba-9c953cb7bdb3
+    else_:
+  - if_: ''
+    then: e38a8e79-0254-4d88-8e98-8d023766523d
+    else_:
+  - if_: ''
+    then: ba2daa5c-96f8-462d-8a50-86c84d4d80e8
+    else_:
+  - if_: ''
+    then: 45e2cbf1-08bc-4085-8d3e-a0fe2fd4553e
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

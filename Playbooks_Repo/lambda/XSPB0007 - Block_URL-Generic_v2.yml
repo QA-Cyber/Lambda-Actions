@@ -1,0 +1,707 @@
+id: Block URL - Generic v2
+name: Block URL - Generic v2
+description: "This playbook blocks malicious URLs using all integrations that are
+  enabled.\n\nSupported integrations for this playbook:\n* Palo Alto Networks PAN-OS\n
+  * Zscaler\n* Sophos\n* Forcepoint\n* Checkpoint\n* Netcraft."
+trigger:
+steps:
+- id: f7a7452c-dafe-4b3e-8461-4ea61daf5e3b
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 8f968aa5-26ca-4471-891b-4ac7f9114147
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: ecece7aa-0eb6-4f67-8a9b-dfc77bcef34d
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 0e2e9b54-cbaa-4f8c-85b2-b5927f30f52a
+  type: condition
+  description: Verify that the playbook input includes at least one URL to block.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 21af0a6a-234a-4061-884a-86f3209ae79e
+    else_:
+  - if_: ''
+    then: ecece7aa-0eb6-4f67-8a9b-dfc77bcef34d
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: efeca267-b6d2-4a08-8325-e8fb7c1dd633
+  type: condition
+  description: Verify that there is a valid instance of Zscaler enabled.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 8f968aa5-26ca-4471-891b-4ac7f9114147
+    else_:
+  - if_: ''
+    then: ea188096-e085-4155-884d-a6c9d23ddb1f
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: ea188096-e085-4155-884d-a6c9d23ddb1f
+  type: action
+  description: Adds the specified URLs to the block list.
+  action:
+  connector:
+  inputs:
+    url:
+      complex:
+        root: inputs.URL
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: a3211000-764a-4ea3-8fea-1cb2a8c2b4cd
+  type: subplaybook
+  description: "This playbook blocks URLs using Palo Alto Networks Panorama or Firewall
+    through Custom URL Categories.\nThe playbook checks whether the input URL category
+    already exists, and if the URLs are a part of this category. Otherwise, it will
+    create the category, block the URLs, and commit the configuration."
+  action:
+  connector:
+  inputs:
+    AutoCommit:
+      complex:
+        root: inputs.AutoCommit
+    CustomURLCategory:
+      complex:
+        root: inputs.CustomURLCategory
+    URL:
+      complex:
+        root: Blocklist
+        accessor: URL
+        transformers:
+        - operator: uniq
+    pre-post:
+      simple: pre-rulebase
+    LogForwarding:
+      complex:
+        root: inputs.LogForwarding
+    categories:
+      complex:
+        root: inputs.categories
+    device-group:
+      complex:
+        root: inputs.device-group
+    type:
+      complex:
+        root: inputs.type
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 90b64f91-6db0-4a69-86e3-80aa6fc36ebd
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 0c64c152-533a-4e38-8a33-5ba8499b4c48
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 9e331921-f00a-47d7-8f02-8ab4fbacc053
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: b9e7db2b-6985-4410-8e01-ccb9950cd8b7
+  type: condition
+  description: Check if should use EDL or not
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 8f968aa5-26ca-4471-891b-4ac7f9114147
+    else_:
+  - if_: ''
+    then: 8d37ba43-fa53-4ab4-83f9-5b9764281c85
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 47aff5b6-5919-46bb-8979-c342b18f9197
+  type: condition
+  description: Check if should use Custom URL Category or not
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 8f968aa5-26ca-4471-891b-4ac7f9114147
+    else_:
+  - if_: ''
+    then: a3211000-764a-4ea3-8fea-1cb2a8c2b4cd
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: da7121fa-715d-4010-81ac-e519b88b58e3
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: CheckPointFirewall_v2
+  outputs:
+  conditions:
+  - if_: ''
+    then: 8f968aa5-26ca-4471-891b-4ac7f9114147
+    else_:
+  - if_: ''
+    then: 195a51ea-2a0b-47e3-83f6-c6b6a4938847
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 195a51ea-2a0b-47e3-83f6-c6b6a4938847
+  type: subplaybook
+  description: "This playbook blocks URLs using Checkpoint Firewall through Custom
+    URL Categories.\nThe playbook checks whether the input URL category already exists,
+    and if the URLs are a part of this category. Otherwise, it will create the category,
+    block the URLs, and publish the configuration."
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 0dd55a58-9d45-449e-8b9f-3c1630188951
+  type: subplaybook
+  description: "This playbook adds the URL to the Default Block URL Policy. (The target\n
+    policy can be changed as requested).\nPre-Requisite: \n1) Create a web policy
+    rule that refers to the URL group you specified on the inputs of the playbook.\n
+    2) Create a new firewall rule and assign the web policy to the one created in
+    the previous step."
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 21af0a6a-234a-4061-884a-86f3209ae79e
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 42362e33-89e4-4e9a-89ad-8fca62f06425
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c08fd24c-0333-4f69-8700-69b92c530882
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: sophos_firewall
+  outputs:
+  conditions:
+  - if_: ''
+    then: 8f968aa5-26ca-4471-891b-4ac7f9114147
+    else_:
+  - if_: ''
+    then: 0dd55a58-9d45-449e-8b9f-3c1630188951
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 12ce6945-cd09-46e6-8661-748f50ed220c
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 8d37ba43-fa53-4ab4-83f9-5b9764281c85
+  type: action
+  description: commands.local.cmd.add.values.to.indicator.multi.select.field
+  action:
+  connector:
+  inputs:
+    field:
+      simple: tags
+    fieldValue:
+      complex:
+        root: inputs.Tag
+    indicatorsValues:
+      complex:
+        root: Blocklist
+        accessor: URL
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 7948896f-f14b-4e0b-865e-47a3a0c1da3f
+  type: action
+  description: Ask the analyst for verification of which URL to block
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6a38d62a-b597-4165-87e8-7b5b92953ca5
+  type: action
+  description: Set a value in context under the key you entered. If no value is entered,
+    the script doesn't do anything.
+  action: SetAndHandleEmpty
+  connector:
+  inputs:
+    append:
+      simple: 'true'
+    key:
+      simple: Blocklist.URL
+    value:
+      simple: ${Would you like to Block the following URLs?.Answers.0}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: d561f0f8-0d4c-4ba3-8560-187751ca5c85
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 08e14d34-e96d-422a-8640-f5ef9a6eaa7a
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Forcepoint
+  outputs:
+  conditions:
+  - if_: ''
+    then: 8f968aa5-26ca-4471-891b-4ac7f9114147
+    else_:
+  - if_: ''
+    then: d3a1e7fd-3deb-4910-8567-c5bcb6363576
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: d3a1e7fd-3deb-4910-8567-c5bcb6363576
+  type: action
+  description: "Append a specific category in Forcepoint with the Blocked URLs. \n
+    You can choose to add those to a default category (For more info - refer to https://www.forcepoint.com/product/feature/master-database-url-categories)\n
+    or specify a custom/user-defined category."
+  action:
+  connector:
+  inputs:
+    urls:
+      simple: ${Blocklist.URL}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 33d5bf90-736a-4228-8307-53b1d58d4550
+  type: condition
+  description: Check if should ask for user verification
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 76856aa5-7ff2-415b-8f6f-e4bd1e6798a9
+    else_:
+  - if_: ''
+    then: 7948896f-f14b-4e0b-865e-47a3a0c1da3f
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 76856aa5-7ff2-415b-8f6f-e4bd1e6798a9
+  type: action
+  description: Set a value in context under the key you entered. If no value is entered,
+    the script doesn't do anything.
+  action: SetAndHandleEmpty
+  connector:
+  inputs:
+    key:
+      simple: Blocklist.URL
+    value:
+      complex:
+        root: inputs.URL
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e889ae46-04a0-4514-8923-2291cec2883a
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 35fcf7d9-19c6-48fe-831d-0b78cbf96323
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Netcraft V2
+  outputs:
+  conditions:
+  - if_: ''
+    then: 8f968aa5-26ca-4471-891b-4ac7f9114147
+    else_:
+  - if_: ''
+    then: 0e06c863-2829-4749-8d1a-6daeb34d89c6
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 0e06c863-2829-4749-8d1a-6daeb34d89c6
+  type: action
+  description: "Report a new attack or authorize an existing attack in the Takedown
+    Service.\nIf a takedown for the attack already exists in the Netcraft system it
+    will be authorized, otherwise, a new takedown will be added and authorized.\n"
+  action:
+  connector:
+  inputs:
+    attack:
+      complex:
+        root: Blocklist
+        accessor: URL
+    comment:
+      simple: Malicious - Added by Netcraft Integration
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f840dbdd-478b-445f-8f0b-a5527a54467b
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e5de9af1-33df-4064-82d9-b5b87f472d7f
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Palo Alto Networks - Prisma SASE
+  outputs:
+  conditions:
+  - if_: ''
+    then: 8f968aa5-26ca-4471-891b-4ac7f9114147
+    else_:
+  - if_: ''
+    then: 7fa52bc1-010b-4de9-87e4-dbc537abd12b
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 7fa52bc1-010b-4de9-87e4-dbc537abd12b
+  type: subplaybook
+  description: "The playbook will handle the operation of blocking a URL within the
+    organization.\nIf a category is provided, the URL will be added to the list.\n
+    If not, a new URL category will be created, and a new security rule that blocks
+    that category."
+  action:
+  connector:
+  inputs:
+    AutoCommit:
+      complex:
+        root: inputs.AutoCommit
+    CategoryName:
+      complex:
+        root: inputs.CustomURLCategory
+    Folder:
+      complex:
+        root: inputs.Folder
+        transformers:
+        - operator: uniq
+    URL:
+      complex:
+        accessor: URL
+        root: Blocklist
+        transformers:
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

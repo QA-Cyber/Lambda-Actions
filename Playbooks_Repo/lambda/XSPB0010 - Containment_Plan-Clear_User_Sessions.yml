@@ -1,0 +1,369 @@
+id: Containment Plan - Clear User Sessions
+name: Containment Plan - Clear User Sessions
+description: "## Containment Plan - Clear User Sessions\n\nThis playbook is a sub-playbook
+  within the containment plan playbook.\nThe playbook uses the 'Okta v2' and 'MSGraph
+  User' integrations to clear user sessions."
+trigger:
+steps:
+- id: f2a578bb-7b26-4477-8391-2e40e77fb9d5
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 965b6bb7-8584-4ee9-86be-705ca7951fba
+  type: action
+  description: "Removes all active identity provider sessions. This forces the user
+    to authenticate on the next operation. Optionally revokes OpenID Connect and OAuth
+    refresh and access tokens issued to the user.\nFor more information and examples:\n\
+    https://developer.okta.com/docs/reference/api/users/#user-sessions"
+  action:
+  connector:
+  inputs:
+    userId:
+      complex:
+        root: Account
+        accessor: ID
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 581b7da6-4c88-41a6-8175-a2116add396c
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: ea29c7c0-e180-4c2e-8593-3948400c532e
+  type: action
+  description: Fetches information for a single user. You must enter one or more parameters
+    for the command to run.
+  action:
+  connector:
+  inputs:
+    username:
+      simple: ${OktaUsersSessionToClear}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: bda090c7-6749-46e5-8453-31f56d8b778c
+  type: action
+  description: commands.local.cmd.set.parent.incident.context
+  action:
+  connector:
+  inputs:
+    key:
+      simple: UsersSessionCleared
+    value:
+      complex:
+        root: Account
+        accessor: Username
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: cceb9ed8-97d2-4b2a-8688-c02b46be05a6
+  type: action
+  description: Set a value in context under the key you entered.
+  action: Set
+  connector:
+  inputs:
+    key:
+      simple: OktaUsersSessionToClear
+    value:
+      complex:
+        root: inputs.Username
+        filters:
+        - - operator: notContainsGeneral
+            left:
+              value:
+                simple: inputs.Username
+              iscontext: true
+            right:
+              value:
+                simple: administrator
+            ignorecase: true
+        - - operator: notContainsGeneral
+            left:
+              value:
+                simple: inputs.Username
+              iscontext: true
+            right:
+              value:
+                simple: system
+            ignorecase: true
+        transformers:
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 4025c083-2630-4171-889e-5f05b1fc51eb
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'.
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Okta v2
+  outputs:
+  conditions:
+  - if_: ''
+    then: 581b7da6-4c88-41a6-8175-a2116add396c
+    else_:
+  - if_: ''
+    then: cceb9ed8-97d2-4b2a-8688-c02b46be05a6
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f1d3409f-55f4-4804-8a48-354971cae04e
+  type: condition
+  description: Whether to clear the user sessions based on the input values.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 581b7da6-4c88-41a6-8175-a2116add396c
+    else_:
+  - if_: ''
+    then: 4025c083-2630-4171-889e-5f05b1fc51eb
+    else_:
+  - if_: ''
+    then: 64c30075-eba8-4222-8251-cf075b841898
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 64c30075-eba8-4222-8251-cf075b841898
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'.
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Microsoft Graph User
+  outputs:
+  conditions:
+  - if_: ''
+    then: 581b7da6-4c88-41a6-8175-a2116add396c
+    else_:
+  - if_: ''
+    then: 2fd929ed-f77b-49d3-8ec5-9ac7e37a2a47
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f0ed1f31-5552-423b-8d43-44a4e3b69879
+  type: action
+  description: "Retrieves the properties and relationships of a user object. For more
+    information, visit: https://docs.microsoft.com/en-us/graph/api/user-update?view=graph-rest-1.0).\n
+    Permissions: - User.Read (Delegated) - User.Read.All (Application)."
+  action:
+  connector:
+  inputs:
+    user:
+      simple: ${MsGraphUsersSessionToClear}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c82fc95c-577d-407a-8e4c-127b17c05843
+  type: action
+  description: "Revoke a user session - Invalidates all the refresh tokens issued
+    to applications for a user.\nPermission: Directory.AccessAsUser.All(Delegated)."
+  action:
+  connector:
+  inputs:
+    user:
+      simple: ${MSGraphUser.ID}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: aaafcc54-e334-42a5-8a5c-f4dea1d0c158
+  type: action
+  description: commands.local.cmd.set.parent.incident.context
+  action:
+  connector:
+  inputs:
+    key:
+      simple: UsersSessionCleared
+    value:
+      simple: ${MSGraphUser.UserPrincipalName}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 4655db74-8104-4510-88b0-d9a081911b34
+  type: condition
+  description: Verify that the user exists.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 581b7da6-4c88-41a6-8175-a2116add396c
+    else_:
+  - if_: ''
+    then: c82fc95c-577d-407a-8e4c-127b17c05843
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c1ba5bf5-e37f-41ee-8392-7709acc40e8f
+  type: condition
+  description: Verify that the user exists.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 581b7da6-4c88-41a6-8175-a2116add396c
+    else_:
+  - if_: ''
+    then: 965b6bb7-8584-4ee9-86be-705ca7951fba
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 2fd929ed-f77b-49d3-8ec5-9ac7e37a2a47
+  type: action
+  description: Set a value in context under the key you entered.
+  action: Set
+  connector:
+  inputs:
+    key:
+      simple: MsGraphUsersSessionToClear
+    value:
+      complex:
+        root: inputs.Username
+        filters:
+        - - operator: notContainsGeneral
+            left:
+              value:
+                simple: inputs.Username
+              iscontext: true
+            right:
+              value:
+                simple: administrator
+            ignorecase: true
+        - - operator: notContainsGeneral
+            left:
+              value:
+                simple: inputs.Username
+              iscontext: true
+            right:
+              value:
+                simple: system
+            ignorecase: true
+        transformers:
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

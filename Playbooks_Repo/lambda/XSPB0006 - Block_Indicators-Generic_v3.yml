@@ -1,0 +1,742 @@
+id: Block Indicators - Generic v3
+name: Block Indicators - Generic v3
+description: "This playbook blocks malicious indicators using all integrations that
+  are enabled, using the following sub-playbooks:\n\n- Block URL - Generic v2\n- Block
+  Account - Generic v2\n- Block IP - Generic v3\n- Block File - Generic v2\n- Block
+  Email - Generic v2\n- Block Domain - Generic v2."
+trigger:
+steps:
+- id: be855f8e-b0d6-4b33-8898-954bf9ba99cc
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c155d55d-f7f3-4af2-8739-3cb6143e0e81
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 15d43128-6c48-4deb-8ed0-044d0454fa7b
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 97b85f3e-e339-490d-8f4c-7a188cfc0f25
+  type: subplaybook
+  description: "This playbook is used to block files from running on endpoints. \n
+    This playbook supports the following integrations:\n- Palo Alto Networks Traps\n
+    - Palo Alto Networks Cortex XDR\n- Cybereason\n- Carbon Black Enterprise Response\n
+    - Cylance Protect v2\n"
+  action:
+  connector:
+  inputs:
+    Hash:
+      complex:
+        root: inputs.AutoBlockIndicators
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which indicators would you like to block?.Answers.2
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoBlockIndicators
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.FilesToBlock
+              iscontext: true
+    MD5:
+      complex:
+        root: inputs.MD5
+    SHA256:
+      complex:
+        root: inputs.SHA256
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 53c7faa6-ec4b-46c0-8322-71972e65dad0
+  type: subplaybook
+  description: "This playbook blocks malicious IP addresses using all integrations
+    that are enabled. The direction of the traffic that will be blocked is determined
+    by the XSOAR user (and set by default to outgoing)\nNote the following:\n-  some
+    of those integrations require specific parameters to run, which are based on the
+    playbook inputs. Also, certain integrations use FW rules or appended network objects.\n
+    - Note that the appended network objects should be specified in blocking rules
+    inside the system later on. \n\n\nSupported integrations for this playbook [Network
+    security products such as FW/WAF/IPs/etc.]: \n\n* Check Point Firewall\n* Palo
+    Alto Networks PAN-OS\n* Zscaler\n* FortiGate\n* Aria Packet Intelligence\n* Cisco
+    Firepower \n* Cisco Secure Cloud Analytics\n* Cisco ASA\n* Akamai WAF\n* F5 SilverLine\n
+    * ThreatX\n* Signal Sciences WAF\n* Sophos Firewall\n\n"
+  action:
+  connector:
+  inputs:
+    AkamaiNetworkListID:
+      complex:
+        root: inputs.AkamaiNetworkListID
+    AutoCommit:
+      complex:
+        root: inputs.AutoCommit
+    CiscoFWSource:
+      complex:
+        root: inputs.CiscoFWSource
+    CustomBlockRule:
+      complex:
+        root: inputs.CustomBlockRule
+    DAG:
+      complex:
+        root: inputs.DAG
+    IP:
+      complex:
+        root: inputs.AutoBlockIndicators
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which indicators would you like to block?.Answers.0
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoBlockIndicators
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.IP
+              iscontext: true
+    InputEnrichment:
+      complex:
+        root: inputs.InputEnrichment
+    InternalRange:
+      complex:
+        root: inputs.InternalRange
+    LogForwarding:
+      complex:
+        root: inputs.LogForwarding
+    RuleDirection:
+      complex:
+        root: inputs.RuleDirection
+    RuleName:
+      complex:
+        root: inputs.RuleName
+    SiteName:
+      complex:
+        root: inputs.SiteName
+    StaticAddressGroup:
+      complex:
+        root: inputs.StaticAddressGroup
+    Tag:
+      complex:
+        root: inputs.Tag
+    UserVerification:
+      complex:
+        root: inputs.UserVerification
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 22f0eb38-c4d3-4e67-889b-6abbff216ab8
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 8e6165ed-cc2e-4820-8ae4-c73fd82a3088
+  type: action
+  description: commands.local.cmd.add.values.to.indicator.multi.select.field
+  action:
+  connector:
+  inputs:
+    field:
+      simple: tags
+    fieldValue:
+      complex:
+        root: inputs.Tag
+    indicatorsValues:
+      complex:
+        root: IndicatorsToBlock
+        filters:
+        - - operator: isNotEqualString
+            left:
+              value:
+                simple: IndicatorsToBlock
+              iscontext: true
+            right:
+              value:
+                simple: No indicators to block
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f12b6207-b78c-4cde-8f3d-2cbd8c3e0d56
+  type: subplaybook
+  description: "This playbook blocks malicious usernames using all integrations that
+    you have enabled.\n\nSupported integrations for this playbook:\n* Active Directory\n
+    * PAN-OS - This requires PAN-OS 9.1 or higher.\n* SailPoint\n* PingOne\n* AWS
+    IAM\n* Clarizen IAM\n* Envoy IAM\n* ExceedLMS IAM\n* Okta"
+  action:
+  connector:
+  inputs:
+    Tag:
+      simple: Bad Account
+    UserVerification:
+      complex:
+        root: inputs.UserVerification
+    Username:
+      complex:
+        root: inputs.AutoBlockIndicators
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which indicators would you like to block?.Answers.3
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoBlockIndicators
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.Username
+              iscontext: true
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: ac24ec10-63b4-46ed-8c10-ae50147ac064
+  type: subplaybook
+  description: ''
+  action:
+  connector:
+  inputs:
+    AutoCommit:
+      complex:
+        root: inputs.AutoCommit
+    CustomURLCategory:
+      complex:
+        root: inputs.CustomURLCategory
+    EDLServerIP:
+      complex:
+        root: inputs.EDLServerIP
+    LogForwarding:
+      complex:
+        root: inputs.LogForwarding
+    Tag:
+      complex:
+        root: inputs.Tag
+    URL:
+      complex:
+        root: inputs.AutoBlockIndicators
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which indicators would you like to block?.Answers.1
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoBlockIndicators
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.URL
+              iscontext: true
+    UserVerification:
+      complex:
+        root: inputs.UserVerification
+    categories:
+      complex:
+        root: inputs.categories
+    device-group:
+      complex:
+        root: inputs.device-group
+    type:
+      complex:
+        root: inputs.type
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 0d20c35f-5bdf-4b27-8b63-f5334f9342f5
+  type: action
+  description: Select which indicators to block.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 8a156613-e43b-4bf2-857c-159220291b3b
+  type: condition
+  description: Checks whether the AutoBlockIndicators input is set to 'True'
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 0d20c35f-5bdf-4b27-8b63-f5334f9342f5
+    else_:
+  - if_: ''
+    then: 6cabb94a-1422-4d97-89ee-5b35b328c70b
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: ca92498f-ebc4-4e68-81e9-44e1c6907d9d
+  type: action
+  description: Set a value in context under the key you entered.
+  action: Set
+  connector:
+  inputs:
+    key:
+      simple: IndicatorsToBlock
+    value:
+      complex:
+        root: Which indicators would you like to block?.Answers
+        accessor: '0'
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: Which indicators would you like to block?.Answers.1
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: Which indicators would you like to block?.Answers.2
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: Which indicators would you like to block?.Answers.3
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: Which indicators would you like to block?.Answers.4
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: Which indicators would you like to block?.Answers.5
+              iscontext: true
+        - operator: uniq
+        - operator: SetIfEmpty
+          args:
+            applyIfEmpty: {}
+            defaultValue:
+              value:
+                simple: No indicators to block
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6cabb94a-1422-4d97-89ee-5b35b328c70b
+  type: action
+  description: Set a value in context under the key you entered.
+  action: Set
+  connector:
+  inputs:
+    key:
+      simple: IndicatorsToBlock
+    value:
+      complex:
+        root: inputs.IP
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.URL
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.Username
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.MD5
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.SHA256
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.EmailToBlock
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.DomainToBlock
+              iscontext: true
+        - operator: append
+          args:
+            item:
+              value:
+                simple: inputs.FilesToBlock
+              iscontext: true
+        - operator: uniq
+        - operator: SetIfEmpty
+          args:
+            applyIfEmpty: {}
+            defaultValue:
+              value:
+                simple: No indicators to block
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 92a68f14-96ed-4e6f-880f-dde5980b1fc2
+  type: condition
+  description: Checks whether there are indicators to block.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 22f0eb38-c4d3-4e67-889b-6abbff216ab8
+    else_:
+  - if_: ''
+    then: 15d43128-6c48-4deb-8ed0-044d0454fa7b
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 8be5d5f6-b142-415a-8669-90965b645964
+  type: subplaybook
+  description: ''
+  action:
+  connector:
+  inputs:
+    Domain:
+      complex:
+        root: inputs.AutoBlockIndicators
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which indicators would you like to block?.Answers.5
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoBlockIndicators
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.DomainToBlock
+              iscontext: true
+    DomainBlackListID:
+      complex:
+        root: inputs.DomainBlackListID
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: eb042e15-af15-4142-8fa9-f05d0d283499
+  type: subplaybook
+  description: ''
+  action:
+  connector:
+  inputs:
+    EmailToBlock:
+      complex:
+        root: inputs.AutoBlockIndicators
+        transformers:
+        - operator: If-Then-Else
+          args:
+            condition:
+              value:
+                simple: lhs==rhs
+            conditionB: {}
+            conditionInBetween: {}
+            else:
+              value:
+                simple: Which indicators would you like to block?.Answers.4
+              iscontext: true
+            equals: {}
+            lhs:
+              value:
+                simple: inputs.AutoBlockIndicators
+              iscontext: true
+            lhsB: {}
+            options: {}
+            optionsB: {}
+            rhs:
+              value:
+                simple: 'True'
+            rhsB: {}
+            then:
+              value:
+                simple: inputs.EmailToBlock
+              iscontext: true
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: ee795eae-1fc0-4458-864b-91b2f224db89
+  type: condition
+  description: Checks whether a tag for blocked indicators was specified.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 22f0eb38-c4d3-4e67-889b-6abbff216ab8
+    else_:
+  - if_: ''
+    then: 8e6165ed-cc2e-4820-8ae4-c73fd82a3088
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 4b64da5f-53b9-4fdd-8e65-5a133c6700d6
+  type: condition
+  description: Looks for available indicators to process
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: f0a6c388-3821-4ad0-8720-6660caa31997
+    else_:
+  - if_: ''
+    then: 8a156613-e43b-4bf2-857c-159220291b3b
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f0a6c388-3821-4ad0-8720-6660caa31997
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

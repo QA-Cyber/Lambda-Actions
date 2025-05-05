@@ -1,0 +1,1399 @@
+id: Block Account - Generic v2
+name: Block Account - Generic v2
+description: "This playbook blocks malicious usernames using all integrations that
+  you have enabled.\n\nSupported integrations for this playbook:\n* Active Directory\n
+  * PAN-OS - This requires PAN-OS 9.1 or higher.\n* SailPoint\n* PingOne\n* AWS IAM\n
+  * Clarizen IAM\n* Envoy IAM\n* ExceedLMS IAM\n* Okta\n* Microsoft Graph User (Azure
+  Active Directory Users)\n* Google Workspace Admin\n* Slack IAM\n* ServiceNow IAM\n
+  * Prisma Cloud IAM\n* Zoom IAM\n* Atlassian IAM\n* GitHub IAM."
+trigger:
+steps:
+- id: cc38d57c-1f3a-4616-8fc3-b3d5b2beefb3
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: df7e57df-4f26-4b41-8552-0d4068792d13
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 84a222c3-d83f-4d9c-8f75-605f9c1cd233
+  type: condition
+  description: Verify that the playbook input includes at least one username to block.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: eda8a397-b0f5-4cb8-85a6-804bbbf59244
+    else_:
+  - if_: ''
+    then: c34085c0-1974-4153-8f36-fb22e4ba0c4e
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: d50b5c24-46e7-4b68-8082-632feb18733d
+  type: action
+  description: Registers users to a tag. This command is only available for PAN-OS
+    version 9.x and above.
+  action:
+  connector:
+  inputs:
+    Users:
+      complex:
+        root: Blocklist
+        accessor: Final
+    tag:
+      complex:
+        root: inputs.Tag
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 134ffe20-63fc-486a-8a79-685e3d206ae8
+  type: condition
+  description: Verify that the playbook input includes at least one tag to apply to
+    the user.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: d50b5c24-46e7-4b68-8082-632feb18733d
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: dd28a21a-8e77-4e94-8ebd-6b4dd2a40907
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 253e9206-6499-4698-81bc-4f6b405723e9
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 4665f43b-c357-46ab-8658-1f5307d73e34
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 9f3e4789-ef65-4d8b-8142-b931aca2d1b8
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 5af0265d-f69a-47ef-8fdd-8be726ab8812
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 8170d464-f524-484a-8578-d2d5c6b44c24
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 9426248c-bc57-4e2a-898c-333c705fe7c9
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e3d46f19-bf96-4280-887d-c746b0e95976
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 00761e97-8a6e-48f4-85fb-d894509a2c17
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: ca29fc92-0b56-4eca-8fb4-285bf732a419
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Okta IAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 692fc977-5dff-49fa-8ef9-4c0c53979786
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: SailPointIdentityIQ
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 4ebe9bf0-210f-4752-83d0-bb2e2a03262a
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c00031c8-63dc-447a-8064-458b8b89c0b9
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: AWS - IAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 1dfdb5b5-b388-49f8-8778-b631675b5228
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: PingOne
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 08d5ce28-f0dd-4a81-889a-383591a50ad5
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 1e40e759-f2e0-46f7-8c4c-e6c305ada2fe
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: ClarizenIAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e69ec334-a883-4519-8b53-2d12a380819d
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Envoy IAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: d7750a59-552e-4fbe-8d72-6a0dbf2c50b2
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: ExceedLMS IAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 85bde384-178d-44b1-8c73-5899e51cf664
+  type: action
+  description: Disable an active user.
+  action:
+  connector:
+  inputs:
+    user-profile:
+      simple: ${Blocklist.Final}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 08d5ce28-f0dd-4a81-889a-383591a50ad5
+  type: action
+  description: Deactivate a user's account.
+  action:
+  connector:
+  inputs:
+    username:
+      complex:
+        root: Blocklist
+        accessor: Final
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 50b2030e-e402-47f1-86df-5b5f4e8e7077
+  type: action
+  description: Disable account's active status by id using IdentityIQ SCIM API's.
+  action:
+  connector:
+  inputs:
+    id:
+      complex:
+        root: IdentityIQ.Account
+        accessor: id
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 90a2adf8-4f57-4b53-896d-44bddd4d064c
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Panorama
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 134ffe20-63fc-486a-8a79-685e3d206ae8
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e31ad79c-5806-41f0-839b-f896c860d3cc
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Active Directory Query v2
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: da02de44-c739-4db1-85bc-3c053f8aa183
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c34085c0-1974-4153-8f36-fb22e4ba0c4e
+  type: condition
+  description: Check if manual verification is required before block
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: f97632fd-1653-4fda-8222-e8dbe5c36646
+    else_:
+  - if_: ''
+    then: 90c4e379-c164-495b-8bd0-74e807433506
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: eda8a397-b0f5-4cb8-85a6-804bbbf59244
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 90c4e379-c164-495b-8bd0-74e807433506
+  type: action
+  description: "Set a value in context under the key you entered. If no value is entered,
+    the script doesn't do anything.\n\nThis automation runs using the default Limited
+    User role, unless you explicitly change the permissions.\nFor more information,
+    see the section about permissions here:\n- For Cortex XSOAR 6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+    \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n
+    - For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+  action: SetAndHandleEmpty
+  connector:
+  inputs:
+    append:
+      simple: 'true'
+    key:
+      simple: checks.common
+    value:
+      complex:
+        root: inputs.NamingConvention
+        transformers:
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: ' '
+        - operator: split
+          args:
+            delimiter:
+              value:
+                simple: ','
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 603550b4-89d3-4df1-84d9-1eb2951e0871
+  type: action
+  description: "Set a value in context under the key you entered. If no value is entered,
+    the script doesn't do anything.\n\nThis automation runs using the default Limited
+    User role, unless you explicitly change the permissions.\nFor more information,
+    see the section about permissions here:\n- For Cortex XSOAR 6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+    \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n
+    - For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+  action: SetAndHandleEmpty
+  connector:
+  inputs:
+    key:
+      simple: Blocklist.Sensitive
+    value:
+      complex:
+        root: Blocklist.Potential
+        filters:
+        - - operator: StringContainsArray
+            left:
+              value:
+                simple: Blocklist.Potential
+              iscontext: true
+            right:
+              value:
+                simple: checks.common
+              iscontext: true
+            ignorecase: true
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 93dc1c23-81e4-40fd-8f62-9f4290882421
+  type: action
+  description: "Set a value in context under the key you entered. If no value is entered,
+    the script doesn't do anything.\n\nThis automation runs using the default Limited
+    User role, unless you explicitly change the permissions.\nFor more information,
+    see the section about permissions here:\n- For Cortex XSOAR 6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+    \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n
+    - For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+  action: SetAndHandleEmpty
+  connector:
+  inputs:
+    key:
+      simple: Blocklist.Potential
+    value:
+      complex:
+        root: inputs.Username
+        transformers:
+        - operator: split
+          args:
+            delimiter:
+              value:
+                simple: ','
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 39b3cf6c-5757-447b-8188-9ead6e21a445
+  type: condition
+  description: Check if there are any sensitive users to block
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 4d484404-eefc-4cf6-8f56-abdae89d61e6
+    else_:
+  - if_: ''
+    then: 6ab46eeb-8460-44ab-8b96-0c6a35e38581
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6ab46eeb-8460-44ab-8b96-0c6a35e38581
+  type: action
+  description: "Please note that in this form there are serval accounts that are listed
+    as \"Sensitive Accounts\":\n${User.Sensetive}"
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 4d484404-eefc-4cf6-8f56-abdae89d61e6
+  type: action
+  description: "Please note that in this form there are serval accounts that are listed
+    as \"Sensitive Accounts\":\n${User.Sensetive}"
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 9e174bd8-73a8-46ef-8a56-138a1cac0b61
+  type: action
+  description: "Set a value in context under the key you entered. If no value is entered,
+    the script doesn't do anything.\n\nThis automation runs using the default Limited
+    User role, unless you explicitly change the permissions.\nFor more information,
+    see the section about permissions here:\n- For Cortex XSOAR 6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+    \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n
+    - For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+  action: SetAndHandleEmpty
+  connector:
+  inputs:
+    append:
+      simple: 'true'
+    key:
+      simple: Blocklist.Final
+    value:
+      complex:
+        root: ${Which Users you would like to Block?  Choose from the following lists
+          :.Answers
+        accessor: 0}
+        transformers:
+        - operator: append
+          args:
+            item:
+              value:
+                simple: Which sensitive users you would like to Block?  Choose from
+                  the following lists :.Answers.0
+              iscontext: true
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f97632fd-1653-4fda-8222-e8dbe5c36646
+  type: action
+  description: "Set a value in context under the key you entered. If no value is entered,
+    the script doesn't do anything.\n\nThis automation runs using the default Limited
+    User role, unless you explicitly change the permissions.\nFor more information,
+    see the section about permissions here:\n- For Cortex XSOAR 6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+    \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n
+    - For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+  action: SetAndHandleEmpty
+  connector:
+  inputs:
+    append:
+      simple: 'true'
+    key:
+      simple: Blocklist.Final
+    value:
+      complex:
+        root: inputs.Username
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: f9188978-a51d-4e86-8420-1749db9f1d3b
+  type: action
+  description: Disables an Active Directory user account.
+  action:
+  connector:
+  inputs:
+    username:
+      complex:
+        root: UserAD
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 64ddf917-048c-444b-8fea-b9529a3ad0b3
+  type: condition
+  description: Check if the analyst selected any users to block
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: eda8a397-b0f5-4cb8-85a6-804bbbf59244
+    else_:
+  - if_: ''
+    then: 9e174bd8-73a8-46ef-8a56-138a1cac0b61
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 8791822e-5e1e-4b28-82d9-a822aa17108d
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Slack IAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e2aaa6e8-de1f-4399-8e89-2321fe4fa030
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e8b7f7a8-2b9c-44ef-8eff-ceb494799432
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: ServiceNow IAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6a694bcc-610d-46c4-8d22-dec644076b78
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6345f42c-51a8-401f-8099-ecea5a0403c4
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Salesforce IAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: dba2b9c1-cb47-41a9-8386-1de15a47de2d
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c6cb894b-65a5-4e85-87f4-debe4d8cdbfe
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: PrismaCloud IAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: de7c1b4f-0ecc-4782-8346-50b679dac66b
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 1a19cd62-eafa-4b66-80aa-b397a439f52c
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Microsoft Graph User
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: e56d753f-ac0c-417d-83b3-1eec253d740b
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 31d15f37-d89d-4d09-8009-2a60c76d0b5e
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 31592372-486c-4648-8376-8889941df6c8
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Zoom_IAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: b98574a0-93fc-423b-87e1-bf888db3881a
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: deb7235b-0e73-4aa7-8e3e-2b07ad73daf9
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: Atlassian IAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 5e5c6e1e-8c3a-42b8-85bd-3646e9b01531
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 909d3b40-e606-4225-8d09-a83ebdd33b79
+  type: action
+  description: "Disables a user from all Office 365 applications, and prevents sign
+    in. Note: This command disables user,\nbut does not terminate an existing session.
+    Supported only in a self deployed app flow with the\nPermission: Directory.AccessAsUser.All(Delegated)"
+  action:
+  connector:
+  inputs:
+    user:
+      complex:
+        root: UserMSGraph
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 909312b6-5f6e-451c-83dd-a00e31c49197
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: GitHub IAM
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 85bde384-178d-44b1-8c73-5899e51cf664
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 4f6321ef-dfb9-41fd-8a72-61bea5cff007
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: a274143d-2455-4679-8064-41a6cc01e1be
+  type: condition
+  description: Returns 'yes' if integration brand is available. Otherwise returns
+    'no'
+  action: IsIntegrationAvailable
+  connector:
+  inputs:
+    brandname:
+      simple: GSuiteAdmin
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 128ca043-fa17-4ebf-82e1-ce3b4812de86
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: fa1e6574-7969-4b44-8593-b2244060cebe
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 128ca043-fa17-4ebf-82e1-ce3b4812de86
+  type: action
+  description: Updates a user.
+  action:
+  connector:
+  inputs:
+    suspended:
+      simple: 'true'
+    user_key:
+      complex:
+        root: Blocklist
+        accessor: Final
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 4ebe9bf0-210f-4752-83d0-bb2e2a03262a
+  type: action
+  description: Fetch accounts by search/filter parameters (id, display_name, last_refresh,
+    native_identity, last_target_agg, identity_name & application_name) using IdentityIQ
+    SCIM APIs.
+  action:
+  connector:
+  inputs:
+    display_name:
+      complex:
+        root: Blocklist
+        accessor: Final
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: da02de44-c739-4db1-85bc-3c053f8aa183
+  type: action
+  description: Retrieves detailed information about a user account. The user can be
+    specified by name, email address, or as an Active Directory Distinguished Name
+    (DN). If no filter is specified, all users are returned.
+  action:
+  connector:
+  inputs:
+    extend-context:
+      simple: UserAD=attributes.sAMAccountName
+    ignore-outputs:
+      simple: 'true'
+    username:
+      complex:
+        root: Blocklist
+        accessor: Final
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 419df6f0-2416-4a48-8124-eb64ce5da93a
+  type: condition
+  description: Verify that the user exists.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: f9188978-a51d-4e86-8420-1749db9f1d3b
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: e56d753f-ac0c-417d-83b3-1eec253d740b
+  type: action
+  description: "Retrieves the properties and relationships of a user object. For more
+    information, visit: https://docs.microsoft.com/en-us/graph/api/user-update?view=graph-rest-1.0.\n
+    Permissions: - User.Read (Delegated) - User.Read.All (Application)."
+  action:
+  connector:
+  inputs:
+    extend-context:
+      simple: UserMSGraph=id
+    ignore-outputs:
+      simple: 'true'
+    user:
+      complex:
+        root: Blocklist
+        accessor: Final
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6a4ebfcb-e506-4333-81b5-8889065e2fbe
+  type: condition
+  description: Verify that the user exists.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 78bcaa68-2a3d-4805-8e25-1bee31249d8f
+    else_:
+  - if_: ''
+    then: 909d3b40-e606-4225-8d09-a83ebdd33b79
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}

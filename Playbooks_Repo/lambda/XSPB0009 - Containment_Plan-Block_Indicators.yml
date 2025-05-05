@@ -1,0 +1,487 @@
+id: Containment Plan - Block Indicators
+name: Containment Plan - Block Indicators
+description: "## Containment Plan - Block Indicators\n\nThis playbook is a sub-playbook
+  within the containment plan playbook.\n\n### Indicator Blocking\n\nThe playbook
+  block indicators by two methods:\n\n1. It adds the malicious hashes into the XSIAM
+  hash block list\n2. It utilizes the sub-playbook \"Block Indicators - Generic v3\""
+trigger:
+steps:
+- id: 0eab88db-3b97-46e9-8040-fc0e5ccdd72b
+  type: start
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 42177fdd-e676-4494-8430-473b77c4d326
+  type: action
+  description: Block lists requested files which have not already been block listed
+    or added to allow list.
+  action:
+  connector:
+  inputs:
+    comment:
+      complex:
+        root: alert
+        accessor: alertname
+    hash_list:
+      complex:
+        root: foundIncidents.CustomFields
+        filters:
+        - - operator: isNotEqualString
+            left:
+              value:
+                simple: foundIncidents.CustomFields.initiatorpath
+              iscontext: true
+            right:
+              value:
+                simple: c:\windows\explorer.exe
+            ignorecase: true
+        accessor: initiatorsha256
+        transformers:
+        - operator: SetIfEmpty
+          args:
+            applyIfEmpty: {}
+            defaultValue:
+              value:
+                simple: inputs.FileHash
+              iscontext: true
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6555f437-9362-4b64-8416-9a207801acc8
+  type: title
+  description: ''
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: c769a542-379a-42a7-8cb0-325e6b48e2b4
+  type: condition
+  description: Whether to block the indicators based on the input values.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 6555f437-9362-4b64-8416-9a207801acc8
+    else_:
+  - if_: ''
+    then: 56214186-2922-4165-820b-062ad475cf73
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 58da2cac-8a9e-4f4f-88de-623361cde61f
+  type: action
+  description: commands.local.cmd.set.parent.incident.context
+  action:
+  connector:
+  inputs:
+    key:
+      simple: BlockedFilesHash
+    value:
+      complex:
+        root: Core.blocklist.added_hashes
+        accessor: fileHash
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 4fb0cfd4-2555-4d5b-844c-c83c447c4a99
+  type: action
+  description: commands.local.cmd.set.parent.incident.context
+  action:
+  connector:
+  inputs:
+    key:
+      simple: IndicatorsToBlock
+    value:
+      complex:
+        root: IndicatorsToBlock
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: df934c6a-4169-41f4-8cbe-76de251da626
+  type: condition
+  description: Checks whether the file hash exists.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 5ba573bb-fbf4-4890-8e63-15376725d187
+    else_:
+  - if_: ''
+    then: 42177fdd-e676-4494-8430-473b77c4d326
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 56214186-2922-4165-820b-062ad475cf73
+  type: condition
+  description: Whether to disable the account automatically based on the input values.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 6401c6c9-8ff7-4f49-8676-fd99f48da60f
+    else_:
+  - if_: ''
+    then: df934c6a-4169-41f4-8cbe-76de251da626
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 6401c6c9-8ff7-4f49-8676-fd99f48da60f
+  type: condition
+  description: Checks whether the file hash exists.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 5ba573bb-fbf4-4890-8e63-15376725d187
+    else_:
+  - if_: ''
+    then: fca5352e-ba68-4776-8b35-903387490051
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: fca5352e-ba68-4776-8b35-903387490051
+  type: action
+  description: Block lists requested files which have not already been block listed
+    or added to allow list.
+  action:
+  connector:
+  inputs:
+    comment:
+      complex:
+        root: alert
+        accessor: alertname
+    hash_list:
+      complex:
+        root: inputs.FileHash
+        filters:
+        - - operator: in
+            left:
+              value:
+                simple: inputs.FileHash
+              iscontext: true
+            right:
+              value:
+                simple: inputs.FileHash
+              iscontext: true
+        - - operator: stringHasLength
+            left:
+              value:
+                simple: inputs.FileHash
+              iscontext: true
+            right:
+              value:
+                simple: '64'
+        transformers:
+        - operator: uniq
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 5ba573bb-fbf4-4890-8e63-15376725d187
+  type: subplaybook
+  description: "This playbook blocks malicious indicators using all integrations that
+    are enabled, using the following sub-playbooks:\n\n- Block URL - Generic v2\n
+    - Block Account - Generic v2\n- Block IP - Generic v3\n- Block File - Generic
+    v2\n- Block Email - Generic v2\n- Block Domain - Generic v2\n\n"
+  action:
+  connector:
+  inputs:
+    AutoBlockIndicators:
+      complex:
+        root: inputs.AutoBlockIndicators
+    AutoCommit:
+      simple: No
+    CustomBlockRule:
+      simple: 'True'
+    CustomURLCategory:
+      simple: Demisto Remediation - Malicious URLs
+    DomainToBlock:
+      complex:
+        root: inputs.Domain
+    EmailToBlock:
+      complex:
+        root: DBotScore
+        filters:
+        - - operator: isEqualString
+            left:
+              value:
+                simple: DBotScore.Type
+              iscontext: true
+            right:
+              value:
+                simple: email
+        - - operator: greaterThanOrEqual
+            left:
+              value:
+                simple: DBotScore.Score
+              iscontext: true
+            right:
+              value:
+                simple: '3'
+        accessor: Indicator
+        transformers:
+        - operator: uniq
+    FilesToBlock:
+      complex:
+        root: DBotScore
+        filters:
+        - - operator: isEqualString
+            left:
+              value:
+                simple: DBotScore.Type
+              iscontext: true
+            right:
+              value:
+                simple: file
+        - - operator: greaterThanOrEqual
+            left:
+              value:
+                simple: DBotScore.Score
+              iscontext: true
+            right:
+              value:
+                simple: '3'
+        accessor: Indicator
+        transformers:
+        - operator: uniq
+    IP:
+      complex:
+        root: inputs.IP
+        transformers:
+        - operator: uniq
+    InputEnrichment:
+      simple: 'False'
+    MD5:
+      complex:
+        root: inputs.FileHash
+        filters:
+        - - operator: stringHasLength
+            left:
+              value:
+                simple: inputs.FileHash
+              iscontext: true
+            right:
+              value:
+                simple: '32'
+        transformers:
+        - operator: uniq
+    RuleDirection:
+      simple: outbound
+    RuleName:
+      simple: XSOAR - Block Indicators playbook - ${incident.id}
+    SHA256:
+      complex:
+        root: inputs.FileHash
+        filters:
+        - - operator: stringHasLength
+            left:
+              value:
+                simple: inputs.FileHash
+              iscontext: true
+            right:
+              value:
+                simple: '64'
+        transformers:
+        - operator: uniq
+    URL:
+      complex:
+        root: inputs.URL
+        transformers:
+        - operator: uniq
+    UserVerification:
+      complex:
+        root: inputs.UserVerification
+    Username:
+      complex:
+        root: inputs.Username
+        transformers:
+        - operator: replace
+          args:
+            limit: {}
+            replaceWith: {}
+            toReplace:
+              value:
+                simple: inputs.Username
+              iscontext: true
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: cb04e962-15e3-4189-8fcc-73efa9cb71fb
+  type: action
+  description: commands.local.cmd.set.parent.incident.context
+  action:
+  connector:
+  inputs:
+    key:
+      simple: BlockedFilesHash
+    value:
+      complex:
+        root: Core.blocklist.added_hashes
+        accessor: fileHash
+  outputs:
+  conditions:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 0a63acdb-6497-4f96-8318-5231aefde427
+  type: condition
+  description: Check if there are any indicators that are blocked.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 6555f437-9362-4b64-8416-9a207801acc8
+    else_:
+  - if_: ''
+    then: 4fb0cfd4-2555-4d5b-844c-c83c447c4a99
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 5e12fc6b-2fa0-43d0-8a46-d2f213525a45
+  type: condition
+  description: Checks whether the file hash exists.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 5ba573bb-fbf4-4890-8e63-15376725d187
+    else_:
+  - if_: ''
+    then: cb04e962-15e3-4189-8fcc-73efa9cb71fb
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+- id: 5df17f17-1825-4ac0-8edf-c0e89f437551
+  type: condition
+  description: Checks whether the file hash exists.
+  action:
+  connector:
+  inputs: {}
+  outputs:
+  conditions:
+  - if_: ''
+    then: 5ba573bb-fbf4-4890-8e63-15376725d187
+    else_:
+  - if_: ''
+    then: 58da2cac-8a9e-4f4f-88de-623361cde61f
+    else_:
+  subplaybooks:
+  parallel:
+  instructions:
+  timeout:
+  escalation:
+  runtime:
+  script_content:
+  task_definition:
+inputs:
+outputs:
+metadata:
+  vendor_mappings: {}
